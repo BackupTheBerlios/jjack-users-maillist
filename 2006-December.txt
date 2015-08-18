@@ -1,0 +1,628 @@
+From contact at petersalomonsen.com  Sat Dec  9 14:10:49 2006
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Sat, 9 Dec 2006 14:10:49 +0100
+Subject: [jjack-users] JJack in CVS
+In-Reply-To: <453967C4.4070705@jensgulden.de>
+References: <200610181119.49417.contact@petersalomonsen.com>
+	<200610192221.56636.contact@petersalomonsen.com>
+	<453967C4.4070705@jensgulden.de>
+Message-ID: <200612091410.49421.contact@petersalomonsen.com>
+
+Hi,
+
+No big changes yet, but I've modified the build.xml with the following:
+
+- Relative basedir in build.xml
+- Use JAVA_HOME environment variable for ant build java dependencies. Example 
+from shell: JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun ant all
+
+Also added a CHANGELOG file for logging changes.
+
+cheers,
+
+Peter
+
+
+From helgeingvart at gmail.com  Tue Dec 12 22:04:55 2006
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Tue, 12 Dec 2006 22:04:55 +0100
+Subject: [jjack-users] Using jjack to grab sound
+Message-ID: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+
+Hello!
+
+I'm looking for an API to grab sound with as minimum of delay as possible
+(as contrary to JavaSound). I need only telephone quality sound, that is
+11kHz sampling rate and 8bit mono. Is it possible to downsize the default
+CD-quality of sound in jjack? Also, I'm looking for a device reccomandation
+to fit this API that will be able to grab
+sound from 8 different channels simultaniously.
+
+Best regards,
+Helge Fredriksen
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20061212/bec09a78/attachment.html>
+
+From contact at petersalomonsen.com  Wed Dec 13 08:29:33 2006
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Wed, 13 Dec 2006 08:29:33 +0100
+Subject: [jjack-users] Using jjack to grab sound
+In-Reply-To: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+Message-ID: <200612130829.34147.contact@petersalomonsen.com>
+
+Hi,
+
+On Linux you should be able to connect to any device supported by ALSA (see 
+http://www.alsa-project.org/ and browse devices there). Jack supports 
+connecting to e.g. 8 channels if the device supports it.
+
+You can easily downsize the sound of jjack by manipulating the audio data. In 
+your case that would be an interpolation of 4 samples and removing the 8 
+lower bits.
+
+best regards,
+
+Peter
+
+On Tuesday 12 December 2006 22:04, Helge Fredriksen wrote:
+> Hello!
+>
+> I'm looking for an API to grab sound with as minimum of delay as possible
+> (as contrary to JavaSound). I need only telephone quality sound, that is
+> 11kHz sampling rate and 8bit mono. Is it possible to downsize the default
+> CD-quality of sound in jjack? Also, I'm looking for a device reccomandation
+> to fit this API that will be able to grab
+> sound from 8 different channels simultaniously.
+>
+> Best regards,
+> Helge Fredriksen
+
+
+From inventor at cefn.com  Wed Dec 13 01:57:45 2006
+From: inventor at cefn.com (Cefn Hoile)
+Date: Wed, 13 Dec 2006 00:57:45 +0000
+Subject: [jjack-users] Using jjack to grab sound
+In-Reply-To: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+Message-ID: <85A38272-7C3F-45D1-9833-5CD46A6507CE@cefn.com>
+
+Hi, Helge
+
+I think the rate of sampling is handled by the Jack implementation,  
+and JJack just intervenes as a client and exposes the bytes fed  
+through the Jack system to Java. So some of this sampling rate, and  
+the consequent load, will be determined by your configuration of Jack.
+
+ From your description it seems like you have similar requirements to  
+the project I attempted. You can see a nice pic from our test  
+contraption here...
+http://flickr.com/photos/55387465 at N00/218307084/
+
+I made some progress on it, and managed to get quite a few usb audio  
+cards working with JJack - initially on Pure:Dyne had driver problems  
+but finally on debian got at least the test JJack apps like the  
+'echo' working for long periods with multiple (4 in the end) cheap  
+VoIP soundcards and USB hubs. I think in principle the experiment  
+could have been extended to more soundcards and hubs. The sample apps  
+would crash eventually (after quite a while - tens of minutes) but  
+could be restarted automatically with simple scripting. I needed to  
+work on something else at that point, so it got left as it is.
+
+You'll see more in the links below. In the longer run I intended to  
+simply serialise the bytes in JJack events directly to file, and  
+reverse the process for playback. Doesn't give you the open format  
+which might be ideal, but for my project the playback output was  
+JJack as well, (other live sound outputs)  so it suited me to try it  
+that way. Funnily enough my project involved telephones too.
+
+You can follow the blog topics about the project in reverse order  
+here...
+http://cefn.com/curiosity/tag/pipedreams
+
+...and several snapshots from the attempted code framework by  
+following these links...
+
+1) The primary game intended to be run using a multi-audio-channel  
+enabled PC
+http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/ 
+backchatter/games/ConverseGame.java?view=markup
+
+2) A directory containing test 'games' which invoke my Channel- 
+oriented API
+http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/ 
+backchatter/games/
+
+3) Here you can browse my Channel API itself - a high level framework  
+for manipulating, wiring and recording channels in general.
+http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/ 
+backchatter/
+
+4) A rough and ready JJack implementation of my channel API
+http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/ 
+backchatter/impl/jjack/
+
+The API seemed to work. The channel-based games written (like the  
+ConverseGame) would run with a text emulator (text input and output  
+channels were coordinated properly).
+
+However, the JJack implementation hosting multiple live audio channel  
+interfaces was still very untried and tested. Mostly I would look at  
+my own use of JJack for reference and ideas rather than as a working  
+implementation. I still intend to build on it in the end, but it's  
+work in progress.
+
+Drop me a line (directly or through this list) if you're following  
+any of the same paths to try and get your thing working, and if I can  
+help I'll make suggestions. Not totally sure what your application  
+is, but I'm guessing it's similar in it's basic needs.
+
+For other stuff which the Curiosity Collective is up to, you can  
+visit the main website...
+http://curiositycollective.org
+
+Good luck.
+
+Cefn
+http://cefn.com/cefntiki/
+
+On 12 Dec 2006, at 21:04, Helge Fredriksen wrote:
+
+> Hello!
+>
+> I'm looking for an API to grab sound with as minimum of delay as  
+> possible (as contrary to JavaSound). I need only telephone quality  
+> sound, that is 11kHz sampling rate and 8bit mono. Is it possible to  
+> downsize the default CD-quality of sound in jjack? Also, I'm  
+> looking for a device reccomandation to fit this API that will be  
+> able to grab
+> sound from 8 different channels simultaniously.
+>
+> Best regards,
+> Helge Fredriksen
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From helgeingvart at gmail.com  Wed Dec 13 15:46:10 2006
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Wed, 13 Dec 2006 15:46:10 +0100
+Subject: [jjack-users] Using jjack to grab sound
+In-Reply-To: <85A38272-7C3F-45D1-9833-5CD46A6507CE@cefn.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+	<85A38272-7C3F-45D1-9833-5CD46A6507CE@cefn.com>
+Message-ID: <e78383b30612130646n16e811c5xb81a6c1665421325@mail.gmail.com>
+
+Hi,
+
+and thanks for an extencive reply!
+
+It seems that jjack is definetly the API to use on Linux. I was originally
+looking for a cross-platform API, has jack been ported to Windows? Anyway
+we found other ways to grab sound on windows using DirectSound.
+
+Our intention is to build a radio simulator for ship-to-ship communication
+in naval training. To do this, I need to be able to grab at least 8 sounds
+at the
+same time and playback at least two. The voice will be sent to a recorder
+server via our own VoIP protocoll + sent to other student/instructor PCs
+also
+via VoIP.
+
+JJack seem to give me the direct access to the sound bits as I would like,
+the
+only problem is to find the correct hardware to use. I've been looking on
+this:
+
+http://audioen.terratec.net/modules.php?op=modload&name=News&file=article&sid=9
+
+It's not supported in the list of supported terratec devices:
+
+http://www.alsa-project.org/alsa-doc/index.php?vendor=vendor-Terratec#matrix
+
+However, it's said to be supported by freebob (, which sits on top of jack
+as a client,
+so it should be supported by jjack then?
+
+An even more cost efficient solution would be to go for the
+
+http://www.soundonsound.com/sos/apr04/articles/terratecphase88.htm
+
+but I haven't found that this is supported yet, even thought it's the
+successor of
+EWS 88MT PCI which is listed as supported under ALSA (and then jack as
+well?).
+
+Actually it seems like these two are the same, just a different layout
+(FireWire on the rack,
+PCI on the other).
+
+Any comments?
+
+Helge Fredriksen
+
+
+
+On 12/13/06, Cefn Hoile <inventor at cefn.com> wrote:
+>
+> Hi, Helge
+>
+> I think the rate of sampling is handled by the Jack implementation,
+> and JJack just intervenes as a client and exposes the bytes fed
+> through the Jack system to Java. So some of this sampling rate, and
+> the consequent load, will be determined by your configuration of Jack.
+>
+> From your description it seems like you have similar requirements to
+> the project I attempted. You can see a nice pic from our test
+> contraption here...
+> http://flickr.com/photos/55387465 at N00/218307084/
+>
+> I made some progress on it, and managed to get quite a few usb audio
+> cards working with JJack - initially on Pure:Dyne had driver problems
+> but finally on debian got at least the test JJack apps like the
+> 'echo' working for long periods with multiple (4 in the end) cheap
+> VoIP soundcards and USB hubs. I think in principle the experiment
+> could have been extended to more soundcards and hubs. The sample apps
+> would crash eventually (after quite a while - tens of minutes) but
+> could be restarted automatically with simple scripting. I needed to
+> work on something else at that point, so it got left as it is.
+>
+> You'll see more in the links below. In the longer run I intended to
+> simply serialise the bytes in JJack events directly to file, and
+> reverse the process for playback. Doesn't give you the open format
+> which might be ideal, but for my project the playback output was
+> JJack as well, (other live sound outputs)  so it suited me to try it
+> that way. Funnily enough my project involved telephones too.
+>
+> You can follow the blog topics about the project in reverse order
+> here...
+> http://cefn.com/curiosity/tag/pipedreams
+>
+> ...and several snapshots from the attempted code framework by
+> following these links...
+>
+> 1) The primary game intended to be run using a multi-audio-channel
+> enabled PC
+> http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/
+> backchatter/games/ConverseGame.java?view=markup
+>
+> 2) A directory containing test 'games' which invoke my Channel-
+> oriented API
+> http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/
+> backchatter/games/
+>
+> 3) Here you can browse my Channel API itself - a high level framework
+> for manipulating, wiring and recording channels in general.
+> http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/
+> backchatter/
+>
+> 4) A rough and ready JJack implementation of my channel API
+> http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/
+> backchatter/impl/jjack/
+>
+> The API seemed to work. The channel-based games written (like the
+> ConverseGame) would run with a text emulator (text input and output
+> channels were coordinated properly).
+>
+> However, the JJack implementation hosting multiple live audio channel
+> interfaces was still very untried and tested. Mostly I would look at
+> my own use of JJack for reference and ideas rather than as a working
+> implementation. I still intend to build on it in the end, but it's
+> work in progress.
+>
+> Drop me a line (directly or through this list) if you're following
+> any of the same paths to try and get your thing working, and if I can
+> help I'll make suggestions. Not totally sure what your application
+> is, but I'm guessing it's similar in it's basic needs.
+>
+> For other stuff which the Curiosity Collective is up to, you can
+> visit the main website...
+> http://curiositycollective.org
+>
+> Good luck.
+>
+> Cefn
+> http://cefn.com/cefntiki/
+>
+> On 12 Dec 2006, at 21:04, Helge Fredriksen wrote:
+>
+> > Hello!
+> >
+> > I'm looking for an API to grab sound with as minimum of delay as
+> > possible (as contrary to JavaSound). I need only telephone quality
+> > sound, that is 11kHz sampling rate and 8bit mono. Is it possible to
+> > downsize the default CD-quality of sound in jjack? Also, I'm
+> > looking for a device reccomandation to fit this API that will be
+> > able to grab
+> > sound from 8 different channels simultaniously.
+> >
+> > Best regards,
+> > Helge Fredriksen
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20061213/6878a7ae/attachment.html>
+
+From helgeingvart at gmail.com  Fri Dec 15 13:25:04 2006
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Fri, 15 Dec 2006 13:25:04 +0100
+Subject: [jjack-users] Using jjack to grab sound
+In-Reply-To: <200612130829.34147.contact@petersalomonsen.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+	<200612130829.34147.contact@petersalomonsen.com>
+Message-ID: <e78383b30612150425y6d649e5ahac196d9b3449649a@mail.gmail.com>
+
+Can you depict an algorithm for such a downscale? Would it be a noticable
+cpu
+usage for this?
+
+Do you forsee any problem using jjack together with the freebob driver?
+
+Helge F.
+
+On 12/13/06, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+>
+> Hi,
+>
+> On Linux you should be able to connect to any device supported by ALSA
+> (see
+> http://www.alsa-project.org/ and browse devices there). Jack supports
+> connecting to e.g. 8 channels if the device supports it.
+>
+> You can easily downsize the sound of jjack by manipulating the audio data.
+> In
+> your case that would be an interpolation of 4 samples and removing the 8
+> lower bits.
+>
+> best regards,
+>
+> Peter
+>
+> On Tuesday 12 December 2006 22:04, Helge Fredriksen wrote:
+> > Hello!
+> >
+> > I'm looking for an API to grab sound with as minimum of delay as
+> possible
+> > (as contrary to JavaSound). I need only telephone quality sound, that is
+> > 11kHz sampling rate and 8bit mono. Is it possible to downsize the
+> default
+> > CD-quality of sound in jjack? Also, I'm looking for a device
+> reccomandation
+> > to fit this API that will be able to grab
+> > sound from 8 different channels simultaniously.
+> >
+> > Best regards,
+> > Helge Fredriksen
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20061215/5697d2eb/attachment.html>
+
+From contact at petersalomonsen.com  Fri Dec 15 15:10:00 2006
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Fri, 15 Dec 2006 15:10:00 +0100
+Subject: [jjack-users] Using jjack to grab sound
+In-Reply-To: <e78383b30612150425y6d649e5ahac196d9b3449649a@mail.gmail.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+	<200612130829.34147.contact@petersalomonsen.com>
+	<e78383b30612150425y6d649e5ahac196d9b3449649a@mail.gmail.com>
+Message-ID: <200612151510.00858.contact@petersalomonsen.com>
+
+
+
+On Friday 15 December 2006 13:25, Helge Fredriksen wrote:
+> Can you depict an algorithm for such a downscale? Would it be a noticable
+> cpu
+> usage for this?
+
+Compute the average for four samples, and convert the resulting float value 
+into a byte by multiplying it with 127 and skipping the decimal numbers.
+
+No significant cpu usage for this.
+
+> Do you forsee any problem using jjack together with the freebob driver?
+
+I'm not familiar with the freebob driver. I was also going to propose just 
+using Javasound api as is, in order to have full cross platform portability. 
+Javasound api also uses ALSA directly on Linux or WDM (DirectSound) on 
+windows. 
+
+Jack gives better performance when it comes to latency and is also more 
+flexible regarding connectivity etc. The downside is that it only works on 
+Linux and Mac.
+
+It might be that Jack supports Freebob, but I don't know anything about that.
+
+cheers,
+
+Peter
+
+
+From helgeingvart at gmail.com  Mon Dec 18 21:55:01 2006
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Mon, 18 Dec 2006 21:55:01 +0100
+Subject: [jjack-users] Fwd:  Using jjack to grab sound
+In-Reply-To: <e78383b30612180513k6853fe62gda00812af8cda2c0@mail.gmail.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+	<200612130829.34147.contact@petersalomonsen.com>
+	<e78383b30612150425y6d649e5ahac196d9b3449649a@mail.gmail.com>
+	<200612151510.00858.contact@petersalomonsen.com>
+	<e78383b30612180513k6853fe62gda00812af8cda2c0@mail.gmail.com>
+Message-ID: <e78383b30612181255j5f7c1eb4icf538b8acc83062c@mail.gmail.com>
+
+Yes, we tried JavaSound for grabbing purposes on Windows, but found that
+it introduced a 200ms delay on the signal before we got the bytes up in our
+code. Thus, our need for jjack.
+
+It is possible to feed sound back to a jackd device? How would you do that
+typically in code?
+
+Best regards,
+Helge Fredriksen
+
+On 12/15/06, Peter Salomonsen <contact at petersalomonsen.com > wrote:
+>
+>
+>
+> On Friday 15 December 2006 13:25, Helge Fredriksen wrote:
+> > Can you depict an algorithm for such a downscale? Would it be a
+> noticable
+> > cpu
+> > usage for this?
+>
+> Compute the average for four samples, and convert the resulting float
+> value
+> into a byte by multiplying it with 127 and skipping the decimal numbers.
+>
+> No significant cpu usage for this.
+>
+> > Do you forsee any problem using jjack together with the freebob driver?
+>
+> I'm not familiar with the freebob driver. I was also going to propose just
+> using Javasound api as is, in order to have full cross platform
+> portability.
+> Javasound api also uses ALSA directly on Linux or WDM (DirectSound) on
+> windows.
+>
+> Jack gives better performance when it comes to latency and is also more
+> flexible regarding connectivity etc. The downside is that it only works on
+>
+> Linux and Mac.
+>
+> It might be that Jack supports Freebob, but I don't know anything about
+> that.
+>
+> cheers,
+>
+> Peter
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20061218/028f1a86/attachment.html>
+
+From contact at petersalomonsen.com  Tue Dec 19 13:21:07 2006
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Tue, 19 Dec 2006 13:21:07 +0100
+Subject: [jjack-users] Fwd:  Using jjack to grab sound
+In-Reply-To: <e78383b30612181255j5f7c1eb4icf538b8acc83062c@mail.gmail.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+	<e78383b30612180513k6853fe62gda00812af8cda2c0@mail.gmail.com>
+	<e78383b30612181255j5f7c1eb4icf538b8acc83062c@mail.gmail.com>
+Message-ID: <200612191321.08001.contact@petersalomonsen.com>
+
+Take a look at the jjack example clients. E.g. the CABLE client which just 
+passes on the signal.
+
+regards,
+
+Peter
+
+
+
+On Monday 18 December 2006 21:55, Helge Fredriksen wrote:
+> Yes, we tried JavaSound for grabbing purposes on Windows, but found that
+> it introduced a 200ms delay on the signal before we got the bytes up in our
+> code. Thus, our need for jjack.
+>
+> It is possible to feed sound back to a jackd device? How would you do that
+> typically in code?
+>
+> Best regards,
+> Helge Fredriksen
+>
+> On 12/15/06, Peter Salomonsen <contact at petersalomonsen.com > wrote:
+> > On Friday 15 December 2006 13:25, Helge Fredriksen wrote:
+> > > Can you depict an algorithm for such a downscale? Would it be a
+> >
+> > noticable
+> >
+> > > cpu
+> > > usage for this?
+> >
+> > Compute the average for four samples, and convert the resulting float
+> > value
+> > into a byte by multiplying it with 127 and skipping the decimal numbers.
+> >
+> > No significant cpu usage for this.
+> >
+> > > Do you forsee any problem using jjack together with the freebob driver?
+> >
+> > I'm not familiar with the freebob driver. I was also going to propose
+> > just using Javasound api as is, in order to have full cross platform
+> > portability.
+> > Javasound api also uses ALSA directly on Linux or WDM (DirectSound) on
+> > windows.
+> >
+> > Jack gives better performance when it comes to latency and is also more
+> > flexible regarding connectivity etc. The downside is that it only works
+> > on
+> >
+> > Linux and Mac.
+> >
+> > It might be that Jack supports Freebob, but I don't know anything about
+> > that.
+> >
+> > cheers,
+> >
+> > Peter
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+From contact at petersalomonsen.com  Tue Dec 19 20:25:09 2006
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Tue, 19 Dec 2006 20:25:09 +0100
+Subject: [jjack-users] AMD64 suppor
+In-Reply-To: <200612191321.08001.contact@petersalomonsen.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+	<e78383b30612181255j5f7c1eb4icf538b8acc83062c@mail.gmail.com>
+	<200612191321.08001.contact@petersalomonsen.com>
+Message-ID: <200612192025.09754.contact@petersalomonsen.com>
+
+INF pointer type is now 64-bit (long) for AMD64 support.
+
+cheers,
+
+Peter
+
+
+From contact at petersalomonsen.com  Tue Dec 19 20:25:09 2006
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Tue, 19 Dec 2006 20:25:09 +0100
+Subject: [jjack-users] AMD64 suppor
+In-Reply-To: <200612191321.08001.contact@petersalomonsen.com>
+References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
+	<e78383b30612181255j5f7c1eb4icf538b8acc83062c@mail.gmail.com>
+	<200612191321.08001.contact@petersalomonsen.com>
+Message-ID: <200612192025.09754.contact@petersalomonsen.com>
+
+INF pointer type is now 64-bit (long) for AMD64 support.
+
+cheers,
+
+Peter
+
+

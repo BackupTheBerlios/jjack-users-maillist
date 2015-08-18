@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Garbage collection
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-May/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Garbage%20collection&In-Reply-To=%3C1242048532.13921.105.camel%40faraday%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000106.html">
+   <LINK REL="Next"  HREF="000108.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Garbage collection</H1>
+    <B>Paul John Leonard</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Garbage%20collection&In-Reply-To=%3C1242048532.13921.105.camel%40faraday%3E"
+       TITLE="[jjack-users] Garbage collection">eespjl at bath.ac.uk
+       </A><BR>
+    <I>Mon May 11 15:28:52 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000106.html">[jjack-users] Garbage collection
+</A></li>
+        <LI>Next message: <A HREF="000108.html">[jjack-users] Garbage collection
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#107">[ date ]</a>
+              <a href="thread.html#107">[ thread ]</a>
+              <a href="subject.html#107">[ subject ]</a>
+              <a href="author.html#107">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE> Yes I agree in this case, but I have not experienced this absolute
+freeze on a dual core machine until the latest changes of toot?  Since
+the audio is meant to run on a single thread we should always have some
+free CPU if we are on a dual core machine. I think there is a recent bug
+in frinika or toot.
+
+BTW this might be useful 
+
+<A HREF="http://en.wikipedia.org/wiki/Reisub">http://en.wikipedia.org/wiki/Reisub</A>
+
+This is getting a bit off topic for jjack ?
+
+cheers Paul.
+ 
+
+On Mon, 2009-05-11 at 13:13 +0200, Peter Salomonsen wrote:
+&gt;<i> I mean, since we are able to freeze the system entirely with the
+</I>&gt;<i> Frinika realtime patch - I cannot see how any GC can be going on,
+</I>&gt;<i> since we're not even able to power off the machine... :)
+</I>&gt;<i> 
+</I>&gt;<i> cheers,
+</I>&gt;<i> 
+</I>&gt;<i> Peter
+</I>&gt;<i> 
+</I>&gt;<i> On Mon, May 11, 2009 at 1:06 PM, Paul John Leonard &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">eespjl at bath.ac.uk</A>&gt;
+</I>&gt;<i> wrote:
+</I>&gt;<i>         Hi Peter,
+</I>&gt;<i>         
+</I>&gt;<i>          An interesting point. Since the detailed workings of the the
+</I>&gt;<i>         JVM are
+</I>&gt;<i>         not defined a difficult one to answer. I believe that in the
+</I>&gt;<i>         standard
+</I>&gt;<i>         JVM during GC all java threads (including the high proirity
+</I>&gt;<i>         ones) might
+</I>&gt;<i>         be halted for critical stages of GC.
+</I>&gt;<i>         
+</I>&gt;<i>          My guess is that on a single processor machine if you are
+</I>&gt;<i>         doing work on
+</I>&gt;<i>         the audio thread then GC collection will not be triggered.
+</I>&gt;<i>         But a sleeping audio thread might not wake up on schedule if
+</I>&gt;<i>         there is
+</I>&gt;<i>         garbage collection going on.
+</I>&gt;<i>         
+</I>&gt;<i>          On a multiprocessor machine then the GC could be triggered by
+</I>&gt;<i>         another
+</I>&gt;<i>         thread. And here I start to get very out of my depth. Can the
+</I>&gt;<i>         JVM halt
+</I>&gt;<i>         all the other processing threads ?  I don't think it needs to
+</I>&gt;<i>         halt a
+</I>&gt;<i>         thread that is executing the code in the JNI because this is
+</I>&gt;<i>         essentially
+</I>&gt;<i>         decoupled. But if you are doing processing in java then it
+</I>&gt;<i>         might be
+</I>&gt;<i>         halted?
+</I>&gt;<i>         
+</I>&gt;<i>          But this is just guess work . . .
+</I>&gt;<i>         
+</I>&gt;<i>          Another source of glitches is the JIT.
+</I>&gt;<i>         
+</I>&gt;<i>         cheers Paul.
+</I>&gt;<i>         
+</I>&gt;<i>         
+</I>&gt;<i>         
+</I>&gt;<i>         
+</I>&gt;<i>         On Mon, 2009-05-11 at 12:16 +0200, Peter Salomonsen wrote:
+</I>&gt;<i>         &gt; Hi,
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt; But when running frinika with rt prio as we do, doesn't this
+</I>&gt;<i>         at least
+</I>&gt;<i>         &gt; mean that the audio thread has priority over gc?
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt; cheers,
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt; Peter
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt; On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard
+</I>&gt;<i>         &gt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">eespjl at bath.ac.uk</A>&gt; wrote:
+</I>&gt;<i>         &gt;         Hi,
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt;          The suns rt (real time) JVM can sort out these GC
+</I>&gt;<i>         problems.
+</I>&gt;<i>         &gt;         But
+</I>&gt;<i>         &gt;         unfortunately it is only free for academics.
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt;         cheers Paul.
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt;         On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig
+</I>&gt;<i>         wrote:
+</I>&gt;<i>         &gt;         &gt; Hallo,
+</I>&gt;<i>         &gt;         &gt; on standard virtual machine the gc stops execution
+</I>&gt;<i>         of all
+</I>&gt;<i>         &gt;         threads and there is
+</I>&gt;<i>         &gt;         &gt; no possiblity to prevent the GC from running. Some
+</I>&gt;<i>         gc can be
+</I>&gt;<i>         &gt;         configured a way
+</I>&gt;<i>         &gt;         &gt; that the duration of the stops are small but it
+</I>&gt;<i>         stays
+</I>&gt;<i>         &gt;         critical. My experience
+</I>&gt;<i>         &gt;         &gt; is that to excute the GC explicitly before
+</I>&gt;<i>         starting the
+</I>&gt;<i>         &gt;         realtime
+</I>&gt;<i>         &gt;         &gt; audioprocessing works fine if your programm does
+</I>&gt;<i>         not create
+</I>&gt;<i>         &gt;         much objects.
+</I>&gt;<i>         &gt;         &gt;
+</I>&gt;<i>         &gt;         &gt; best regards
+</I>&gt;<i>         &gt;         &gt; Oliver
+</I>&gt;<i>         &gt;         &gt; &gt; Hi,
+</I>&gt;<i>         &gt;         &gt; &gt;
+</I>&gt;<i>         &gt;         &gt; &gt; If the garbage collector runs during audio
+</I>&gt;<i>         processing,
+</I>&gt;<i>         &gt;         wouldn't that be
+</I>&gt;<i>         &gt;         &gt; &gt; likely to make processing too slow and get the
+</I>&gt;<i>         application
+</I>&gt;<i>         &gt;         kicked as a
+</I>&gt;<i>         &gt;         &gt; &gt; jack client?
+</I>&gt;<i>         &gt;         &gt; &gt;
+</I>&gt;<i>         &gt;         &gt; &gt; Is it possible to prevent the GC from running
+</I>&gt;<i>         while
+</I>&gt;<i>         &gt;         processing? Does JNI
+</I>&gt;<i>         &gt;         &gt; &gt; already guarantee that? Or should we just be
+</I>&gt;<i>         careful not
+</I>&gt;<i>         &gt;         to do any memory
+</I>&gt;<i>         &gt;         &gt; &gt; allocations while processing audio (which might
+</I>&gt;<i>         be quite
+</I>&gt;<i>         &gt;         hard in the
+</I>&gt;<i>         &gt;         &gt; &gt; presence of threads)?
+</I>&gt;<i>         &gt;         &gt; &gt;
+</I>&gt;<i>         &gt;         &gt; &gt;
+</I>&gt;<i>         &gt;         &gt; &gt; Arnout
+</I>&gt;<i>         &gt;         &gt; &gt; _______________________________________________
+</I>&gt;<i>         &gt;         &gt; &gt; jjack-users mailing list
+</I>&gt;<i>         &gt;         &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i>         &gt;         &gt; &gt;
+</I>&gt;<i>         <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>         &gt;         &gt;
+</I>&gt;<i>         &gt;         &gt;
+</I>&gt;<i>         &gt;         &gt; _______________________________________________
+</I>&gt;<i>         &gt;         &gt; jjack-users mailing list
+</I>&gt;<i>         &gt;         &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i>         &gt;         &gt;
+</I>&gt;<i>         <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt;         _______________________________________________
+</I>&gt;<i>         &gt;         jjack-users mailing list
+</I>&gt;<i>         &gt;         <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt;
+</I>&gt;<i>         &gt; _______________________________________________
+</I>&gt;<i>         &gt; jjack-users mailing list
+</I>&gt;<i>         &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i>         &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>         
+</I>&gt;<i>         _______________________________________________
+</I>&gt;<i>         jjack-users mailing list
+</I>&gt;<i>         <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i>         <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>         
+</I>&gt;<i> 
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000106.html">[jjack-users] Garbage collection
+</A></li>
+	<LI>Next message: <A HREF="000108.html">[jjack-users] Garbage collection
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#107">[ date ]</a>
+              <a href="thread.html#107">[ thread ]</a>
+              <a href="subject.html#107">[ subject ]</a>
+              <a href="author.html#107">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

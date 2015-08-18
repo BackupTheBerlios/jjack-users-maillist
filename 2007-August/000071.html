@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Error
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Error&In-Reply-To=%3Ce78383b30708181019j76b4f51xf7e68bd0c742b78d%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000070.html">
+   <LINK REL="Next"  HREF="000072.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Error</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Error&In-Reply-To=%3Ce78383b30708181019j76b4f51xf7e68bd0c742b78d%40mail.gmail.com%3E"
+       TITLE="[jjack-users] Error">helgeingvart at gmail.com
+       </A><BR>
+    <I>Sat Aug 18 19:19:25 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000070.html">[jjack-users] Error
+</A></li>
+        <LI>Next message: <A HREF="000072.html">[jjack-users] Error
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#71">[ date ]</a>
+              <a href="thread.html#71">[ thread ]</a>
+              <a href="subject.html#71">[ subject ]</a>
+              <a href="author.html#71">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On 8/18/07, Peter Salomonsen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">contact at petersalomonsen.com</A>&gt; wrote:
+&gt;<i>
+</I>&gt;<i> Hi,
+</I>&gt;<i>
+</I>&gt;<i> If you look at de.gulden.framework.jjack.JJackSystem :
+</I>&gt;<i>
+</I>&gt;<i>         try
+</I>&gt;<i>         {
+</I>&gt;<i>             // try loading native library from system lib (library path)
+</I>&gt;<i>             System.loadLibrary(&quot;jjack&quot;);
+</I>&gt;<i>         } catch(Throwable e)
+</I>&gt;<i>         {
+</I>&gt;<i>             // Else look in the local lib folder
+</I>&gt;<i>             File file = new File(&quot;lib/&quot;+System.getProperty(&quot;os.arch&quot;)+&quot;/&quot;+System.getProperty(&quot;
+</I>&gt;<i> os.name&quot;)+&quot;/libjjack.so&quot;);
+</I>&gt;<i>             String libJJackFileName = file.getAbsolutePath();
+</I>&gt;<i>             System.load(libJJackFileName);
+</I>&gt;<i>         }
+</I>&gt;<i>
+</I>
+You see that you really don't have to set any library path.
+
+
+OK, if working dir is set to the  jjack home directory...
+
+
+&gt;<i> If you do so (as you've done), you must make sure that it's the correct
+</I>&gt;<i> one compiled for your platform. The current cvs only contains a 64 bit
+</I>&gt;<i> binary - and if you're using 32 bit you have to build this yourself (but
+</I>&gt;<i> it's as simple as running the all target of the ant build script).
+</I>
+
+I don't think there were any  binary included in the cvs repo.  The ant
+script build.xml contained a target for making this libjjack.so, which I
+built together with the jjack jars. So I think that there shouldn't be any
+problems with the binary.
+
+After a bit more testing, it turns out that the my problem was related to
+how you automatically set up JJackMixerProvider via the setup in
+META-INF/services which were picked up by the JavaSound AudioSystem when
+launched via the jar files, but which my dear IntelliJ system could not
+detect.
+
+Thus, when running it from the IDE, I need to call the JJackMixerProvider
+directly, not via calls to the AudioSystem. then everything works smoothly.
+
+However, I have more questions.
+
+1) When trying to grab from the lines opened, my code just hangs in this
+loop:
+
+        while (true) {
+            lineIn.read(buf, 0, buf.length);
+            lineOut.write(buf, 0, buf.length);
+            noise.write(buf, 0, buf.length);
+        }
+
+I have tried to start the jackd deamon with 44100 samle rate (default beeing
+48000), and forcing short as sample size, with no luck. Also, I have tried
+to use qjackctl to connect JJack input/output to the alsa playback and
+capture also with no luck.
+
+2) I would like to use jjack for mixing other sounds in together with voice
+beeing tranfered from the network. I had expected to see more jjack clients
+popping up when executing
+
+       SourceDataLine noise = (SourceDataLine)mixer.getLine(
+mixer.getSourceLineInfo()[0]);
+        noise.open(format, 512);
+        noise.start();
+
+but this was not the case. When I insert two different sounds into the two
+different SourceDataLines available, where is the mixing taking place? Would
+this mixing be &quot;latency-free&quot; like the rest of the jack system? If it is
+necessary to install more than one jjack client to utilize the real-time
+jack mixing capabilities, is that available in the same process, or do I
+need to lauch several jvm's?
+
+Regards,
+Helge Fredriksen
+
+
+cheers,
+&gt;<i>
+</I>&gt;<i> Peter
+</I>&gt;<i>
+</I>&gt;<i> On 8/17/07, Helge Fredriksen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">helgeingvart at gmail.com</A> &gt; wrote:
+</I>&gt;<i>
+</I>&gt;<i> &gt; Hello!
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; I'm trying to run the sample program JJackMixerProviderTest with this
+</I>&gt;<i> &gt; library path
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; -Djava.library.path=/home/helge/devel/jjack/lib/i386/Linux
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; where the libjjack.so resides
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Exception in thread &quot;main&quot; javax.sound.sampled.LineUnavailableException:
+</I>&gt;<i> &gt; Audio Device Unavailable
+</I>&gt;<i> &gt;     at com.sun.media.sound.HeadspaceMixer.nResume(Native Method)
+</I>&gt;<i> &gt;     at com.sun.media.sound.HeadspaceMixer.implOpen(HeadspaceMixer.java
+</I>&gt;<i> &gt; :346)
+</I>&gt;<i> &gt;     at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:286)
+</I>&gt;<i> &gt;     at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:323)
+</I>&gt;<i> &gt;     at com.sun.media.sound.AbstractDataLine.open(AbstractDataLine.java:103)
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt;     at com.sun.media.sound.MixerSourceLine.open(MixerSourceLine.java:39)
+</I>&gt;<i> &gt;     at com.petersalomonsen.jjack.javasound.JJackMixerProviderTest.main(
+</I>&gt;<i> &gt; JJackMixerProviderTest.java:53)
+</I>&gt;<i> &gt;     at sun.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
+</I>&gt;<i> &gt;     at sun.reflect.NativeMethodAccessorImpl.invoke(
+</I>&gt;<i> &gt; NativeMethodAccessorImpl.java:39)
+</I>&gt;<i> &gt;     at sun.reflect.DelegatingMethodAccessorImpl.invoke(
+</I>&gt;<i> &gt; DelegatingMethodAccessorImpl.java:25)
+</I>&gt;<i> &gt;     at java.lang.reflect.Method.invoke (Method.java:597)
+</I>&gt;<i> &gt;     at com.intellij.rt.execution.application.AppMain.main(AppMain.java
+</I>&gt;<i> &gt; :90)
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; It seems like in the example, the infos from
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Info[] infos = AudioSystem.getMixerInfo();
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; do not contain the desired JJack info necessary to initialize. Probably
+</I>&gt;<i> &gt; something I have to do to get the JJack system registered as a valid
+</I>&gt;<i> &gt; JavaSound mixer?
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Moreover, if the jackd happens not to be running, the jre crashes:
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Intel [plughw:0,0]
+</I>&gt;<i> &gt; Java Sound Audio Engine
+</I>&gt;<i> &gt; Port Intel [hw:0]
+</I>&gt;<i> &gt; #
+</I>&gt;<i> &gt; # An unexpected error has been detected by Java Runtime Environment:
+</I>&gt;<i> &gt; #
+</I>&gt;<i> &gt; #  SIGSEGV (0xb) at pc=0x90584379, pid=4818, tid=3084487568
+</I>&gt;<i> &gt; #
+</I>&gt;<i> &gt; # Java VM: Java HotSpot(TM) Server VM (1.6.0-b105 mixed mode)
+</I>&gt;<i> &gt; # Problematic frame:
+</I>&gt;<i> &gt; # C  [libjack-0.100.0.so.0+0xb379]  jack_get_sample_rate+0x9
+</I>&gt;<i> &gt; #
+</I>&gt;<i> &gt; # An error report file with more information is saved as
+</I>&gt;<i> &gt; hs_err_pid4818.log
+</I>&gt;<i> &gt; #
+</I>&gt;<i> &gt; # If you would like to submit a bug report, please visit:
+</I>&gt;<i> &gt; #   <A HREF="http://java.sun.com/webapps/bugreport/crash.jsp">http://java.sun.com/webapps/bugreport/crash.jsp</A>
+</I>&gt;<i> &gt; #
+</I>&gt;<i> &gt; natively registering jack client &quot;JJack&quot;
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Regards,
+</I>&gt;<i> &gt; Helge Fredriksen
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; _______________________________________________
+</I>&gt;<i> &gt; jjack-users mailing list
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt;
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20070818/ef826db8/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20070818/ef826db8/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000070.html">[jjack-users] Error
+</A></li>
+	<LI>Next message: <A HREF="000072.html">[jjack-users] Error
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#71">[ date ]</a>
+              <a href="thread.html#71">[ thread ]</a>
+              <a href="subject.html#71">[ subject ]</a>
+              <a href="author.html#71">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

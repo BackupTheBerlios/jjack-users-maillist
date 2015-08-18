@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Jack, Java and Threads under Linux
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Jack%2C%20Java%20and%20Threads%20under%20Linux&In-Reply-To=%3C452F171F.8090201%40beuz.org%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000001.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Jack, Java and Threads under Linux</H1>
+    <B>Ptitjes</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Jack%2C%20Java%20and%20Threads%20under%20Linux&In-Reply-To=%3C452F171F.8090201%40beuz.org%3E"
+       TITLE="[jjack-users] Jack, Java and Threads under Linux">ptitjes at gmail.com
+       </A><BR>
+    <I>Fri Oct 13 06:33:35 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000001.html">[jjack-users] Native allocation of Jack jni buffers are now only	done once (instead of each process call)
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello,
+
+I'm having problems using Jack with Java. It seems to be related to a
+threading problem however i can't figure out what is going on.
+
+In fact, i programmed my own Jack library for Java (in order to be able
+to create clients with a litlle bit more flexibility). But i'm having
+the same problem using JJack when i activate the client (your start()
+method). This is called from the main Thread (which runs the gui event
+loop).
+
+The symptoms are:
+	- memory is growing, growing
+	- swap starts to be use
+	- system hangs
+
+I have to make it run inside an OSGi container (Eclipse) so i don't have
+access to the main method...
+
+When i run it in a main() this works well!
+
+Do you have any ideas or readings ? How could i overcome this problem ?
+
+Thanks. Didier.
+
+Here is what my code looks like, just so that you can figure out the
+call order!
+
+IJackClient client = factory.newClient(&quot;Test Client&quot;);
+
+final IJackOwnedPort outPort = client.registerPort(&quot;testOut&quot;,
+		IJackPort.DefaultAudioType,
+		JackPortFlags.create().setOutput().setTerminal(), 0);
+
+client.setProcessCallback(new IProcessCallback() {
+	public void process(int frameCount) throws JackException {
+		FloatBuffer out = outPort.getBuffer(frameCount);
+		for (int i = 0; i &lt; frameCount; i++) {
+			float y = (float) Math.sin(Math.PI * 2.0 *
+				((double) step / 100)) * 0.7f;
+			out.put(i, y);
+			step++;
+		}
+	}
+});
+
+client.activate();
+Thread.sleep(30000);
+client.deactivate();
+
+client.unregisterPort(outPort);
+client.close();
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - <A HREF="http://enigmail.mozdev.org">http://enigmail.mozdev.org</A>
+
+iD8DBQFFLxcfHvGdGwuWobERAmsnAKCVRBSfrQ5rqR2UMuCCJZEVfzD/cgCfX5lM
+Z4tPs+Qg79MdI/weYX/CGrA=
+=vKlv
+-----END PGP SIGNATURE-----
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000001.html">[jjack-users] Native allocation of Jack jni buffers are now only	done once (instead of each process call)
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

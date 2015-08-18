@@ -1,0 +1,89 @@
+From Oliver.Rettig at orat.de  Wed Jul 22 09:32:37 2009
+From: Oliver.Rettig at orat.de (Oliver Rettig)
+Date: Wed, 22 Jul 2009 09:32:37 +0200
+Subject: [jjack-users] JJack native client redesign proposal for future
+	0.4 release
+In-Reply-To: <f4ca5a5a0906260656w5e74987cieb81b6309698c088@mail.gmail.com>
+References: <da05bb0906052338h180d6048v3c9aa8789cef0a15@mail.gmail.com>
+	<D5078BEA-FEC5-432A-9D4A-0340DC3716ED@icarus.nu>
+	<f4ca5a5a0906260656w5e74987cieb81b6309698c088@mail.gmail.com>
+Message-ID: <200907220932.37547.Oliver.Rettig@orat.de>
+
+Hallo,
+
+that+s fine to hear that JJack is used. I have made some tests using it 
+directly without JavaSound-bridge. But I run into problem with single core 
+older PCs. I am not sure but I think the garbage collector can be the problem. 
+I get breaks in the audio. 
+
+Does anybody knows if the priority of the audiothread which invokes via JNI 
+the Java code is attached to the priority to the priority of the attached 
+thread executing the JNI-callback?
+
+Does anybody knows if the new gc from Java 7 which can be configured to a 
+maximum break the gc stops the world can solve gc affected breaks? This gc 
+should be backported also to Java 6?
+
+Does anybody has experiences with JJack based on windows kernelstreaming 
+portaudio impl?
+
+best regards
+Oliver
+
+> Ollie,
+>
+> Are you using Jack with realtime priority? Not sure what the deal is with
+> RT on the Mac. I've got JJack running with RT on an 800MHz Indamixx tablet
+> and it's rock solid with a direct callback and 512 buffersize, but breaks
+> down completely with the JavaSound bridge, probably due to different thread
+> priorities. If this little thing can cope, a Mac should be able to! :-)
+>
+> Best, N
+>
+> --
+> Neil C Smith - http://neilcsmith.net
+> sent while mobile through GoogleMail - please reply to neil at neilcsmith.net
+>
+> On Jun 26, 2009 2:32 PM, "Oliver Bown" <ollie at icarus.nu> wrote:
+>
+> Hi Neil,
+>
+> thanks for that. I am using it with Beads, and I have written a direct
+> JJack interface, but I hadn't noticed that it's performance was any
+> different from the JavaSound version, so I was still using that. I'll go
+> back to using JJack directly and see how I get on.
+>
+> Oh, and I realised after my last post that increasing the buffer size of
+> jackdmp (e.g., from 512 to 1024) helped a great deal.
+>
+> Ollie
+>
+> On 26/06/2009, at 5:13 PM, Neil C Smith wrote: > Hi Ollie, > > Good to see
+> you on this list. Java...
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From peter.brinkmann at googlemail.com  Sun Jul 26 19:28:23 2009
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Sun, 26 Jul 2009 13:28:23 -0400
+Subject: [jjack-users] v04-proposal update
+Message-ID: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+
+Hello everybody,
+I made a few more changes to the native client API.  In particular,
+connection management is now more flexible than before; you can connect or
+disconnect entire ranges of ports at any time.  The original functionality
+of JJACK remains unchanged, but a few methods in JJackNativeClient.java have
+changed.  I believe that the new API factors things more cleanly than the
+previous version; if you prefer the previous version, please let me know.
+Best,
+     Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090726/bc255d21/attachment.html>
+

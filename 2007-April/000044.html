@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] (JJack) Allocation of object in process() in	libjjack.c is now fixed
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20%28JJack%29%20Allocation%20of%20object%20in%20process%28%29%20in%0A%09libjjack.c%20is%20now%20fixed&In-Reply-To=%3C200704091823.32975.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000045.html">
+   <LINK REL="Next"  HREF="000046.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] (JJack) Allocation of object in process() in	libjjack.c is now fixed</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20%28JJack%29%20Allocation%20of%20object%20in%20process%28%29%20in%0A%09libjjack.c%20is%20now%20fixed&In-Reply-To=%3C200704091823.32975.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] (JJack) Allocation of object in process() in	libjjack.c is now fixed">contact at petersalomonsen.com
+       </A><BR>
+    <I>Mon Apr  9 18:23:32 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000045.html">[jjack-users] Javasound interfaces for JJack
+</A></li>
+        <LI>Next message: <A HREF="000046.html">[jjack-users] Manipulating on the audio bytes
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#44">[ date ]</a>
+              <a href="thread.html#44">[ thread ]</a>
+              <a href="subject.html#44">[ subject ]</a>
+              <a href="author.html#44">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE> libjjack.c - fixed so that allocation of objects are done once and not for 
+every process() call
+
+This should give you a much more stable audio output when using realtime and 
+low latency (e.g. 128 buffer size)...
+
+cheers,
+
+Peter
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000045.html">[jjack-users] Javasound interfaces for JJack
+</A></li>
+	<LI>Next message: <A HREF="000046.html">[jjack-users] Manipulating on the audio bytes
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#44">[ date ]</a>
+              <a href="thread.html#44">[ thread ]</a>
+              <a href="subject.html#44">[ subject ]</a>
+              <a href="author.html#44">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

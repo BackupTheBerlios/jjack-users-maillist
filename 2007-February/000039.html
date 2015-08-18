@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] comparing JJack and JavaSound, measuring latency
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-February/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20comparing%20JJack%20and%20JavaSound%2C%20measuring%20latency&In-Reply-To=%3C200702251134.12937.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000038.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] comparing JJack and JavaSound, measuring latency</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20comparing%20JJack%20and%20JavaSound%2C%20measuring%20latency&In-Reply-To=%3C200702251134.12937.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] comparing JJack and JavaSound, measuring latency">contact at petersalomonsen.com
+       </A><BR>
+    <I>Sun Feb 25 11:34:12 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000038.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#39">[ date ]</a>
+              <a href="thread.html#39">[ thread ]</a>
+              <a href="subject.html#39">[ subject ]</a>
+              <a href="author.html#39">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Jens,
+
+I never tried using USB devices - but your observations of javasound latency 
+improvements starting from java 1.5, is the same as mine (you have to use the 
+ALSA or WDM driver though - the old javasound engine is still slow).
+
+Your measurements are quite the same as I've observed (for the onboard 
+soundcards). Also the difference in results with linux and windows (much 
+higher latency on windows) is the same as I've observed.
+
+I have never tried this roundrip measurement using ethernet - only the full 
+duplex approach as used in Frinika. I get to calculate the full roundrip 
+time, and may also estimate the system overhead (by substracting the buffer 
+latency time) - but to separate input / output system overhead is more 
+difficult...
+
+cheers,
+
+Peter
+
+On Saturday 24 February 2007 03:54, Jens Gulden wrote:
+&gt;<i> Hello,
+</I>&gt;<i>
+</I>&gt;<i> Peter Salomonsen wrote:
+</I>&gt;<i>  &gt; We have a test benchmark program we used for this in
+</I>&gt;<i>
+</I>&gt;<i> com.frinika.audio.benchmark.RecordInputRoundtripLatencyTest
+</I>&gt;<i>
+</I>&gt;<i> Thanks again for the hint. I used this piece of code as an entry point for
+</I>&gt;<i> teaching me how to deploy JavaSound. Then I made my own benchmark tool,
+</I>&gt;<i> because I thought one might get more accurate results if 2 machines are
+</I>&gt;<i> used for measuring latency: one for generating the audio signal, and one
+</I>&gt;<i> for measuring the delay between issuing that request and the appearance of
+</I>&gt;<i> the audio signal. (The disadvantage of this apprach is that you necessarily
+</I>&gt;<i> add more latency through the recording/measuring machine, but that's ok as
+</I>&gt;<i> long as your aim is comparing different setups and not getting absolute
+</I>&gt;<i> values.)
+</I>&gt;<i>
+</I>&gt;<i> General question: Is my approach valid? More details below.
+</I>&gt;<i>
+</I>&gt;<i> The two most surprising results are:
+</I>&gt;<i>
+</I>&gt;<i> 1) there's a dramatic improve of JavaSound both on Linux and Windows since
+</I>&gt;<i> jdk 1.5 (the horror-stories on 200ms latency have obviously been true in
+</I>&gt;<i> times of jdk1.4, but it has improved a lot)
+</I>&gt;<i>
+</I>&gt;<i> 2) JavaSound seems to be more liable to different hardware and
+</I>&gt;<i> system-configurations: JACK/JJack behaves more stable with respect to
+</I>&gt;<i> providing equal latency for different underlying hardware, while JavaSound
+</I>&gt;<i> sometimes succeeds in achieving very low latency with the tested
+</I>&gt;<i> onboard-audio-hardware (Intel 82801), but falls behind the use of JJack
+</I>&gt;<i> when the tested USB-audio-hardware (Aardvark DirectUSB) is deployed.
+</I>&gt;<i> Depeding on the Linux configuration, there had been high differences in
+</I>&gt;<i> latency when using the USB-audio-device.
+</I>&gt;<i>
+</I>&gt;<i> A table with results is attached as PDF.
+</I>&gt;<i>
+</I>&gt;<i> I've added the benchmark tool to JJack's CVS-repository, class
+</I>&gt;<i> de.gulden.framework.jjack.util.benchmark.AudioBenchmark.
+</I>&gt;<i>
+</I>&gt;<i> More details:
+</I>&gt;<i> Machine A is a Pentium M 1400MHz, using either the onboard-sound-card
+</I>&gt;<i> (Intel 82801) or an external USB-audio-interface (Aardvark DirectMix USB3).
+</I>&gt;<i> The latency of this setup is being measured each under a Linux
+</I>&gt;<i> 2.6.15-non-realtime kernel, a 2.6.15-4-realtime kernel, and Windows XP. All
+</I>&gt;<i> three JDK versions 1.4, 1.5 and 1.6 get utilized, each one in combination
+</I>&gt;<i> which each device and each operating system either using JJack (on Linux)
+</I>&gt;<i> or JavaSound output. Machine B is a AMD 800Mhz running a 2.6.15-4-realtime
+</I>&gt;<i> Linux (Musix 0.39) and JDK 1.5, this second machine performs the measuring
+</I>&gt;<i> by recording and subsequently analyzing the audio signal generated by
+</I>&gt;<i> machine A in all different setups. Both machines have been connected via
+</I>&gt;<i> ethernet, using a direct-link cable (a &#8222;crossed&#8220; ethernet cable) which
+</I>&gt;<i> minimizes network latency by avoiding any hubs or ip-switches on the way
+</I>&gt;<i> between the machines. The ICMP-ping times reported by the &#8222;ping&#8220;-command
+</I>&gt;<i> result in 0.2 ms and less, so network-transmission latency does not
+</I>&gt;<i> significantly distort the measured results. The audio-output of machine A
+</I>&gt;<i> is connected to the audio input of machine B via an analog (zero-latency
+</I>&gt;<i> .-) cable.
+</I>&gt;<i>
+</I>&gt;<i> On the software-side, a benchmark application has been written that either
+</I>&gt;<i> runs in server-mode on the machine of which the audio-latency is to be
+</I>&gt;<i> measured (machine A), or in client-mode on the machine which performs the
+</I>&gt;<i> measuring (machine B). The benchmark application has been made part of the
+</I>&gt;<i> JJack package (available via CVS), in class
+</I>&gt;<i> de.gulden.framework.jjack.util.benchmark.AudioBenchmark. When run in server
+</I>&gt;<i> mode, the program first initializes the required audio-output device
+</I>&gt;<i> (either via JJack or JavaSound), and then puts itself to sleep by waiting
+</I>&gt;<i> on a UDP network data-package to arrive on port 7777. Once this UDP-package
+</I>&gt;<i> has been received, the program immediately outputs 100 ms of a
+</I>&gt;<i> full-amplitude square signal with an period length of 100 frames. Reacting
+</I>&gt;<i> on the UDP-package has been implemented to happen as soon as possible, both
+</I>&gt;<i> in JJack and JavaSound mode, although the ways of achieving the lowest
+</I>&gt;<i> possible reaction time fudamentally differ in JJack and JavaSound due to
+</I>&gt;<i> the principle difference of a pull-architecture in JACK/JJack and a
+</I>&gt;<i> push-architecture in JavaSound. Once the audio output has been generate,
+</I>&gt;<i> the program waits 100 ms and loops back to waiting for an UDP-package until
+</I>&gt;<i> it gets manually stopped.
+</I>&gt;<i> When running in client mode, the program initializes audio-input via JJack
+</I>&gt;<i> and starts recording of one second, then waits 100 ms, issues a UDP-package
+</I>&gt;<i> to port 7777 on the server machine and remembers the amount of empty audio
+</I>&gt;<i> data recorded until the UDP-packge has been sent, waits until the record
+</I>&gt;<i> buffer is filled, cuts off the beginning part recorded before the
+</I>&gt;<i> UDP-package was actually sent, and then searches the recorded audio for the
+</I>&gt;<i> occurrence of a sequence of at least 10 amplitude values above 0.2, which
+</I>&gt;<i> is interpreted as the beginning of the received square waveform signal. The
+</I>&gt;<i> time of &#8222;empty&#8220; audio data until the waveform begins is calculated and
+</I>&gt;<i> output as latency time. Note that this way of measuring of course also
+</I>&gt;<i> includes latency induced by other origins (e.g. little network overhead,
+</I>&gt;<i> which, however, can be considered less with the UDP-ping method than with
+</I>&gt;<i> any custom Midi-device in a real-world realtime-audio application) and of
+</I>&gt;<i> course the latency of the recording audio-input on the client machine.
+</I>&gt;<i> However, the method appears suitable for comparing different combinatios of
+</I>&gt;<i> audio APIs, Java versions, operating systems and hardware to get
+</I>&gt;<i> information on how they relatively compare to each other.
+</I>&gt;<i> The JACK server has been run in playback-only mode on the server, and in
+</I>&gt;<i> capture-only mode on the client. Duplex-mode has not been measured.
+</I>&gt;<i>
+</I>&gt;<i> So, what do you think, are the results plausible? Thanks for comments,
+</I>&gt;<i> Jens
+</I>&gt;<i>
+</I>&gt;<i> Jens Gulden schrieb:
+</I>&gt;<i> &gt; Hello,
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; several people have reported big differences in latency between using
+</I>&gt;<i> &gt; JavaSound and JJack. JavaSound seems to regularly cause latency of about
+</I>&gt;<i> &gt; 200ms.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Is there an easy way to measure the latency of JavaSound (some piece of
+</I>&gt;<i> &gt; Java code + &quot;latency measurig tool&quot;, or something)? How would a small
+</I>&gt;<i> &gt; test setup look like? I have never used JavaSound for audio before, so
+</I>&gt;<i> &gt; I'm very thankful for hints.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; What other fundamental differences between JavaSound and JJack are there?
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; (I'm currently writing a paper about JJack for the Linux Audio Conference
+</I>&gt;<i> &gt; LAC '07. The paper is already accepted as a contribution to the
+</I>&gt;<i> &gt; conference, and now I want to improve it by adding benchmarks comparing
+</I>&gt;<i> &gt; JavaSound and JJack. I'll make a post to this list when the paper is
+</I>&gt;<i> &gt; available.)
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Many thanks in advance,
+</I>&gt;<i> &gt; Jens
+</I>&gt;<i> &gt; _______________________________________________
+</I>&gt;<i> &gt; jjack-users mailing list
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000038.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#39">[ date ]</a>
+              <a href="thread.html#39">[ thread ]</a>
+              <a href="subject.html#39">[ subject ]</a>
+              <a href="author.html#39">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

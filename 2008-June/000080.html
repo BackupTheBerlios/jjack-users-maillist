@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] something similar to jack_connect
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2008-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20something%20similar%20to%20jack_connect&In-Reply-To=%3Cfb35bdf9549c.484e9b30%40costarricense.cr%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000079.html">
+   <LINK REL="Next"  HREF="000081.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] something similar to jack_connect</H1>
+    <B>MOISES ALBERTO ACUNA CHAVES</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20something%20similar%20to%20jack_connect&In-Reply-To=%3Cfb35bdf9549c.484e9b30%40costarricense.cr%3E"
+       TITLE="[jjack-users] something similar to jack_connect">moiso1 at costarricense.cr
+       </A><BR>
+    <I>Tue Jun 10 23:18:08 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000079.html">[jjack-users] JJackSystem issue - general question about connection a jjack client to a jack inputport in the software
+</A></li>
+        <LI>Next message: <A HREF="000081.html">[jjack-users] something similar to jack_connect
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#80">[ date ]</a>
+              <a href="thread.html#80">[ thread ]</a>
+              <a href="subject.html#80">[ subject ]</a>
+              <a href="author.html#80">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello&#160;JJack&#160;Users,
+I was&#160;wondering&#160;if&#160;it&#160;was&#160;possible&#160;to&#160;have&#160;something&#160;like&#160;the&#160;jack_connect(jack_client_t *, const&#160;char* source_port, const&#160;char&#160;* destination_port);
+because&#160;I&#160; would&#160;like&#160;to&#160;connect&#160;in&#160;the&#160;same&#160;code&#160;the&#160;inputs&#160;of&#160;my&#160;client&#160;with&#160;the&#160;physical&#160;ports&#160;that&#160;are published&#160;in&#160;the&#160;jack&#160;server. Because&#160;what&#160;i was&#160;trying&#160;with&#160;jjack&#160;to&#160;route&#160;from&#160;one&#160;input&#160;to&#160;different&#160;output. for&#160;example..
+
+i1&#160;&#160; ---- o1
+&#160;&#160;&#160;&#160;&#160; ---- o2
+&#160;&#160;&#160;&#160;&#160; ---- o3
+
+i2&#160;&#160; ---- o4
+&#160;&#160;&#160;&#160;&#160; ---- o5
+&#160;&#160;&#160;&#160;&#160; ---- o6
+
+i3&#160;&#160; ---- o7
+&#160;&#160;&#160;&#160;&#160; ---- o8
+&#160;&#160;&#160;&#160;&#160; ---- o9
+
+i tried with the process method in the file that is attached, but when i play in i1 and i2 it only routes the signal to o1 and o4, i would like to repeat the i1 to o1, o2, o3.
+it would be best if these o's are the physical playback ports of a device that the jack server can see(that's why my question about jack_connect).
+I'll appreciate any help . thanks
+
+
+
+
+
+-------------------------------------------------------
+Mois&#233;s A. Acu&#241;a Chaves
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20080610/026e2168/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20080610/026e2168/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000079.html">[jjack-users] JJackSystem issue - general question about connection a jjack client to a jack inputport in the software
+</A></li>
+	<LI>Next message: <A HREF="000081.html">[jjack-users] something similar to jack_connect
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#80">[ date ]</a>
+              <a href="thread.html#80">[ thread ]</a>
+              <a href="subject.html#80">[ subject ]</a>
+              <a href="author.html#80">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

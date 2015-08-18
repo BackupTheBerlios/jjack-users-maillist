@@ -1,0 +1,235 @@
+From moiso1 at costarricense.cr  Fri Jun  6 00:35:37 2008
+From: moiso1 at costarricense.cr (MOISES ALBERTO ACUNA CHAVES)
+Date: Thu, 05 Jun 2008 16:35:37 -0600
+Subject: [jjack-users] JJackSystem static methods cannot be found by Java
+Message-ID: <fc6dbe1a33b0.484815d9@costarricense.cr>
+
+Hello,
+I'm new?at?the?Jack?world?and?I'm trying?to?get?a JJack?simple client?working
+the?thing?is?that?iinstalled?the?jjack?well?copied?the?libjjack.so to?/usr/lib?and?iget?the?jjack.jar?in?the?path?when?compiling?but?fails?to?compilewith?this?error:
+javac?-classpath?../jjack-0.3/lib/jjack.jar:. MyJJackClient.java
+
+MyJJackClient.java:33: cannot?find?symbol
+symbol? : method?setProcessor(MyJJackClient)
+location: class?JJackSystem
+??????????????? JJackSystem.setProcessor(myclient);
+?????????????????????????? ^
+1 error
+
+
+I'm using Java 1.6.0 in Ubuntu 7.04 
+
+maybe some had the same problem and got the solution
+thanks
+
+-------------------------------------------------------
+Mois?s A. Acu?a Chaves
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080605/71a82e34/attachment.html>
+
+From moiso1 at costarricense.cr  Mon Jun  9 17:28:40 2008
+From: moiso1 at costarricense.cr (MOISES ALBERTO ACUNA CHAVES)
+Date: Mon, 09 Jun 2008 09:28:40 -0600
+Subject: [jjack-users] JJackSystem issue - general question about connection
+ a jjack client to a jack inputport in the software
+Message-ID: <fc38f4cb62e3.484cf7c8@costarricense.cr>
+
+Hello?Jens, 
+I've found?the?problem?it?was?a silly?thing?the?class?JJackSystem?i was?calling?wasn't the?one, 
+i had?to?use the?whole?path?de.gulden.framework.jjack.JJackSystem? it?is?ok?now, I had?it?working. 
+
+Now, I have?another?question. For?all?users?of?the?list.
+I have?a great?audio card: the?RME?Hammerfall?with?the?Digiface?interface, Jack?gets?all?the?channels?of?the?card?as ports?and?i would?like?to?create?a player?in?Java the?uses JJack?to?,somehow, connect?an?audiofile?with?my?audiocard?playback?port(s). So i can play?a file and?i can select?the?channel(s) where?i want?to?send?the?audio. 
+thanks?and?i hoping? for some advice.
+
+
+-------------------------------------------------------
+Mois?s A. Acu?a Chaves
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080609/c224b7c3/attachment.html>
+
+From moiso1 at costarricense.cr  Tue Jun 10 23:18:08 2008
+From: moiso1 at costarricense.cr (MOISES ALBERTO ACUNA CHAVES)
+Date: Tue, 10 Jun 2008 15:18:08 -0600
+Subject: [jjack-users] something similar to jack_connect
+Message-ID: <fb35bdf9549c.484e9b30@costarricense.cr>
+
+Hello?JJack?Users,
+I was?wondering?if?it?was?possible?to?have?something?like?the?jack_connect(jack_client_t *, const?char* source_port, const?char?* destination_port);
+because?I? would?like?to?connect?in?the?same?code?the?inputs?of?my?client?with?the?physical?ports?that?are published?in?the?jack?server. Because?what?i was?trying?with?jjack?to?route?from?one?input?to?different?output. for?example..
+
+i1?? ---- o1
+????? ---- o2
+????? ---- o3
+
+i2?? ---- o4
+????? ---- o5
+????? ---- o6
+
+i3?? ---- o7
+????? ---- o8
+????? ---- o9
+
+i tried with the process method in the file that is attached, but when i play in i1 and i2 it only routes the signal to o1 and o4, i would like to repeat the i1 to o1, o2, o3.
+it would be best if these o's are the physical playback ports of a device that the jack server can see(that's why my question about jack_connect).
+I'll appreciate any help . thanks
+
+
+
+
+
+-------------------------------------------------------
+Mois?s A. Acu?a Chaves
+
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080610/026e2168/attachment.html>
+
+From contact at petersalomonsen.com  Wed Jun 11 10:15:41 2008
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Wed, 11 Jun 2008 10:15:41 +0200
+Subject: [jjack-users] something similar to jack_connect
+In-Reply-To: <fb35bdf9549c.484e9b30@costarricense.cr>
+References: <fb35bdf9549c.484e9b30@costarricense.cr>
+Message-ID: <e4451f0c0806110115s79c2ed56g1afee73444f3938@mail.gmail.com>
+
+Hi,
+
+Your attachment wasn't included, can you paste in your code in the mail?
+
+I don't know this part of jjack very well, but I don't know if the java api
+supports routing during runtime (as I understand that is what you try to
+achieve). I know there are posibilities of internal routing, between jjack
+clients, but the jack routing I think you have to control graphically using
+e.g. qjackctl.
+
+It would be good though, if it was possible to do the routing
+programatically, I think this is possible to obtain, but the c library would
+then have to be modified...
+
+regards,
+
+Peter
+
+On Tue, Jun 10, 2008 at 11:18 PM, MOISES ALBERTO ACUNA CHAVES <
+moiso1 at costarricense.cr> wrote:
+
+> Hello JJack Users,
+> I
+> was wondering if it was possible to have something like the jack_connect(jack_client_t
+> *, const char* source_port, const char * destination_port);
+> because I
+> would like to connect in the same code the inputs of my client with the physical ports that are
+> published in the jack server. Because what i
+> was trying with jjack to route from one input to different output.
+> for example..
+>
+> i1   ---- o1
+>       ---- o2
+>       ---- o3
+>
+> i2   ---- o4
+>       ---- o5
+>       ---- o6
+>
+> i3   ---- o7
+>       ---- o8
+>       ---- o9
+>
+> i tried with the process method in the file that is attached, but when i
+> play in i1 and i2 it only routes the signal to o1 and o4, i would like to
+> repeat the i1 to o1, o2, o3.
+> it would be best if these o's are the physical playback ports of a device
+> that the jack server can see(that's why my question about jack_connect).
+> I'll appreciate any help . thanks
+>
+>
+>
+>
+>
+> -------------------------------------------------------
+> Mois?s A. Acu?a Chaves
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080611/f7f1c9bf/attachment.html>
+
+From moiso1 at costarricense.cr  Thu Jun 12 04:24:29 2008
+From: moiso1 at costarricense.cr (MOISES ALBERTO ACUNA CHAVES)
+Date: Wed, 11 Jun 2008 20:24:29 -0600
+Subject: [jjack-users] something similar to jack_connect
+Message-ID: <fbfdbb8344c1.4850347d@costarricense.cr>
+
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080611/c1a83ce0/attachment.html>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: MyJJackClient.java
+Type: text/x-java
+Size: 2182 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080611/c1a83ce0/attachment.java>
+
+From contact at petersalomonsen.com  Thu Jun 12 09:59:48 2008
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Thu, 12 Jun 2008 09:59:48 +0200
+Subject: [jjack-users] something similar to jack_connect
+In-Reply-To: <e4451f0c0806112047h65d4e13fj2f85e3f7d2fc9fe@mail.gmail.com>
+References: <fbfdbb8344c1.4850347d@costarricense.cr>
+	<e4451f0c0806112047h65d4e13fj2f85e3f7d2fc9fe@mail.gmail.com>
+Message-ID: <e4451f0c0806120059q15fd2a9cr291444d0a1813f96@mail.gmail.com>
+
+Hi,
+
+As far as I can see from libjjack.c there are no functions for listing /
+connecting to inputs/outputs visible with jack_lsp from java code.
+
+http://cvs.berlios.de/cgi-bin/viewcvs.cgi/jjack/jjack/src/de/gulden/framework/jjack/libjjack.c?rev=1.6&content-type=text/vnd.viewcvs-markup
+
+In order to be able to do this, jack ports must be exposed to java in this c
+library, as well as functions for connecting them.
+
+So at this point the connections has to be done manually from a jack
+patchbay application.
+regards,
+
+Peter
+
+On Thu, Jun 12, 2008 at 4:24 AM, MOISES ALBERTO ACUNA CHAVES <
+moiso1 at costarricense.cr> wrote:
+
+>
+> hello Peter and everyone,
+> here is the file, sorry the last time,
+> now i
+> want to route internally my client inputs to several outputs inside the client.
+> I
+> would like to route my client inputs to others jack inputs (the ones that i
+> can see with jack_lsp application) but doing it from jjack with code.
+> thanks!!
+> -------------------------------------------------------
+> Mois?s A. Acu?a Chaves
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080612/c64db2a7/attachment.html>
+

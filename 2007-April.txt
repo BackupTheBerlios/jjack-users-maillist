@@ -1,0 +1,173 @@
+From contact at petersalomonsen.com  Mon Apr  9 16:52:45 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Mon, 09 Apr 2007 16:52:45 +0200
+Subject: [jjack-users] Javasound interfaces for JJack
+Message-ID: <200704091652.45987.contact@petersalomonsen.com>
+
+Hi,
+
+I started an implementation of Javasound interfaces for JJack in the JJack 
+cvs. The purpose is so that you should be able to plug applications written 
+for javasound directly onto jjack.
+
+What happens is that JJack pops up as a new audio device in javasound.
+
+A demonstration showing the basic principles of how this works can be found 
+here (in jjack cvs):
+
+com.petersalomonsen.jjack.javasound.JJackMixerProviderTest
+
+It streams a wav file from your disk through javasound to jjack.
+
+For Frinika this means that we can use Toots JavaSoundAudioServer also for 
+jack, and that way we automatically get support for large buffersizes in jack 
+without jumpy metronome and notes/events.
+
+NOTE: I still have to fix the RT mem allocation bug in libjack.c (this is 
+fixed in Frinika but still not committed back to the jjack project) 
+
+Else you should find that this implementation adds the stability of jack to 
+javasound apps. The javasound SourceDataLine.write blocking mechanism is 
+implemented using wait() and notify(), and is controlled directly by the jack 
+thread - meaning that we won't have the problem with unpredictable wakeups 
+from Thread.sleep() or yield..
+
+cheers,
+
+Peter
+
+
+From contact at petersalomonsen.com  Mon Apr  9 18:23:32 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Mon, 09 Apr 2007 18:23:32 +0200
+Subject: [jjack-users] (JJack) Allocation of object in process() in
+	libjjack.c is now fixed
+Message-ID: <200704091823.32975.contact@petersalomonsen.com>
+
+ libjjack.c - fixed so that allocation of objects are done once and not for 
+every process() call
+
+This should give you a much more stable audio output when using realtime and 
+low latency (e.g. 128 buffer size)...
+
+cheers,
+
+Peter
+
+
+From helgeingvart at gmail.com  Tue Apr 10 18:15:03 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Tue, 10 Apr 2007 18:15:03 +0200
+Subject: [jjack-users] Javasound interfaces for JJack
+In-Reply-To: <200704091652.45987.contact@petersalomonsen.com>
+References: <200704091652.45987.contact@petersalomonsen.com>
+Message-ID: <e78383b30704100915j133d0a0em3c6fd70a966e59da@mail.gmail.com>
+
+Great stuff! Suits my needs perfectly.
+
+Helge
+
+On 4/9/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> Hi,
+>
+> I started an implementation of Javasound interfaces for JJack in the JJack
+> cvs. The purpose is so that you should be able to plug applications written
+> for javasound directly onto jjack.
+>
+> What happens is that JJack pops up as a new audio device in javasound.
+>
+> A demonstration showing the basic principles of how this works can be found
+> here (in jjack cvs):
+>
+> com.petersalomonsen.jjack.javasound.JJackMixerProviderTest
+>
+> It streams a wav file from your disk through javasound to jjack.
+>
+> For Frinika this means that we can use Toots JavaSoundAudioServer also for
+> jack, and that way we automatically get support for large buffersizes in jack
+> without jumpy metronome and notes/events.
+>
+> NOTE: I still have to fix the RT mem allocation bug in libjack.c (this is
+> fixed in Frinika but still not committed back to the jjack project)
+>
+> Else you should find that this implementation adds the stability of jack to
+> javasound apps. The javasound SourceDataLine.write blocking mechanism is
+> implemented using wait() and notify(), and is controlled directly by the jack
+> thread - meaning that we won't have the problem with unpredictable wakeups
+> from Thread.sleep() or yield..
+>
+> cheers,
+>
+> Peter
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+
+
+From helgeingvart at gmail.com  Mon Apr 30 12:49:59 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Mon, 30 Apr 2007 12:49:59 +0200
+Subject: [jjack-users] Manipulating on the audio bytes
+Message-ID: <e78383b30704300349y3d5de10cld859300686bc082f@mail.gmail.com>
+
+Hello!
+
+Not really a directly jjack related question, but I wonder about two
+sound sample questions, which you guys probably know the answer to:
+
+1) If I have a AudioFormat of the form signed 44kHz, 16bit samples, 2
+audio channels with PCM encoding, how can i split the left and the
+right audio channels?
+
+2) If I have the same audioformat with only one audio channel, how can
+i extract the short which is the syntesis of two (hopefully)
+neighboring bytes into a short variable and set it back to the byte
+array after manipulation?
+
+Best regards,
+Helge F.
+
+
+From contact at petersalomonsen.com  Mon Apr 30 13:02:04 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Mon, 30 Apr 2007 13:02:04 +0200
+Subject: [jjack-users] Manipulating on the audio bytes
+In-Reply-To: <e78383b30704300349y3d5de10cld859300686bc082f@mail.gmail.com>
+References: <e78383b30704300349y3d5de10cld859300686bc082f@mail.gmail.com>
+Message-ID: <1177930924.5978.45.camel@localhost>
+
+On Mon, 2007-04-30 at 12:49 +0200, Helge Fredriksen wrote:
+> Hello!
+> 
+> Not really a directly jjack related question, but I wonder about two
+> sound sample questions, which you guys probably know the answer to:
+> 
+> 1) If I have a AudioFormat of the form signed 44kHz, 16bit samples, 2
+> audio channels with PCM encoding, how can i split the left and the
+> right audio channels?
+
+They are multiplexed - meaning that you'll get 2 bytes (16 bits) for the
+left channels, then 2 bytes for the right channels - 2 left - 2 right
+and so on...
+
+Such a multiplexing goes on in the Javasound jjack implementation if you
+study the source. (Inputs are now implemented btw.)
+
+> 2) If I have the same audioformat with only one audio channel, how can
+> i extract the short which is the syntesis of two (hopefully)
+> neighboring bytes into a short variable and set it back to the byte
+> array after manipulation?
+
+The easiest is to use a java.nio.ByteBuffer representation, where you
+can use the view method: .asShortBuffer(). Then you see a view of the
+byteArray as an array of shorts... (You'll also find usages of this in
+the jjack javasound impl in JJackLine.java...)
+
+cheers,
+
+Peter
+
+
+

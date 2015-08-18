@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Encoding
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-January/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Encoding&In-Reply-To=%3Ce78383b30701240628m4cf5b913i8feedd292ca1be9f%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000026.html">
+   <LINK REL="Next"  HREF="000028.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Encoding</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Encoding&In-Reply-To=%3Ce78383b30701240628m4cf5b913i8feedd292ca1be9f%40mail.gmail.com%3E"
+       TITLE="[jjack-users] Encoding">helgeingvart at gmail.com
+       </A><BR>
+    <I>Wed Jan 24 15:28:47 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000026.html">[jjack-users] Encoding
+</A></li>
+        <LI>Next message: <A HREF="000028.html">[jjack-users] Encoding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#27">[ date ]</a>
+              <a href="thread.html#27">[ thread ]</a>
+              <a href="subject.html#27">[ subject ]</a>
+              <a href="author.html#27">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Getting this now:
+
+de.gulden.framework.jjack.JJackException: cannot register jack client,
+jack server not running?
+
+Even though, started it on the command line using this command (with outprints)
+
+<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">helge at morrison</A>:~/devel/jjack/lib$ jackd -v -d alsa -d hw:0 -r 44100 -s
+getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_alsa.so
+getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_dummy.so
+getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_oss.so
+jackd 0.101.1
+Copyright 2001-2005 Paul Davis and others.
+jackd comes with ABSOLUTELY NO WARRANTY
+This is free software, and you are welcome to redistribute it
+under certain conditions; see the file COPYING for details
+
+JACK compiled with System V SHM support.
+server `default' registered
+loading driver ..
+apparent rate = 44100
+creating alsa driver ...
+hw:0|hw:0|1024|2|44100|0|0|nomon|swmeter|soft-mode|32bit
+control device hw:0
+configuring for 44100Hz, period = 1024 frames, buffer = 2 periods
+nperiods = 2 for capture
+nperiods = 2 for playback
+registered builtin port type 32 bit float mono audio
+required capabilities not available
+capabilities: =
+new client: alsa_pcm, id = 1 type 1 @ 0x8058a98 fd = -1
+new buffer size 1024
+registered port alsa_pcm:capture_1, offset = 4096
+registered port alsa_pcm:capture_2, offset = 8192
+registered port alsa_pcm:playback_1, offset = 0
+registered port alsa_pcm:playback_2, offset = 0
+++ jack_rechain_graph():
+client alsa_pcm: internal client, execution_order=0.
+-- jack_rechain_graph()
+6617 waiting for signals
+load = 0.0129 max usecs: 6.000, spare = 23213.000
+load = 0.0194 max usecs: 6.000, spare = 23213.000
+load = 0.0226 max usecs: 6.000, spare = 23213.000
+load = 0.0221 max usecs: 5.000, spare = 23214.000
+load = 0.0240 max usecs: 6.000, spare = 23213.000
+load = 0.0227 max usecs: 5.000, spare = 23214.000
+load = 0.0243 max usecs: 6.000, spare = 23213.000
+
+
+Regards,
+Helge
+
+
+
+On 1/24/07, Peter Salomonsen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">contact at petersalomonsen.com</A>&gt; wrote:
+&gt;<i> Hi,
+</I>&gt;<i>
+</I>&gt;<i> You should use the ant scripts (build.xml) to compile a amd64 compatible
+</I>&gt;<i> version. Or you should be able to find it under /src/lib/amd64/linux/.
+</I>&gt;<i>
+</I>&gt;<i> I've also updated the jjack project with support for amd64 (if you get the cvs
+</I>&gt;<i> version and use the ant script).
+</I>&gt;<i>
+</I>&gt;<i> cheers,
+</I>&gt;<i>
+</I>&gt;<i> Peter
+</I>&gt;<i>
+</I>&gt;<i> On Wednesday 24 January 2007 13:29, Helge Fredriksen wrote:
+</I>&gt;<i> &gt; Hello again.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; I'm trying to setup the frinika project on my brand new Dell Optiplex
+</I>&gt;<i> &gt; machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
+</I>&gt;<i> &gt; everything,
+</I>&gt;<i> &gt; seeing arch=AMD64 beeing default (not sure if this has any effect on
+</I>&gt;<i> &gt; the compiling, though).
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; However, trying to use this lib through IDEA:
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; java.lang.UnsatisfiedLinkError:
+</I>&gt;<i> &gt; /home/helge/devel/frinika/libfrinika.so: Can't load this .so (machine
+</I>&gt;<i> &gt; code=0xb7da) on a IA 32-bit platform
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Anyone that can help me? How can I compile it so that it will load? I know
+</I>&gt;<i> &gt; this isn't quite a jjack question...
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Regards,
+</I>&gt;<i> &gt; Helge F.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; On 1/19/07, Helge Fredriksen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">helgeingvart at gmail.com</A>&gt; wrote:
+</I>&gt;<i> &gt; &gt; OK, this looks really promising.
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; It seems you are implementing a TargetDataLine, which is nicely fitted to
+</I>&gt;<i> &gt; &gt; the JavaSound framework.
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; Is the PCM coded buffer nicely fitted into a 1102 length buffer which
+</I>&gt;<i> &gt; &gt; I get from doing a
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; targetDataLine.read(buffer) with a  AudioFormat of
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
+</I>&gt;<i> &gt; &gt; false);
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; using the slow JavaSound target data line? buffer beeing a byte buffer
+</I>&gt;<i> &gt; &gt; that is.
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; Helge
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; On 1/19/07, Peter Salomonsen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">contact at petersalomonsen.com</A>&gt; wrote:
+</I>&gt;<i> &gt; &gt; &gt; On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+</I>&gt;<i> &gt; &gt; &gt; &gt; Hello!
+</I>&gt;<i> &gt; &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; &gt; I was hoping to use JJack to grab sound from a standard sound card on
+</I>&gt;<i> &gt; &gt; &gt; &gt; Linux and output it using JavaSound on another machine using plain
+</I>&gt;<i> &gt; &gt; &gt; &gt; byte buffers as transfer media. However, I'm dependent of using PCM
+</I>&gt;<i> &gt; &gt; &gt; &gt; encoded sound. Is it possible to do such encoding before I get the
+</I>&gt;<i> &gt; &gt; &gt; &gt; frames into JJack, alternatively do it here? Anyone experienced with
+</I>&gt;<i> &gt; &gt; &gt; &gt; such encoding?
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; Float to PCM can be done like this:
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; FloatBuffer left, FloatBuffer right
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; int n = 0;
+</I>&gt;<i> &gt; &gt; &gt;                         for(int i = 0;i&lt;iCapacity; i++)
+</I>&gt;<i> &gt; &gt; &gt;                         {
+</I>&gt;<i> &gt; &gt; &gt;                                 // Left
+</I>&gt;<i> &gt; &gt; &gt;                                 int sampleL =
+</I>&gt;<i> &gt; &gt; &gt; (int)(left.get(i)*(32768)); // Right
+</I>&gt;<i> &gt; &gt; &gt;                                 int sampleR =
+</I>&gt;<i> &gt; &gt; &gt; (int)(right.get(i)*(32768));
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt;                                 // Left
+</I>&gt;<i> &gt; &gt; &gt;                                 outBuffer[n++] = ((byte)((sampleL &amp;
+</I>&gt;<i> &gt; &gt; &gt; 0xff00) &gt;&gt; 8)); outBuffer[n++] = ((byte)(sampleL &amp; 0xff));
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt;                                 if(!mono)
+</I>&gt;<i> &gt; &gt; &gt;                                 {
+</I>&gt;<i> &gt; &gt; &gt;                                         // Right
+</I>&gt;<i> &gt; &gt; &gt;                                         outBuffer[n++] =
+</I>&gt;<i> &gt; &gt; &gt; ((byte)((sampleR &amp; 0xff00) &gt;&gt; 8)); outBuffer[n++] = ((byte)(sampleR &amp;
+</I>&gt;<i> &gt; &gt; &gt; 0xff)); }
+</I>&gt;<i> &gt; &gt; &gt;                         }
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; &gt; Also, I'm wondering if anyone can explain the term
+</I>&gt;<i> &gt; &gt; &gt; &gt; framerate/framesize in JavaSound to me?
+</I>&gt;<i> &gt; &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; &gt; How does these parameters compare to sample frequency and sample bit
+</I>&gt;<i> &gt; &gt; &gt; &gt; size?
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; framerate is the same as samplerate (samples per seconds) - framerate
+</I>&gt;<i> &gt; &gt; &gt; will always be the same regardless of how many channels you have.
+</I>&gt;<i> &gt; &gt; &gt; Framesize = (bits per sample / 8) * (number of channels).
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; A full example of the jjack float to pcm encoding can be found in:
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; com.frinika.audio.drivers.jack.AudioInput.java (from Frinika -
+</I>&gt;<i> &gt; &gt; &gt; www.frinika.com)
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; regards,
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; Peter
+</I>&gt;<i> &gt; &gt; &gt; _______________________________________________
+</I>&gt;<i> &gt; &gt; &gt; jjack-users mailing list
+</I>&gt;<i> &gt; &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; _______________________________________________
+</I>&gt;<i> &gt; jjack-users mailing list
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000026.html">[jjack-users] Encoding
+</A></li>
+	<LI>Next message: <A HREF="000028.html">[jjack-users] Encoding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#27">[ date ]</a>
+              <a href="thread.html#27">[ thread ]</a>
+              <a href="subject.html#27">[ subject ]</a>
+              <a href="author.html#27">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

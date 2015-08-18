@@ -1,0 +1,372 @@
+From chris at mailtochris.com  Mon Jul 21 21:28:55 2008
+From: chris at mailtochris.com (Chris Kairalla)
+Date: Mon, 21 Jul 2008 15:28:55 -0400
+Subject: [jjack-users] noisy, static for audio
+Message-ID: <2F9D4A00-BAB6-4413-82B3-A872ACB9512C@mailtochris.com>
+
+Hello,
+I just started playing around with Jack and JJack, and I'm very  
+excited about the possibilities that it opens up.  I've hit a snag on  
+my first tests though.  When I run the gain client, any manipulation  
+of the slider will turn the audio into very loud static.  I followed  
+along with the example in "Developing Jack Clients" and got everything  
+running, but when I ran the audio through the gain algorithm in the  
+example I got the same static.  Last but not least, I wrote a very  
+simple volume parser and the numbers seem erratic and huge!  Much  
+larger than -1.0 to 1.0, as stated in the documentation.
+
+What step am I missing?  I'm using Mac OSX 1.5 on a Dual G5 desktop.   
+I'm attaching the code below.
+Thanks, Chris
+_____________________________________________________________________
+import java.nio.FloatBuffer;
+
+import de.gulden.framework.jjack.*;
+import de.gulden.framework.jjack.JJackSystem;
+public class MyJJackClient implements JJackAudioProcessor {
+
+	//event class for jjack.  Find audio level.
+     public void process(JJackAudioEvent e) {
+         float level = 0;
+         FloatBuffer in = e.getInput(e.getMonoInputPort());
+             int cap = in.capacity();
+             for (int j=0; j<cap; j++) {
+                 float a = in.get(j);
+                 if (a > level) level = a;
+             }
+         System.out.println("capacity="+in.capacity()+"  level  
+="+level);
+     }
+
+     public static void main(String[] args){
+     	MyJJackClient jj = new MyJJackClient();
+     	JJackSystem.setProcessor(jj);
+     }
+}
+
+
+
+From mail at jensgulden.de  Mon Jul 21 22:04:24 2008
+From: mail at jensgulden.de (Jens Gulden)
+Date: Mon, 21 Jul 2008 22:04:24 +0200
+Subject: [jjack-users] noisy, static for audio
+In-Reply-To: <2F9D4A00-BAB6-4413-82B3-A872ACB9512C@mailtochris.com>
+References: <2F9D4A00-BAB6-4413-82B3-A872ACB9512C@mailtochris.com>
+Message-ID: <4884EBC8.8020207@jensgulden.de>
+
+Hello Chris,
+
+you wrote:
+> Much larger than -1.0 to 1.0
+
+This sounds like the float values are encoded differently than expected. 
+It might be that due to the G5 processor, the JACK system uses a 
+different endianess (byte/word-order) in encoding the float values.
+
+Is anything changing if you replace the 2 occurrences of 
+"ByteOrder.LITTLE_ENDIAN" at the bottom of file 
+de/gulden/framework/jjack/JJackSystem.java with "ByteOrder.BIG_ENDIAN" 
+(and recompile the class)?
+
+Best,
+Jens
+
+Chris Kairalla schrieb:
+> Hello,
+> I just started playing around with Jack and JJack, and I'm very  
+> excited about the possibilities that it opens up.  I've hit a snag on  
+> my first tests though.  When I run the gain client, any manipulation  
+> of the slider will turn the audio into very loud static.  I followed  
+> along with the example in "Developing Jack Clients" and got everything  
+> running, but when I ran the audio through the gain algorithm in the  
+> example I got the same static.  Last but not least, I wrote a very  
+> simple volume parser and the numbers seem erratic and huge!  Much  
+> larger than -1.0 to 1.0, as stated in the documentation.
+> 
+> What step am I missing?  I'm using Mac OSX 1.5 on a Dual G5 desktop.   
+> I'm attaching the code below.
+> Thanks, Chris
+> _____________________________________________________________________
+> import java.nio.FloatBuffer;
+> 
+> import de.gulden.framework.jjack.*;
+> import de.gulden.framework.jjack.JJackSystem;
+> public class MyJJackClient implements JJackAudioProcessor {
+> 
+> 	//event class for jjack.  Find audio level.
+>      public void process(JJackAudioEvent e) {
+>          float level = 0;
+>          FloatBuffer in = e.getInput(e.getMonoInputPort());
+>              int cap = in.capacity();
+>              for (int j=0; j<cap; j++) {
+>                  float a = in.get(j);
+>                  if (a > level) level = a;
+>              }
+>          System.out.println("capacity="+in.capacity()+"  level  
+> ="+level);
+>      }
+> 
+>      public static void main(String[] args){
+>      	MyJJackClient jj = new MyJJackClient();
+>      	JJackSystem.setProcessor(jj);
+>      }
+> }
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+From chris at mailtochris.com  Mon Jul 21 23:01:21 2008
+From: chris at mailtochris.com (Chris Kairalla)
+Date: Mon, 21 Jul 2008 17:01:21 -0400
+Subject: [jjack-users] noisy, static for audio
+In-Reply-To: <4884EBC8.8020207@jensgulden.de>
+References: <2F9D4A00-BAB6-4413-82B3-A872ACB9512C@mailtochris.com>
+	<4884EBC8.8020207@jensgulden.de>
+Message-ID: <2D68D01F-9AEE-4ADD-8A95-BBB7103EE829@mailtochris.com>
+
+Yup, that fixed it!
+Thanks for pointing me in the right direction.
+
+Chris
+
+On Jul 21, 2008, at 4:04 PM, Jens Gulden wrote:
+
+> Hello Chris,
+>
+> you wrote:
+>> Much larger than -1.0 to 1.0
+>
+> This sounds like the float values are encoded differently than  
+> expected. It might be that due to the G5 processor, the JACK system  
+> uses a different endianess (byte/word-order) in encoding the float  
+> values.
+>
+> Is anything changing if you replace the 2 occurrences of  
+> "ByteOrder.LITTLE_ENDIAN" at the bottom of file de/gulden/framework/ 
+> jjack/JJackSystem.java with "ByteOrder.BIG_ENDIAN" (and recompile  
+> the class)?
+>
+> Best,
+> Jens
+>
+> Chris Kairalla schrieb:
+>> Hello,
+>> I just started playing around with Jack and JJack, and I'm very   
+>> excited about the possibilities that it opens up.  I've hit a snag  
+>> on  my first tests though.  When I run the gain client, any  
+>> manipulation  of the slider will turn the audio into very loud  
+>> static.  I followed  along with the example in "Developing Jack  
+>> Clients" and got everything  running, but when I ran the audio  
+>> through the gain algorithm in the  example I got the same static.   
+>> Last but not least, I wrote a very  simple volume parser and the  
+>> numbers seem erratic and huge!  Much  larger than -1.0 to 1.0, as  
+>> stated in the documentation.
+>> What step am I missing?  I'm using Mac OSX 1.5 on a Dual G5  
+>> desktop.   I'm attaching the code below.
+>> Thanks, Chris
+>> _____________________________________________________________________
+>> import java.nio.FloatBuffer;
+>> import de.gulden.framework.jjack.*;
+>> import de.gulden.framework.jjack.JJackSystem;
+>> public class MyJJackClient implements JJackAudioProcessor {
+>> 	//event class for jjack.  Find audio level.
+>>     public void process(JJackAudioEvent e) {
+>>         float level = 0;
+>>         FloatBuffer in = e.getInput(e.getMonoInputPort());
+>>             int cap = in.capacity();
+>>             for (int j=0; j<cap; j++) {
+>>                 float a = in.get(j);
+>>                 if (a > level) level = a;
+>>             }
+>>         System.out.println("capacity="+in.capacity()+"  level   
+>> ="+level);
+>>     }
+>>     public static void main(String[] args){
+>>     	MyJJackClient jj = new MyJJackClient();
+>>     	JJackSystem.setProcessor(jj);
+>>     }
+>> }
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From chris at mailtochris.com  Tue Jul 22 05:44:02 2008
+From: chris at mailtochris.com (Chris Kairalla)
+Date: Mon, 21 Jul 2008 23:44:02 -0400
+Subject: [jjack-users] Creating ports during runtime?
+Message-ID: <FBDB5953-EEA6-4D8A-8FA0-C7B41F8906B6@mailtochris.com>
+
+Hello,
+
+I am thinking about using jjack in a program where I would like to  
+create and remove jack ports while the program is running.  I can see  
+by the preferences that I can set the name and number of ports at  
+startup, but is it possible to change the name and number of ports  
+while the program is running?
+
+Another acceptable possibility is to change JJackSystem from a static  
+class to a regular class and make multiple JJackSystem objects when  
+needed that each act like their own Jack client.  Could this cause me  
+problems?
+
+Thanks for any advice you may have,
+Chris
+
+
+
+From mail at jensgulden.de  Tue Jul 22 21:25:14 2008
+From: mail at jensgulden.de (Jens Gulden)
+Date: Tue, 22 Jul 2008 21:25:14 +0200
+Subject: [jjack-users] Creating ports during runtime?
+In-Reply-To: <FBDB5953-EEA6-4D8A-8FA0-C7B41F8906B6@mailtochris.com>
+References: <FBDB5953-EEA6-4D8A-8FA0-C7B41F8906B6@mailtochris.com>
+Message-ID: <4886341A.4000708@jensgulden.de>
+
+Hello Chris,
+
+>> create and remove jack ports while the program is running. 
+
+This might not be easily possible. In the native code, the number of 
+ports is set right after allocating a new JACK client with 
+jack_client_new() by repeatedly calling jack_port_register() as often as 
+ports are requested. After this is done, jack_set_process_callback() is 
+called to finally tell the JACK system that processing starts. I am not 
+sure, but I guess the reason why jack_port_register() is called so early 
+is that it wouldn't be possible to allocate any new ports after 
+jack_set_process_callback() has been called once. If you have the time 
+to do experiments you could of course comment-out the 
+jack_port_register() in the native implementation of 
+JJackSystem.nativeInit() in file libjjack.c, and add a Java method that 
+wraps around a native call to jack_port_register(). Then you can try to 
+call jack_port_register() via that method after the client has already 
+been registered. It would be interesting to know if that works.
+
+> change JJackSystem from a static  
+>> class to a regular class and make multiple JJackSystem 
+
+Hmm, also quite a big change to JJack's architecture, but not a too bad 
+idea. I think the reason why it originally was implemented the static 
+way was that by the time the first version was written, any other 
+attempt of loading the native library kept crashing the whole virtual 
+machine. (But there might have been 1000 non-JACK-related reasons for 
+that...) Again, if you like to, you are of course welcome to modify 
+JJackSystem.class and libjjack.c to allow multiple instantiations of 
+JJackSystem, resulting in multiple native JACK clients registered by the 
+JACK subsystem.
+
+Best,
+Jens
+
+
+Chris Kairalla schrieb:
+> Hello,
+> 
+> I am thinking about using jjack in a program where I would like to  
+> create and remove jack ports while the program is running.  I can see  
+> by the preferences that I can set the name and number of ports at  
+> startup, but is it possible to change the name and number of ports  
+> while the program is running?
+> 
+> Another acceptable possibility is to change JJackSystem from a static  
+> class to a regular class and make multiple JJackSystem objects when  
+> needed that each act like their own Jack client.  Could this cause me  
+> problems?
+> 
+> Thanks for any advice you may have,
+> Chris
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+From chris at mailtochris.com  Thu Jul 24 01:33:07 2008
+From: chris at mailtochris.com (Chris Kairalla)
+Date: Wed, 23 Jul 2008 19:33:07 -0400
+Subject: [jjack-users] Creating ports during runtime?
+In-Reply-To: <4886341A.4000708@jensgulden.de>
+References: <FBDB5953-EEA6-4D8A-8FA0-C7B41F8906B6@mailtochris.com>
+	<4886341A.4000708@jensgulden.de>
+Message-ID: <F49123BD-0F6E-4752-8D5B-0DAC12784A9E@mailtochris.com>
+
+Oh well.  I'm pretty good with Java, but my C skills are non- 
+existent.  Simply turning JJackSystem.java into a non-static object  
+doesn't seem to be enough.  It runs without throwing an error to the  
+Java Console, but then the program quits a couple of seconds later.   
+I'm guessing this is because libjjack is unhappy about the revised code.
+
+One workaround that I'm not happy about is that I have a master  
+"controller" program that launches a new JVM for every new connection  
+that I want to create, and the two apps communicate over a local  
+socket connection.     I'd rather not create and tear down all of  
+those JVMs but maybe it won't be so bad.
+
+Thanks for your help,
+Chris
+
+On Jul 22, 2008, at 3:25 PM, Jens Gulden wrote:
+
+> Hello Chris,
+>
+>>> create and remove jack ports while the program is running.
+>
+> This might not be easily possible. In the native code, the number of  
+> ports is set right after allocating a new JACK client with  
+> jack_client_new() by repeatedly calling jack_port_register() as  
+> often as ports are requested. After this is done,  
+> jack_set_process_callback() is called to finally tell the JACK  
+> system that processing starts. I am not sure, but I guess the reason  
+> why jack_port_register() is called so early is that it wouldn't be  
+> possible to allocate any new ports after jack_set_process_callback()  
+> has been called once. If you have the time to do experiments you  
+> could of course comment-out the jack_port_register() in the native  
+> implementation of JJackSystem.nativeInit() in file libjjack.c, and  
+> add a Java method that wraps around a native call to  
+> jack_port_register(). Then you can try to call jack_port_register()  
+> via that method after the client has already been registered. It  
+> would be interesting to know if that works.
+>
+>> change JJackSystem from a static
+>>> class to a regular class and make multiple JJackSystem
+>
+> Hmm, also quite a big change to JJack's architecture, but not a too  
+> bad idea. I think the reason why it originally was implemented the  
+> static way was that by the time the first version was written, any  
+> other attempt of loading the native library kept crashing the whole  
+> virtual machine. (But there might have been 1000 non-JACK-related  
+> reasons for that...) Again, if you like to, you are of course  
+> welcome to modify JJackSystem.class and libjjack.c to allow multiple  
+> instantiations of JJackSystem, resulting in multiple native JACK  
+> clients registered by the JACK subsystem.
+>
+> Best,
+> Jens
+>
+>
+> Chris Kairalla schrieb:
+>> Hello,
+>> I am thinking about using jjack in a program where I would like to   
+>> create and remove jack ports while the program is running.  I can  
+>> see  by the preferences that I can set the name and number of ports  
+>> at  startup, but is it possible to change the name and number of  
+>> ports  while the program is running?
+>> Another acceptable possibility is to change JJackSystem from a  
+>> static  class to a regular class and make multiple JJackSystem  
+>> objects when  needed that each act like their own Jack client.   
+>> Could this cause me  problems?
+>> Thanks for any advice you may have,
+>> Chris
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+

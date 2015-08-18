@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Using jjack to grab sound
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2006-December/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3C85A38272-7C3F-45D1-9833-5CD46A6507CE%40cefn.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000010.html">
+   <LINK REL="Next"  HREF="000013.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Using jjack to grab sound</H1>
+    <B>Cefn Hoile</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3C85A38272-7C3F-45D1-9833-5CD46A6507CE%40cefn.com%3E"
+       TITLE="[jjack-users] Using jjack to grab sound">inventor at cefn.com
+       </A><BR>
+    <I>Wed Dec 13 01:57:45 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000010.html">[jjack-users] Using jjack to grab sound
+</A></li>
+        <LI>Next message: <A HREF="000013.html">[jjack-users] Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#12">[ date ]</a>
+              <a href="thread.html#12">[ thread ]</a>
+              <a href="subject.html#12">[ subject ]</a>
+              <a href="author.html#12">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi, Helge
+
+I think the rate of sampling is handled by the Jack implementation,  
+and JJack just intervenes as a client and exposes the bytes fed  
+through the Jack system to Java. So some of this sampling rate, and  
+the consequent load, will be determined by your configuration of Jack.
+
+ From your description it seems like you have similar requirements to  
+the project I attempted. You can see a nice pic from our test  
+contraption here...
+<A HREF="http://flickr.com/photos/55387465@N00/218307084/">http://flickr.com/photos/55387465@N00/218307084/</A>
+
+I made some progress on it, and managed to get quite a few usb audio  
+cards working with JJack - initially on Pure:Dyne had driver problems  
+but finally on debian got at least the test JJack apps like the  
+'echo' working for long periods with multiple (4 in the end) cheap  
+VoIP soundcards and USB hubs. I think in principle the experiment  
+could have been extended to more soundcards and hubs. The sample apps  
+would crash eventually (after quite a while - tens of minutes) but  
+could be restarted automatically with simple scripting. I needed to  
+work on something else at that point, so it got left as it is.
+
+You'll see more in the links below. In the longer run I intended to  
+simply serialise the bytes in JJack events directly to file, and  
+reverse the process for playback. Doesn't give you the open format  
+which might be ideal, but for my project the playback output was  
+JJack as well, (other live sound outputs)  so it suited me to try it  
+that way. Funnily enough my project involved telephones too.
+
+You can follow the blog topics about the project in reverse order  
+here...
+<A HREF="http://cefn.com/curiosity/tag/pipedreams">http://cefn.com/curiosity/tag/pipedreams</A>
+
+...and several snapshots from the attempted code framework by  
+following these links...
+
+1) The primary game intended to be run using a multi-audio-channel  
+enabled PC
+<A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A> 
+backchatter/games/ConverseGame.java?view=markup
+
+2) A directory containing test 'games' which invoke my Channel- 
+oriented API
+<A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A> 
+backchatter/games/
+
+3) Here you can browse my Channel API itself - a high level framework  
+for manipulating, wiring and recording channels in general.
+<A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A> 
+backchatter/
+
+4) A rough and ready JJack implementation of my channel API
+<A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A> 
+backchatter/impl/jjack/
+
+The API seemed to work. The channel-based games written (like the  
+ConverseGame) would run with a text emulator (text input and output  
+channels were coordinated properly).
+
+However, the JJack implementation hosting multiple live audio channel  
+interfaces was still very untried and tested. Mostly I would look at  
+my own use of JJack for reference and ideas rather than as a working  
+implementation. I still intend to build on it in the end, but it's  
+work in progress.
+
+Drop me a line (directly or through this list) if you're following  
+any of the same paths to try and get your thing working, and if I can  
+help I'll make suggestions. Not totally sure what your application  
+is, but I'm guessing it's similar in it's basic needs.
+
+For other stuff which the Curiosity Collective is up to, you can  
+visit the main website...
+<A HREF="http://curiositycollective.org">http://curiositycollective.org</A>
+
+Good luck.
+
+Cefn
+<A HREF="http://cefn.com/cefntiki/">http://cefn.com/cefntiki/</A>
+
+On 12 Dec 2006, at 21:04, Helge Fredriksen wrote:
+
+&gt;<i> Hello!
+</I>&gt;<i>
+</I>&gt;<i> I'm looking for an API to grab sound with as minimum of delay as  
+</I>&gt;<i> possible (as contrary to JavaSound). I need only telephone quality  
+</I>&gt;<i> sound, that is 11kHz sampling rate and 8bit mono. Is it possible to  
+</I>&gt;<i> downsize the default CD-quality of sound in jjack? Also, I'm  
+</I>&gt;<i> looking for a device reccomandation to fit this API that will be  
+</I>&gt;<i> able to grab
+</I>&gt;<i> sound from 8 different channels simultaniously.
+</I>&gt;<i>
+</I>&gt;<i> Best regards,
+</I>&gt;<i> Helge Fredriksen
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000010.html">[jjack-users] Using jjack to grab sound
+</A></li>
+	<LI>Next message: <A HREF="000013.html">[jjack-users] Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#12">[ date ]</a>
+              <a href="thread.html#12">[ thread ]</a>
+              <a href="subject.html#12">[ subject ]</a>
+              <a href="author.html#12">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

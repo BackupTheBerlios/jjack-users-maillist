@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Using jjack to grab sound
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2006-December/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3C200612151510.00858.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000014.html">
+   <LINK REL="Next"  HREF="000016.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Using jjack to grab sound</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3C200612151510.00858.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] Using jjack to grab sound">contact at petersalomonsen.com
+       </A><BR>
+    <I>Fri Dec 15 15:10:00 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000014.html">[jjack-users] Using jjack to grab sound
+</A></li>
+        <LI>Next message: <A HREF="000016.html">[jjack-users] Fwd:  Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#15">[ date ]</a>
+              <a href="thread.html#15">[ thread ]</a>
+              <a href="subject.html#15">[ subject ]</a>
+              <a href="author.html#15">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>
+
+On Friday 15 December 2006 13:25, Helge Fredriksen wrote:
+&gt;<i> Can you depict an algorithm for such a downscale? Would it be a noticable
+</I>&gt;<i> cpu
+</I>&gt;<i> usage for this?
+</I>
+Compute the average for four samples, and convert the resulting float value 
+into a byte by multiplying it with 127 and skipping the decimal numbers.
+
+No significant cpu usage for this.
+
+&gt;<i> Do you forsee any problem using jjack together with the freebob driver?
+</I>
+I'm not familiar with the freebob driver. I was also going to propose just 
+using Javasound api as is, in order to have full cross platform portability. 
+Javasound api also uses ALSA directly on Linux or WDM (DirectSound) on 
+windows. 
+
+Jack gives better performance when it comes to latency and is also more 
+flexible regarding connectivity etc. The downside is that it only works on 
+Linux and Mac.
+
+It might be that Jack supports Freebob, but I don't know anything about that.
+
+cheers,
+
+Peter
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000014.html">[jjack-users] Using jjack to grab sound
+</A></li>
+	<LI>Next message: <A HREF="000016.html">[jjack-users] Fwd:  Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#15">[ date ]</a>
+              <a href="thread.html#15">[ thread ]</a>
+              <a href="subject.html#15">[ subject ]</a>
+              <a href="author.html#15">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

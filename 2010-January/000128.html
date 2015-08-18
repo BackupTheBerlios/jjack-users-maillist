@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack and Jack compilation and linking on	different OS X systems
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2010-January/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20and%20Jack%20compilation%20and%20linking%20on%0A%09different%20OS%20X%20systems&In-Reply-To=%3Cda05bb1001051608k54f57bdbg96594996a6b69322%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000127.html">
+   <LINK REL="Next"  HREF="000129.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack and Jack compilation and linking on	different OS X systems</H1>
+    <B>Peter Brinkmann</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20and%20Jack%20compilation%20and%20linking%20on%0A%09different%20OS%20X%20systems&In-Reply-To=%3Cda05bb1001051608k54f57bdbg96594996a6b69322%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JJack and Jack compilation and linking on	different OS X systems">peter.brinkmann at googlemail.com
+       </A><BR>
+    <I>Wed Jan  6 01:08:28 CET 2010</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000127.html">[jjack-users] JJack and Jack compilation and linking on different	OS X systems
+</A></li>
+        <LI>Next message: <A HREF="000129.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#128">[ date ]</a>
+              <a href="thread.html#128">[ thread ]</a>
+              <a href="subject.html#128">[ subject ]</a>
+              <a href="author.html#128">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Ollie,
+Quick question:  Are you using the current official version of JJack or the
+newish branch, v0.4-proposal?
+
+
+Could not load jjack native library
+&gt;<i> Tried system library path and
+</I>&gt;<i> /Users/anthonyrowe/Desktop/Kineticatests/squidgrid040110/installation/lib/x86_64/Mac
+</I>&gt;<i> OS X/libjjack.so
+</I>&gt;<i> java.lang.UnsatisfiedLinkError: /Library/Java/Extensions/libjjack.jnilib:
+</I>&gt;<i>        at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+</I>&gt;<i>        at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1822)
+</I>&gt;<i>        at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1715)
+</I>&gt;<i>        ...
+</I>&gt;<i>
+</I>&gt;<i> As you can see, libjjack.jnilib has been successfully spotted in the System
+</I>&gt;<i> library path.
+</I>
+
+Actually, I don't think libjjack.jnilib has been spotted.  The first two
+lines are the message that you get when JJack can't find the native binary,
+and according to your other email, libjjack.jnilib is not in
+/Library/Java/Extensions.
+
+Here's my first guess as to what's going on:  Since you compiled your code
+on Snow Leopard, there may be some compatibility issue with Leopard.  Delete
+or move your file lib/libjjack.jnilib and see whether you get a different
+error message.  If so, then that's an indication that Java sees your file
+but doesn't like the binary from Snow Leopard.  Rebuilding JJack under
+Leopard may solve the problem.
+
+Please let me know how it goes.  This is potentially relevant to a project
+of mine as well, but so far nobody on our team has made the switch to Snow
+Leopard.
+Best,
+     Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20100105/5855863d/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20100105/5855863d/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000127.html">[jjack-users] JJack and Jack compilation and linking on different	OS X systems
+</A></li>
+	<LI>Next message: <A HREF="000129.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#128">[ date ]</a>
+              <a href="thread.html#128">[ thread ]</a>
+              <a href="subject.html#128">[ subject ]</a>
+              <a href="author.html#128">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

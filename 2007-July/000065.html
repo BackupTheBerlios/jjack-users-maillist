@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Diff for libjjack.c
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Diff%20for%20libjjack.c&In-Reply-To=%3C6070.200.120.169.16.1184025998.squirrel%40acooke.dyndns.org%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000064.html">
+   <LINK REL="Next"  HREF="000066.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Diff for libjjack.c</H1>
+    <B>andrew cooke</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Diff%20for%20libjjack.c&In-Reply-To=%3C6070.200.120.169.16.1184025998.squirrel%40acooke.dyndns.org%3E"
+       TITLE="[jjack-users] Diff for libjjack.c">andrew at acooke.org
+       </A><BR>
+    <I>Tue Jul 10 02:06:38 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000064.html">[jjack-users] Problems with arrays when no output data
+</A></li>
+        <LI>Next message: <A HREF="000066.html">[jjack-users] Diff for libjjack.c
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>The following is a context diff for libjjack.c.  It contains three changes:
+
+- The size of the sample is found using size() rather than being
+  hardcoded as 4
+- Some ints are cast to jsize which is long on 64 bit systems (see
+<A HREF="ftp://www6.software.ibm.com/software/developer/jdk/64bitporting/64BitJavaPortingGuide.pdf">ftp://www6.software.ibm.com/software/developer/jdk/64bitporting/64BitJavaPortingGuide.pdf</A>)
+- The allocation of inf-&gt;byteBufferArray[mode] is made outside the loop
+  over ports.  This avoids a null pointer exception in Java when there are
+  zero ports (eg for output on a &quot;consumer only&quot; process).
+
+Of these, only the last is critical to me; the others were just added
+because they seemed to improve the code.  Please could at least the last
+of these changes be including in the CVS tree?  I am working on a client
+that uses JJack and is affected by the nullpointer error (and I don't want
+to have to distribute my own branch of JJack if possible).
+
+Thanks,
+Andrew
+
+qp6 pkg: diff -c jjack/src/de/gulden/framework/jjack/libjjack.c
+jjack-cvs/src/de/gulden/framework/jjack/libjjack.c
+*** jjack/src/de/gulden/framework/jjack/libjjack.c      2007-07-09
+19:51:26.000000000 -0400
+--- jjack-cvs/src/de/gulden/framework/jjack/libjjack.c  2007-07-09
+19:44:23.000000000 -0400
+***************
+*** 343,359 ****
+
+      /* allocate DirectByteBuffer objects */
+      for (mode=INPUT; mode&lt;=OUTPUT; mode++) {
+-               if(inf-&gt;byteBufferArray[mode]==0)
+-               inf-&gt;byteBufferArray[mode] = (*env)-&gt;NewObjectArray(env,
+(jsize)inf-&gt;portCount[mode], inf-&gt;cls_ByteBuffer, NULL);
+                for (i=0; i &lt; inf-&gt;portCount[mode]; i++) {
+                    // Only reallocate if the buffer position changes
+                        jack_default_audio_sample_t *tempSampleBuffer =
+(jack_default_audio_sample_t *)
+jack_port_get_buffer(inf-&gt;port[mode][i], nframes);
+
+                        if(tempSampleBuffer!=inf-&gt;sampleBuffers[mode][i])
+                        {
+                                inf-&gt;sampleBuffers[mode][i] =
+tempSampleBuffer;
+!                       jobject byteBuffer =
+(*env)-&gt;NewDirectByteBuffer(env, inf-&gt;sampleBuffers[mode][i],
+(jsize)(nframes*sizeof(jack_default_audio_sample_t)));
+!               (*env)-&gt;SetObjectArrayElement(env,
+inf-&gt;byteBufferArray[mode], (jsize)i, byteBuffer);
+                        }
+          }
+      }
+--- 343,359 ----
+
+      /* allocate DirectByteBuffer objects */
+      for (mode=INPUT; mode&lt;=OUTPUT; mode++) {
+                for (i=0; i &lt; inf-&gt;portCount[mode]; i++) {
++                       if(inf-&gt;byteBufferArray[mode]==0)
++               inf-&gt;byteBufferArray[mode] = (*env)-&gt;NewObjectArray(env,
+inf-&gt;portCount[mode], inf-&gt;cls_ByteBuffer, NULL);
+                    // Only reallocate if the buffer position changes
+                        jack_default_audio_sample_t *tempSampleBuffer =
+(jack_default_audio_sample_t *)
+jack_port_get_buffer(inf-&gt;port[mode][i], nframes);
+
+                        if(tempSampleBuffer!=inf-&gt;sampleBuffers[mode][i])
+                        {
+                                inf-&gt;sampleBuffers[mode][i] =
+tempSampleBuffer;
+!                       jobject byteBuffer =
+(*env)-&gt;NewDirectByteBuffer(env , inf-&gt;sampleBuffers[mode][i] ,
+nframes*4);
+!               (*env)-&gt;SetObjectArrayElement(env,
+inf-&gt;byteBufferArray[mode], i, byteBuffer);
+                        }
+          }
+      }
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: libjjack.c.diff
+Type: text/x-patch
+Size: 2000 bytes
+Desc: not available
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20070709/76aa6bf8/attachment.bin">https://lists.berlios.de/pipermail/jjack-users/attachments/20070709/76aa6bf8/attachment.bin</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000064.html">[jjack-users] Problems with arrays when no output data
+</A></li>
+	<LI>Next message: <A HREF="000066.html">[jjack-users] Diff for libjjack.c
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

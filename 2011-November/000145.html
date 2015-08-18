@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Small v04-proposal patch
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2011-November/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Small%20v04-proposal%20patch&In-Reply-To=%3CCAHCOHQnLM2TbVdiZsc5%2BoAY9vH7HyAFUGy-xgEeTCWFPF-BH9g%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000146.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Small v04-proposal patch</H1>
+    <B>Jerry James</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Small%20v04-proposal%20patch&In-Reply-To=%3CCAHCOHQnLM2TbVdiZsc5%2BoAY9vH7HyAFUGy-xgEeTCWFPF-BH9g%40mail.gmail.com%3E"
+       TITLE="[jjack-users] Small v04-proposal patch">loganjerry at gmail.com
+       </A><BR>
+    <I>Thu Nov 10 21:59:55 CET 2011</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000146.html">[jjack-users] Small v04-proposal patch
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#145">[ date ]</a>
+              <a href="thread.html#145">[ thread ]</a>
+              <a href="subject.html#145">[ subject ]</a>
+              <a href="author.html#145">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello,
+
+I'm looking at what it would take to get jReality into the Fedora
+Linux distribution, and so am chasing down dependencies.  I see that
+jReality is using the v04-proposal branch, rather than the released
+version 0.3.  While building that branch, the C compiler emitted some
+warnings due to missing &quot;const&quot;s.  In jjack-update.patch, attached, I
+fixed this and also threw in some &quot;static&quot;s for good measure.
+
+Also, in &quot;jjack-javadoc.patch&quot;, attached, two kinds of javadoc
+problems are fixed.  First, @Override is an annotation, not a javadoc
+tag.  Second, there shouldn't be a colon on a @param line, as javadoc
+thinks the colon is part of the parameter name.
+
+Are there any plans to release the v04-proposal branch as 0.4?
+
+Regards,
+-- 
+Jerry James
+<A HREF="http://www.jamezone.org/">http://www.jamezone.org/</A>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: jjack-update.patch
+Type: text/x-patch
+Size: 5147 bytes
+Desc: not available
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20111110/446d4995/attachment.bin">https://lists.berlios.de/pipermail/jjack-users/attachments/20111110/446d4995/attachment.bin</A>&gt;
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: jjack-javadoc.patch
+Type: text/x-patch
+Size: 2710 bytes
+Desc: not available
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20111110/446d4995/attachment-0001.bin">https://lists.berlios.de/pipermail/jjack-users/attachments/20111110/446d4995/attachment-0001.bin</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000146.html">[jjack-users] Small v04-proposal patch
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#145">[ date ]</a>
+              <a href="thread.html#145">[ thread ]</a>
+              <a href="subject.html#145">[ subject ]</a>
+              <a href="author.html#145">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] DataLine.Info.getFormats() supported
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20DataLine.Info.getFormats%28%29%20supported&In-Reply-To=%3C200705182021.10314.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000050.html">
+   <LINK REL="Next"  HREF="000052.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] DataLine.Info.getFormats() supported</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20DataLine.Info.getFormats%28%29%20supported&In-Reply-To=%3C200705182021.10314.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] DataLine.Info.getFormats() supported">contact at petersalomonsen.com
+       </A><BR>
+    <I>Fri May 18 20:21:10 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000050.html">[jjack-users] JJack Javasound provider
+</A></li>
+        <LI>Next message: <A HREF="000052.html">[jjack-users] Experience with volume setting?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#51">[ date ]</a>
+              <a href="thread.html#51">[ thread ]</a>
+              <a href="subject.html#51">[ subject ]</a>
+              <a href="author.html#51">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>DataLine.Info.getFormats() is now supported:
+
+ Mixer 0: JJack desc: JJack javasound provider vend: jjack.berlios.de ver: 0.1
+ ---------------SOURCE -------------------------------- 
+class com.petersalomonsen.jjack.javasound.SourceJJackLine supporting 16 audio 
+formats, and buffers of at least 32 bytes | 
+<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">com.petersalomonsen.jjack.javasound.SourceJJackLine at 6eb02efa</A>
+PCM_SIGNED 44100.0 Hz, 8 bit, mono, 1 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, mono, 2 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, mono, 3 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, mono, 4 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 8 bit, mono, 1 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, mono, 2 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, mono, 3 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, mono, 4 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 8 bit, stereo, 2 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, stereo, 4 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, stereo, 6 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, stereo, 8 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 8 bit, stereo, 2 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, stereo, 4 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, stereo, 6 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, stereo, 8 bytes/frame, big-endian
+ --------------- TARGET -------------------------------- 
+class com.petersalomonsen.jjack.javasound.SourceJJackLine supporting 16 audio 
+formats, and buffers of at least 32 bytes | 
+<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">com.petersalomonsen.jjack.javasound.SourceJJackLine at 79a5f739</A>
+PCM_SIGNED 44100.0 Hz, 8 bit, mono, 1 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, mono, 2 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, mono, 3 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, mono, 4 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 8 bit, mono, 1 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, mono, 2 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, mono, 3 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, mono, 4 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 8 bit, stereo, 2 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, stereo, 4 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, stereo, 6 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, stereo, 8 bytes/frame, little-endian
+PCM_SIGNED 44100.0 Hz, 8 bit, stereo, 2 bytes/frame, 
+PCM_SIGNED 44100.0 Hz, 16 bit, stereo, 4 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 24 bit, stereo, 6 bytes/frame, big-endian
+PCM_SIGNED 44100.0 Hz, 32 bit, stereo, 8 bytes/frame, big-endian
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000050.html">[jjack-users] JJack Javasound provider
+</A></li>
+	<LI>Next message: <A HREF="000052.html">[jjack-users] Experience with volume setting?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#51">[ date ]</a>
+              <a href="thread.html#51">[ thread ]</a>
+              <a href="subject.html#51">[ subject ]</a>
+              <a href="author.html#51">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

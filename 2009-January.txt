@@ -1,0 +1,28 @@
+From arnouten at bzzt.net  Fri Jan 30 22:25:49 2009
+From: arnouten at bzzt.net (Arnout Engelen)
+Date: Fri, 30 Jan 2009 22:25:49 +0100
+Subject: [jjack-users] MIDI
+In-Reply-To: <48F1EA8B.9090009@jensgulden.de>
+References: <20081012100822.GB21736@bzzt.net> <48F1EA8B.9090009@jensgulden.de>
+Message-ID: <20090130212549.GU4804@bzzt.net>
+
+On Sun, Oct 12, 2008 at 02:16:11PM +0200, Jens Gulden wrote:
+> you wrote:
+> > Would adding JACK MIDI to JJack be considered in-scope for JJack? Would
+> > it be hard to implement? Just had a quick look, and the JACK MIDI API seems
+> > pretty similar to the audio stream API.
+> 
+> Absolutely right, adding MIDI support to JJack will be the next 
+> consequential step for a following release. I also don't think it is too 
+> hard, but still will be some days of work to do it thoroughly.
+
+I gave basic JACK MIDI OUT support a shot:
+
+  http://arnout.engelen.eu/files/dev/linuxmusicians/jack/jjack/midiout/
+
+Included is an example 'bang' client that emits a note-on event on each block.
+
+
+Arnout
+
+

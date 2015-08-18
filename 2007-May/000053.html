@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Experience with volume setting?
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Experience%20with%20volume%20setting%3F&In-Reply-To=%3C200705211909.24781.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000052.html">
+   <LINK REL="Next"  HREF="000054.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Experience with volume setting?</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Experience%20with%20volume%20setting%3F&In-Reply-To=%3C200705211909.24781.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] Experience with volume setting?">contact at petersalomonsen.com
+       </A><BR>
+    <I>Mon May 21 19:09:24 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000052.html">[jjack-users] Experience with volume setting?
+</A></li>
+        <LI>Next message: <A HREF="000054.html">[jjack-users] Experience with volume setting?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#53">[ date ]</a>
+              <a href="thread.html#53">[ thread ]</a>
+              <a href="subject.html#53">[ subject ]</a>
+              <a href="author.html#53">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On Monday 21 May 2007 14:41:42 Helge Fredriksen wrote:
+&gt;<i> Hello!
+</I>&gt;<i>
+</I>&gt;<i> Do anyone have experience on how to change the volume on a signed PCM
+</I>&gt;<i> encoded 2 byte sample? I've managed to reconstruct the short from two of
+</I>&gt;<i> the nearby bytes. I think PCM is log10 encoded, probably has some linkage
+</I>&gt;<i> to decibels, I guess... Lacking some theoretical background on sound
+</I>&gt;<i> digitizing I guess, any good reference for bed time reading?
+</I>
+PCM is a simple direct linear digital representation of the analog signal. No 
+logarithms involved. You only need logarithms if you want to change the 
+volume using the decibel scale.
+
+&gt;<i> What I'm really after is the correct mix of several samples (S1...SN) into
+</I>&gt;<i> one, where each sample is weighted (W1...WN).
+</I>&gt;<i>
+</I>&gt;<i> Result = S1 * W1 + S2 * W2 + .... + SN * WN
+</I>&gt;<i>
+</I>&gt;<i> and W1 + W2 + ... + WN = 1.
+</I>
+The correct mix is your formula just as you've entered it. Nothing more. Just 
+make sure the sum of your weights is 1.
+
+A fast decibel to multiplication factor converter:
+
+public final class Decibel {
+	static final float[] amplitudeRatio = new float[11000];
+	static
+	{
+		for(float x=-100;x&lt;10;x+=0.01)
+			amplitudeRatio[(int)(x*100)+10000] = (float)Math.pow(10,x/20.0); 
+	}
+	
+	public static final float getAmplitudeRatio(float dB)
+	{
+		return(amplitudeRatio[(int)(dB*100)+10000]);
+	}
+}
+The decibel scale is precalculated, due to the Math.pow method which make take 
+some extra time. To use this just:
+
+sample = sample * getAmplitueRatio(-6);
+
+which will lower the volume of your sample by 6dB.
+
+regards,
+
+Peter
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000052.html">[jjack-users] Experience with volume setting?
+</A></li>
+	<LI>Next message: <A HREF="000054.html">[jjack-users] Experience with volume setting?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#53">[ date ]</a>
+              <a href="thread.html#53">[ thread ]</a>
+              <a href="subject.html#53">[ subject ]</a>
+              <a href="author.html#53">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

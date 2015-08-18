@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Garbage collection
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-May/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Garbage%20collection&In-Reply-To=%3C200905111056.24223.Oliver.Rettig%40orat.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000103.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Garbage collection</H1>
+    <B>Oliver Rettig</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Garbage%20collection&In-Reply-To=%3C200905111056.24223.Oliver.Rettig%40orat.de%3E"
+       TITLE="[jjack-users] Garbage collection">Oliver.Rettig at orat.de
+       </A><BR>
+    <I>Mon May 11 10:56:24 CEST 2009</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000103.html">[jjack-users] Garbage collection
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#102">[ date ]</a>
+              <a href="thread.html#102">[ thread ]</a>
+              <a href="subject.html#102">[ subject ]</a>
+              <a href="author.html#102">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hallo,
+on standard virtual machine the gc stops execution of all threads and there is 
+no possiblity to prevent the GC from running. Some gc can be configured a way 
+that the duration of the stops are small but it stays critical. My experience 
+is that to excute the GC explicitly before starting the realtime 
+audioprocessing works fine if your programm does not create much objects.
+
+best regards
+Oliver
+&gt;<i> Hi,
+</I>&gt;<i>
+</I>&gt;<i> If the garbage collector runs during audio processing, wouldn't that be
+</I>&gt;<i> likely to make processing too slow and get the application kicked as a
+</I>&gt;<i> jack client?
+</I>&gt;<i>
+</I>&gt;<i> Is it possible to prevent the GC from running while processing? Does JNI
+</I>&gt;<i> already guarantee that? Or should we just be careful not to do any memory
+</I>&gt;<i> allocations while processing audio (which might be quite hard in the
+</I>&gt;<i> presence of threads)?
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i> Arnout
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000103.html">[jjack-users] Garbage collection
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#102">[ date ]</a>
+              <a href="thread.html#102">[ thread ]</a>
+              <a href="subject.html#102">[ subject ]</a>
+              <a href="author.html#102">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

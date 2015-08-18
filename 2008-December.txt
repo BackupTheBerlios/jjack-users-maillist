@@ -1,0 +1,71 @@
+From richardsimonjust at yahoo.co.uk  Sun Dec  7 19:34:53 2008
+From: richardsimonjust at yahoo.co.uk (Richard Just)
+Date: Sun, 7 Dec 2008 18:34:53 +0000 (GMT)
+Subject: [jjack-users] MIDI
+Message-ID: <746983.44470.qm@web25002.mail.ukl.yahoo.com>
+
+Hey there,
+
+I've been asked to find or write open source code that will allow access to midi softsynths from Java. From last months mailing list I see that JJack will be moving in that direction, but am I correct in saying not until next year?
+
+I was wondering what would I need to add or extend in JJack to allow for Midi support? 
+
+Many Thanks
+Richard 
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20081207/cb989363/attachment.html>
+
+From jjack at bzzt.net  Mon Dec  8 00:23:25 2008
+From: jjack at bzzt.net (Arnout Engelen)
+Date: Mon, 8 Dec 2008 00:23:25 +0100
+Subject: [jjack-users] MIDI
+In-Reply-To: <746983.44470.qm@web25002.mail.ukl.yahoo.com>
+References: <746983.44470.qm@web25002.mail.ukl.yahoo.com>
+Message-ID: <20081207232324.GM11042@bzzt.net>
+
+On Sun, Dec 07, 2008 at 06:34:53PM +0000, Richard Just wrote:
+> I've been asked to find or write open source code that will allow access to 
+> midi softsynths from Java. 
+
+I'd be interested to learn if you find/wrote something ;)
+
+> From last months mailing list I see that JJack will be moving in that 
+> direction, but am I correct in saying not until next year?
+
+I can only speak for myself, but I'm not planning on implementing it 
+soon :).
+
+> I was wondering what would I need to add or extend in JJack to allow for 
+> Midi support? 
+
+Basically jjack uses JNI to expose libjack methods to Java code. Are you 
+familiar with JNI? Jack recently added a MIDI API, so I gather that could be 
+wrapped in a similar manner.
+
+
+Arnout
+
+
+From richardsimonjust at yahoo.co.uk  Thu Dec 11 17:31:01 2008
+From: richardsimonjust at yahoo.co.uk (Richard Just)
+Date: Thu, 11 Dec 2008 16:31:01 +0000 (GMT)
+Subject: [jjack-users] MIDI
+Message-ID: <464317.56180.qm@web25002.mail.ukl.yahoo.com>
+
+Hey Arnout,
+
+Looks like a mixture of snd-virmidi and the tritonus implementation of the java sound api are going to hold to key to what I'm looking for. Virmidi allows java to access the soft synths and Tritonus looks set to allow the listing and connecting of alsa midi ports that I was otherwise doing through qjackctl.
+
+Cheers
+Richard
+
+
+      
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20081211/3d83d370/attachment.html>
+

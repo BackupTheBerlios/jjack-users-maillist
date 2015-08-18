@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Creating ports during runtime?
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2008-July/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Creating%20ports%20during%20runtime%3F&In-Reply-To=%3CF49123BD-0F6E-4752-8D5B-0DAC12784A9E%40mailtochris.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000088.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Creating ports during runtime?</H1>
+    <B>Chris Kairalla</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Creating%20ports%20during%20runtime%3F&In-Reply-To=%3CF49123BD-0F6E-4752-8D5B-0DAC12784A9E%40mailtochris.com%3E"
+       TITLE="[jjack-users] Creating ports during runtime?">chris at mailtochris.com
+       </A><BR>
+    <I>Thu Jul 24 01:33:07 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000088.html">[jjack-users] Creating ports during runtime?
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#89">[ date ]</a>
+              <a href="thread.html#89">[ thread ]</a>
+              <a href="subject.html#89">[ subject ]</a>
+              <a href="author.html#89">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Oh well.  I'm pretty good with Java, but my C skills are non- 
+existent.  Simply turning JJackSystem.java into a non-static object  
+doesn't seem to be enough.  It runs without throwing an error to the  
+Java Console, but then the program quits a couple of seconds later.   
+I'm guessing this is because libjjack is unhappy about the revised code.
+
+One workaround that I'm not happy about is that I have a master  
+&quot;controller&quot; program that launches a new JVM for every new connection  
+that I want to create, and the two apps communicate over a local  
+socket connection.     I'd rather not create and tear down all of  
+those JVMs but maybe it won't be so bad.
+
+Thanks for your help,
+Chris
+
+On Jul 22, 2008, at 3:25 PM, Jens Gulden wrote:
+
+&gt;<i> Hello Chris,
+</I>&gt;<i>
+</I>&gt;&gt;&gt;<i> create and remove jack ports while the program is running.
+</I>&gt;<i>
+</I>&gt;<i> This might not be easily possible. In the native code, the number of  
+</I>&gt;<i> ports is set right after allocating a new JACK client with  
+</I>&gt;<i> jack_client_new() by repeatedly calling jack_port_register() as  
+</I>&gt;<i> often as ports are requested. After this is done,  
+</I>&gt;<i> jack_set_process_callback() is called to finally tell the JACK  
+</I>&gt;<i> system that processing starts. I am not sure, but I guess the reason  
+</I>&gt;<i> why jack_port_register() is called so early is that it wouldn't be  
+</I>&gt;<i> possible to allocate any new ports after jack_set_process_callback()  
+</I>&gt;<i> has been called once. If you have the time to do experiments you  
+</I>&gt;<i> could of course comment-out the jack_port_register() in the native  
+</I>&gt;<i> implementation of JJackSystem.nativeInit() in file libjjack.c, and  
+</I>&gt;<i> add a Java method that wraps around a native call to  
+</I>&gt;<i> jack_port_register(). Then you can try to call jack_port_register()  
+</I>&gt;<i> via that method after the client has already been registered. It  
+</I>&gt;<i> would be interesting to know if that works.
+</I>&gt;<i>
+</I>&gt;&gt;<i> change JJackSystem from a static
+</I>&gt;&gt;&gt;<i> class to a regular class and make multiple JJackSystem
+</I>&gt;<i>
+</I>&gt;<i> Hmm, also quite a big change to JJack's architecture, but not a too  
+</I>&gt;<i> bad idea. I think the reason why it originally was implemented the  
+</I>&gt;<i> static way was that by the time the first version was written, any  
+</I>&gt;<i> other attempt of loading the native library kept crashing the whole  
+</I>&gt;<i> virtual machine. (But there might have been 1000 non-JACK-related  
+</I>&gt;<i> reasons for that...) Again, if you like to, you are of course  
+</I>&gt;<i> welcome to modify JJackSystem.class and libjjack.c to allow multiple  
+</I>&gt;<i> instantiations of JJackSystem, resulting in multiple native JACK  
+</I>&gt;<i> clients registered by the JACK subsystem.
+</I>&gt;<i>
+</I>&gt;<i> Best,
+</I>&gt;<i> Jens
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i> Chris Kairalla schrieb:
+</I>&gt;&gt;<i> Hello,
+</I>&gt;&gt;<i> I am thinking about using jjack in a program where I would like to   
+</I>&gt;&gt;<i> create and remove jack ports while the program is running.  I can  
+</I>&gt;&gt;<i> see  by the preferences that I can set the name and number of ports  
+</I>&gt;&gt;<i> at  startup, but is it possible to change the name and number of  
+</I>&gt;&gt;<i> ports  while the program is running?
+</I>&gt;&gt;<i> Another acceptable possibility is to change JJackSystem from a  
+</I>&gt;&gt;<i> static  class to a regular class and make multiple JJackSystem  
+</I>&gt;&gt;<i> objects when  needed that each act like their own Jack client.   
+</I>&gt;&gt;<i> Could this cause me  problems?
+</I>&gt;&gt;<i> Thanks for any advice you may have,
+</I>&gt;&gt;<i> Chris
+</I>&gt;&gt;<i> _______________________________________________
+</I>&gt;&gt;<i> jjack-users mailing list
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000088.html">[jjack-users] Creating ports during runtime?
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#89">[ date ]</a>
+              <a href="thread.html#89">[ thread ]</a>
+              <a href="subject.html#89">[ subject ]</a>
+              <a href="author.html#89">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

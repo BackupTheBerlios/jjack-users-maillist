@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] undefined symbol: jack_client_new
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2010-January/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20undefined%20symbol%3A%20jack_client_new&In-Reply-To=%3C414e44f71001171221o2613fc02q249f1cd462fa36f2%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000134.html">
+   <LINK REL="Next"  HREF="000136.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] undefined symbol: jack_client_new</H1>
+    <B>Roberto Mannai</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20undefined%20symbol%3A%20jack_client_new&In-Reply-To=%3C414e44f71001171221o2613fc02q249f1cd462fa36f2%40mail.gmail.com%3E"
+       TITLE="[jjack-users] undefined symbol: jack_client_new">robermann at gmail.com
+       </A><BR>
+    <I>Sun Jan 17 21:21:05 CET 2010</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000134.html">[jjack-users] undefined symbol: jack_client_new
+</A></li>
+        <LI>Next message: <A HREF="000136.html">[jjack-users] undefined symbol: jack_client_new
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#135">[ date ]</a>
+              <a href="thread.html#135">[ thread ]</a>
+              <a href="subject.html#135">[ subject ]</a>
+              <a href="author.html#135">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>I don't know all this stuff, I just installed your package and run the
+client examples (VU class). So should I downgrade jack or upgrade jjack?
+
+On Sun, Jan 17, 2010 at 8:26 PM, Peter Brinkmann &lt;
+<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">peter.brinkmann at googlemail.com</A>&gt; wrote:
+
+&gt;<i>
+</I>&gt;<i> Roberto,
+</I>&gt;<i> jack_client_new has been deprecated for a while, but it should still be
+</I>&gt;<i> there.  Just in case, though, I would try compiling the new version,
+</I>&gt;<i> v04-proposal, of JJack and see whether that makes a difference.  The new
+</I>&gt;<i> version uses jack_client_open instead of the jack_client_new.
+</I>&gt;<i> Good luck,
+</I>&gt;<i>      Peter
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i> On Sat, Jan 16, 2010 at 6:49 AM, Roberto Mannai &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">robermann at gmail.com</A>&gt;wrote:
+</I>&gt;<i>
+</I>&gt;&gt;<i> Hello list
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> When I run for example the command:
+</I>&gt;&gt;<i> /usr/bin/jjack.sh de.gulfden.application.jjack.clients.VU
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> I get the following error message:
+</I>&gt;&gt;<i> /usr/lib/jvm/java/bin/java: symbol lookup error: /usr/lib/libjjack.so:
+</I>&gt;&gt;<i> undefined symbol: jack_client_new
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> What I'm missing? Do I have a broken dependencies chain?
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> Packages:
+</I>&gt;&gt;<i> jjack-0.3-0.pm.1.1.i586
+</I>&gt;&gt;<i> jack-0.116.2-5.1.i586
+</I>&gt;&gt;<i> java-1_6_0-sun-1.6.0.u17-1.1.1.i586
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> OS: Opensuse 11.2
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> Ciao
+</I>&gt;&gt;<i> Roberto
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> _______________________________________________
+</I>&gt;&gt;<i> jjack-users mailing list
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20100117/8c209d0b/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20100117/8c209d0b/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000134.html">[jjack-users] undefined symbol: jack_client_new
+</A></li>
+	<LI>Next message: <A HREF="000136.html">[jjack-users] undefined symbol: jack_client_new
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#135">[ date ]</a>
+              <a href="thread.html#135">[ thread ]</a>
+              <a href="subject.html#135">[ subject ]</a>
+              <a href="author.html#135">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

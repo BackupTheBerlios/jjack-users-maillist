@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] problems with Java 1.6
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-February/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20problems%20with%20Java%201.6&In-Reply-To=%3C45CF72E9.6050404%40jensgulden.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000029.html">
+   <LINK REL="Next"  HREF="000031.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] problems with Java 1.6</H1>
+    <B>Jens Gulden</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20problems%20with%20Java%201.6&In-Reply-To=%3C45CF72E9.6050404%40jensgulden.de%3E"
+       TITLE="[jjack-users] problems with Java 1.6">mail at jensgulden.de
+       </A><BR>
+    <I>Sun Feb 11 20:47:53 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000029.html">[jjack-users] problems with Java 1.6
+</A></li>
+        <LI>Next message: <A HREF="000031.html">[jjack-users] problems with Java 1.6
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#30">[ date ]</a>
+              <a href="thread.html#30">[ thread ]</a>
+              <a href="subject.html#30">[ subject ]</a>
+              <a href="author.html#30">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello Paul,
+
+thanks for the report. On 2 out of 3 test configurations I also have discovered problems with 
+jdk1.6, while jdk1.5 works fine.
+
+1) On a 2.6.15.5-preempt system with libjack-0.80.0 I get a full crash like this:
+
+# An unexpected error has been detected by Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0xb52068c0, pid=6642, tid=3084819376
+#
+# Java VM: Java HotSpot(TM) Client VM (1.6.0-b105 mixed mode, sharing)
+# Problematic frame:
+# C  [libjack-0.80.0.so.0+0x58c0]  jack_activate+0x20
+
+2) On an old 2.4.24-1-k7 system with libjack-0.80.0.so I simply get a &quot;segmentation fault&quot;, again 
+1.5 works fine there.
+
+3) However, on a 2.6.15.2-preempt system with libjack-0.100.0.so (Musix 0.39), I can run both the 
+JJack example clients and Frinika fine under jdk1.5 as weel as jdk1.6.
+
+So maybe there's a correlation with the version of libjack?
+What version of libjack have you installed, Paul? (please take a look at the filenames &quot;libjack-...&quot; 
+in /usr/lib or /usr/local/lib)
+
+best
+Jens
+
+
+Paul schrieb:
+&gt;<i> Hi,
+</I>&gt;<i> 
+</I>&gt;<i>  I am trying to use jack with java 1.6
+</I>&gt;<i> 
+</I>&gt;<i>  The JVM crashes in jack_activate (called via the native code and JNI).
+</I>&gt;<i> 
+</I>&gt;<i>  It is OK with java 1.5
+</I>&gt;<i> 
+</I>&gt;<i>  Does any one out there have any clues ?
+</I>&gt;<i> 
+</I>&gt;<i> cheers Paul.
+</I>&gt;<i> 
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000029.html">[jjack-users] problems with Java 1.6
+</A></li>
+	<LI>Next message: <A HREF="000031.html">[jjack-users] problems with Java 1.6
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#30">[ date ]</a>
+              <a href="thread.html#30">[ thread ]</a>
+              <a href="subject.html#30">[ subject ]</a>
+              <a href="author.html#30">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

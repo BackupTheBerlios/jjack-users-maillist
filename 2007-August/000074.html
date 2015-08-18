@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack target line's not working
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20target%20line%27s%20not%20working&In-Reply-To=%3Ce78383b30708290818n1f7f0af2j621645a1a52a4768%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000073.html">
+   <LINK REL="Next"  HREF="000075.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack target line's not working</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20target%20line%27s%20not%20working&In-Reply-To=%3Ce78383b30708290818n1f7f0af2j621645a1a52a4768%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JJack target line's not working">helgeingvart at gmail.com
+       </A><BR>
+    <I>Wed Aug 29 17:18:20 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000073.html">[jjack-users] Error
+</A></li>
+        <LI>Next message: <A HREF="000075.html">[jjack-users] Fwd: JJack target line's not working
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#74">[ date ]</a>
+              <a href="thread.html#74">[ thread ]</a>
+              <a href="subject.html#74">[ subject ]</a>
+              <a href="author.html#74">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello!
+
+I've been testing JJack with a modified JJackMixerProviderTest class:
+
+        Info jackMixerInfo = null;
+
+        JJackMixerProvider provider = new JJackMixerProvider();
+        Info[] infos = provider.getMixerInfo();
+
+        System.out.println(&quot;length: &quot; + infos.length);
+        for (int i = 0; i &lt; infos.length; i++) {
+            Info info = infos[i];
+            if (info.getName().equals(&quot;JJack&quot;)) {
+                jackMixerInfo = info;
+            }
+        }
+        AudioFormat format = new AudioFormat(JJackSystem.getSampleRate(),
+16, 1, true, false);
+
+        Mixer mixer = provider.getMixer(jackMixerInfo);
+
+        SourceDataLine lineOut = (SourceDataLine) mixer.getLine(
+mixer.getSourceLineInfo()[0]);
+        if (lineOut instanceof SourceJJackLine) {
+            System.out.println(&quot;yes&quot;);
+        }
+        lineOut.open(format);
+        lineOut.start();
+
+        TargetDataLine lineIn = (TargetDataLine) mixer.getLine(
+mixer.getTargetLineInfo()[0]);
+        lineIn.open(format);
+        lineIn.start();
+
+        byte[] buf = new byte[256];
+        while (true) {
+            lineIn.read(buf, 0, buf.length);
+            lineOut.write(buf, 0, buf.length);
+        }
+
+I have the following problem:
+
+lineIn.read() seems to do it's job, grabbing nicely those 256 frames.
+However, nothing appear to be written to lineOut. Now, debugging a bit
+closer, I end up finding that
+
+    boolean canReadFloat(int length) {
+        return fifo.availableRead() &gt;= length*2;
+    }
+
+in SourceJJackLine always returns false, and thus this code
+
+            if (line.canReadFloat(length)) {
+                float[] lineBuffer = line.readFloat(length);
+                for (int n = 0; n &lt; length; n++) {
+                    System.out.println(&quot;line output: &quot; + (n % channels) +
+channelIndex);
+                    System.out.println(&quot;channels: &quot; + channels);
+
+                    e.getOutputs()[(n % channels) + channelIndex].put((n /
+channels), lineBuffer[n]);
+                }
+            }
+
+in JJackMixer's process routine never get's executed.
+
+Why the length*2 in canReadFloat()?
+
+Regards,
+Helge Fredriksen
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20070829/d9fc1fec/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20070829/d9fc1fec/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000073.html">[jjack-users] Error
+</A></li>
+	<LI>Next message: <A HREF="000075.html">[jjack-users] Fwd: JJack target line's not working
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#74">[ date ]</a>
+              <a href="thread.html#74">[ thread ]</a>
+              <a href="subject.html#74">[ subject ]</a>
+              <a href="author.html#74">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

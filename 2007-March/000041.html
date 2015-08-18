@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Problems compiling jjack.c
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-March/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20compiling%20jjack.c&In-Reply-To=%3C45E6B40F.6080407%40jensgulden.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000040.html">
+   <LINK REL="Next"  HREF="000042.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Problems compiling jjack.c</H1>
+    <B>Jens Gulden</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20compiling%20jjack.c&In-Reply-To=%3C45E6B40F.6080407%40jensgulden.de%3E"
+       TITLE="[jjack-users] Problems compiling jjack.c">mail at jensgulden.de
+       </A><BR>
+    <I>Thu Mar  1 12:07:59 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000040.html">[jjack-users] Problems compiling jjack.c
+</A></li>
+        <LI>Next message: <A HREF="000042.html">[jjack-users] JJack Linux Audio Conference presentation slides +	paper
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#41">[ date ]</a>
+              <a href="thread.html#41">[ thread ]</a>
+              <a href="subject.html#41">[ subject ]</a>
+              <a href="author.html#41">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello,
+
+&gt;<i> weren't able to find the corresponding jjack.h
+</I>
+jjack.h is generated automatically during the build process, see make/build.xml:
+
+  &lt;!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     Create header file libjjack.h
+   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --&gt;
+   &lt;target name=&quot;javah&quot; depends=&quot;init&quot;&gt;
+     &lt;!-- the javah ant task appears to be buggy under Ant1.5/j2sdk1.4.1/Linux, so call as 
+executable --&gt;
+     &lt;!--&lt;javah class=&quot;de.gulden.framework.jjack.JJackSystem&quot; 
+outputFile=&quot;de/gulden/framework/jjack/libjjack.h&quot;/&gt;--&gt;
+     &lt;exec executable=&quot;${JAVA_HOME}/bin/javah&quot; dir=&quot;.&quot; failonerror=&quot;yes&quot;&gt;
+       &lt;arg value=&quot;-classpath&quot;/&gt;
+       &lt;arg value=&quot;classes&quot;/&gt;
+       &lt;arg value=&quot;-o&quot;/&gt;
+       &lt;arg value=&quot;src/de/gulden/framework/jjack/libjjack.h&quot;/&gt;
+       &lt;arg value=&quot;de.gulden.framework.jjack.JJackSystem&quot;/&gt;
+     &lt;/exec&gt;
+   &lt;/target&gt;
+
+So you should be able to get it by entering
+
+javah -classpath classes -o src/de/gulden/framework/jjack/libjjack.h 
+de.gulden.framework.jjack.JJackSystem
+
+Jens
+
+
+Helge Fredriksen schrieb:
+&gt;<i> Jack installed: 0.102
+</I>&gt;<i> Java version: 1.6
+</I>&gt;<i> 
+</I>&gt;<i> Tried to upgrade the jjack.c from the repository, but weren't able to
+</I>&gt;<i> find the corresponding jjack.h, dunno if this is the problem.
+</I>&gt;<i> 
+</I>&gt;<i> Best regards,
+</I>&gt;<i> Helge Fredriksen
+</I>&gt;<i> 
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">mopo at klodrik</A>:~/Desktop/jjack-0_2/src/de/gulden/framework/jjack$ gcc
+</I>&gt;<i> -I/usr/include/jack -I/usr/lib/jvm/java-6-sun-1.6.0.00/include
+</I>&gt;<i> -I/usr/lib/jvm/java-6-sun-1.6.0.00/include/linux libjjack.c
+</I>&gt;<i> libjjack.c: In function 'getInf':
+</I>&gt;<i> libjjack.c:290: warning: passing argument 3 of 'getStaticLongField'
+</I>&gt;<i> discards qualifiers from pointer target type
+</I>&gt;<i> libjjack.c:290: warning: cast to pointer from integer of different size
+</I>&gt;<i> libjjack.c: In function 'process':
+</I>&gt;<i> libjjack.c:313: warning: passing argument 2 of
+</I>&gt;<i> '(*jvm)-&gt;AttachCurrentThread' from incompatible pointer type
+</I>&gt;<i> libjjack.c: In function 'Java_de_gulden_framework_jjack_JJackSystem_nativeInit':
+</I>&gt;<i> libjjack.c:381: warning: cast from pointer to integer of different size
+</I>&gt;<i> libjjack.c:381: warning: passing argument 3 of 'setStaticLongField'
+</I>&gt;<i> discards qualifiers from pointer target type
+</I>&gt;<i> libjjack.c:390: warning: passing argument 3 of 'getStaticStringField'
+</I>&gt;<i> discards qualifiers from pointer target type
+</I>&gt;<i> libjjack.c:404: warning: passing argument 3 of 'getStaticIntField'
+</I>&gt;<i> discards qualifiers from pointer target type
+</I>&gt;<i> libjjack.c:405: warning: passing argument 3 of 'getStaticBooleanField'
+</I>&gt;<i> discards qualifiers from pointer target type
+</I>&gt;<i> libjjack.c: In function
+</I>&gt;<i> 'Java_de_gulden_framework_jjack_JJackSystem_nativeStart':
+</I>&gt;<i> libjjack.c:449: warning: passing argument 3 of 'throwExc2' discards
+</I>&gt;<i> qualifiers from pointer target type
+</I>&gt;<i> /usr/lib/gcc/i486-linux-gnu/4.1.2/../../../../lib/crt1.o: In function `_start':
+</I>&gt;<i> (.text+0x18): undefined reference to `main'
+</I>&gt;<i> /tmp/ccSZSsLj.o: In function `process':
+</I>&gt;<i> libjjack.c:(.text+0xb82): undefined reference to `jack_port_get_buffer'
+</I>&gt;<i> /tmp/ccSZSsLj.o: In function
+</I>&gt;<i> `Java_de_gulden_framework_jjack_JJackSystem_nativeInit':
+</I>&gt;<i> libjjack.c:(.text+0xcf7): undefined reference to `jack_client_new'
+</I>&gt;<i> libjjack.c:(.text+0xe5f): undefined reference to `jack_port_register'
+</I>&gt;<i> libjjack.c:(.text+0xeb9): undefined reference to `jack_set_process_callback'
+</I>&gt;<i> /tmp/ccSZSsLj.o: In function
+</I>&gt;<i> `Java_de_gulden_framework_jjack_JJackSystem_nativeStart':
+</I>&gt;<i> libjjack.c:(.text+0xeed): undefined reference to `jack_activate'
+</I>&gt;<i> libjjack.c:(.text+0xf77): undefined reference to `jack_get_ports'
+</I>&gt;<i> libjjack.c:(.text+0xff6): undefined reference to `jack_port_name'
+</I>&gt;<i> libjjack.c:(.text+0x1019): undefined reference to `jack_connect'
+</I>&gt;<i> libjjack.c:(.text+0x105a): undefined reference to `jack_port_name'
+</I>&gt;<i> libjjack.c:(.text+0x1072): undefined reference to `jack_connect'
+</I>&gt;<i> /tmp/ccSZSsLj.o: In function
+</I>&gt;<i> `Java_de_gulden_framework_jjack_JJackSystem_nativeDestroy':
+</I>&gt;<i> libjjack.c:(.text+0x10ed): undefined reference to `jack_client_close'
+</I>&gt;<i> /tmp/ccSZSsLj.o: In function
+</I>&gt;<i> `Java_de_gulden_framework_jjack_JJackSystem_getSampleRate':
+</I>&gt;<i> libjjack.c:(.text+0x1123): undefined reference to `jack_get_sample_rate'
+</I>&gt;<i> collect2: ld returned 1 exit status
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">mopo at klodrik</A> :~/Desktop/jjack-0_2/src/de/gulden/framework/jjack$
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000040.html">[jjack-users] Problems compiling jjack.c
+</A></li>
+	<LI>Next message: <A HREF="000042.html">[jjack-users] JJack Linux Audio Conference presentation slides +	paper
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#41">[ date ]</a>
+              <a href="thread.html#41">[ thread ]</a>
+              <a href="subject.html#41">[ subject ]</a>
+              <a href="author.html#41">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

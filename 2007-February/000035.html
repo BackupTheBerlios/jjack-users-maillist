@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] comparing JJack and JavaSound, measuring latency
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-February/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20comparing%20JJack%20and%20JavaSound%2C%20measuring%20latency&In-Reply-To=%3Ce78383b30702151157o3b17d921l618d7308683ea87f%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000034.html">
+   <LINK REL="Next"  HREF="000036.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] comparing JJack and JavaSound, measuring latency</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20comparing%20JJack%20and%20JavaSound%2C%20measuring%20latency&In-Reply-To=%3Ce78383b30702151157o3b17d921l618d7308683ea87f%40mail.gmail.com%3E"
+       TITLE="[jjack-users] comparing JJack and JavaSound, measuring latency">helgeingvart at gmail.com
+       </A><BR>
+    <I>Thu Feb 15 20:57:00 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000034.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+        <LI>Next message: <A HREF="000036.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#35">[ date ]</a>
+              <a href="thread.html#35">[ thread ]</a>
+              <a href="subject.html#35">[ subject ]</a>
+              <a href="author.html#35">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>&gt;<i> I can report better performance with JavaSound using Direct Device
+</I>&gt;<i> driver (which directly hold on ALSA) than with JJack (which adds the
+</I>&gt;<i> extra layer of Jack) either for capture or playback. You can go down to
+</I>&gt;<i> an overall latency (input to output) of 2 or 3 ms.
+</I>
+OK, upon reporting the latency experience with JavaSound, I was mostly
+referring to the Windows platform which we experienced great
+improvement with when using a JNI driver for the sound recording part.
+Sound playback worked OK with standard JavaSound.
+
+&gt;<i> Jack inherent difference is that you can connect any Jack client as you
+</I>&gt;<i> wish, whereas once an application holds the ALSA device no other app can
+</I>&gt;<i> push sound to it.
+</I>
+Yes, this is exactly what frustrates me right now. We are trying to
+write a sound recording device using JavaSound on Linux, but capturing
+sound is not trivial since we experience spurious blocking. We had
+hoped that ALSA had matured with software mixing so that several
+devices could access the device, but this is not the case. It seems
+that we cannot use a standard Ubuntu/Suse desktop for our app, since
+various gstreamer stuff reject us from accessing the sound hardware.
+
+If anyone has some suggestions on how to best resolve this problem, we
+would greatly appreciate it! I have tried using lsof | grep alsa to
+get an overview of all processes using alsa, but this seems not to
+give me the whole story.
+
+&gt;<i> Also, as said Peter, Jack client only matters samples as float, so you
+</I>&gt;<i> don't have to bother with dithering and al, which is very pratical as a
+</I>&gt;<i> developer.
+</I>
+When we occationaly get access to the sound device, we do hear clicks
+and some sort of jitters when capturing sound.
+
+Best regards,
+Helge Fredriksen
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000034.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+	<LI>Next message: <A HREF="000036.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#35">[ date ]</a>
+              <a href="thread.html#35">[ thread ]</a>
+              <a href="subject.html#35">[ subject ]</a>
+              <a href="author.html#35">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

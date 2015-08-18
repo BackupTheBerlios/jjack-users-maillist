@@ -1,0 +1,907 @@
+From helgeingvart at gmail.com  Fri Jan 19 10:51:12 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Fri, 19 Jan 2007 10:51:12 +0100
+Subject: [jjack-users] Encoding
+Message-ID: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+
+Hello!
+
+I was hoping to use JJack to grab sound from a standard sound card on
+Linux and output it using JavaSound on another machine using plain
+byte buffers as transfer media. However, I'm dependent of using PCM
+encoded sound. Is it possible to do such encoding before I get the
+frames into JJack, alternatively do it here? Anyone experienced with
+such encoding?
+
+Also, I'm wondering if anyone can explain the term framerate/framesize
+in JavaSound to me?
+How does these parameters compare to sample frequency and sample bit size?
+
+Regards,
+Helge Fredriksen
+
+
+From contact at petersalomonsen.com  Fri Jan 19 11:25:36 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Fri, 19 Jan 2007 11:25:36 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+Message-ID: <200701191125.36847.contact@petersalomonsen.com>
+
+On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+> Hello!
+>
+> I was hoping to use JJack to grab sound from a standard sound card on
+> Linux and output it using JavaSound on another machine using plain
+> byte buffers as transfer media. However, I'm dependent of using PCM
+> encoded sound. Is it possible to do such encoding before I get the
+> frames into JJack, alternatively do it here? Anyone experienced with
+> such encoding?
+
+Float to PCM can be done like this:
+
+FloatBuffer left, FloatBuffer right
+
+int n = 0;
+			for(int i = 0;i<iCapacity; i++)
+			{					
+				// Left
+				int sampleL = (int)(left.get(i)*(32768));
+				// Right
+				int sampleR = (int)(right.get(i)*(32768));
+				
+				// Left			
+				outBuffer[n++] = ((byte)((sampleL & 0xff00) >> 8));
+				outBuffer[n++] = ((byte)(sampleL & 0xff));
+				
+				if(!mono)
+				{
+					// Right			
+					outBuffer[n++] = ((byte)((sampleR & 0xff00) >> 8));
+					outBuffer[n++] = ((byte)(sampleR & 0xff));
+				}
+			}
+
+> Also, I'm wondering if anyone can explain the term framerate/framesize
+> in JavaSound to me?
+
+> How does these parameters compare to sample frequency and sample bit size?
+
+framerate is the same as samplerate (samples per seconds) - framerate will 
+always be the same regardless of how many channels you have. Framesize = 
+(bits per sample / 8) * (number of channels).
+
+A full example of the jjack float to pcm encoding can be found in:
+
+com.frinika.audio.drivers.jack.AudioInput.java (from Frinika - 
+www.frinika.com)
+
+regards,
+
+Peter
+
+
+From ptitjes at beuz.org  Fri Jan 19 12:12:44 2007
+From: ptitjes at beuz.org (Ptitjes)
+Date: Fri, 19 Jan 2007 12:12:44 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+Message-ID: <45B0A7AC.3000101@beuz.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello Hedge,
+
+Maybe, if you don't have any processing to do in between the two
+computers, but just transmit the data then you should grab sound using
+Javasound directly in PCM format too...
+
+My 2 cents. Didier.
+
+Helge Fredriksen a ?crit :
+> Hello!
+> 
+> I was hoping to use JJack to grab sound from a standard sound card on
+> Linux and output it using JavaSound on another machine using plain
+> byte buffers as transfer media. However, I'm dependent of using PCM
+> encoded sound. Is it possible to do such encoding before I get the
+> frames into JJack, alternatively do it here? Anyone experienced with
+> such encoding?
+> 
+> Also, I'm wondering if anyone can explain the term framerate/framesize
+> in JavaSound to me?
+> How does these parameters compare to sample frequency and sample bit size?
+> 
+> Regards,
+> Helge Fredriksen
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFFsKesevl7X0o02SQRAh3WAJ9cJI0lCtNMEX8U6cjnFL++rTjFIACePmYP
+A3XtyYMoc7lLMv3npiwvDTc=
+=67Ky
+-----END PGP SIGNATURE-----
+
+
+
+From helgeingvart at gmail.com  Fri Jan 19 12:56:20 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Fri, 19 Jan 2007 12:56:20 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <45B0A7AC.3000101@beuz.org>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+	<45B0A7AC.3000101@beuz.org>
+Message-ID: <e78383b30701190356x68506f57na4ca9e24e43f9cf3@mail.gmail.com>
+
+Jupp, but I'm having too much latency using JavaSound. I'm using it
+for VoIP, and that is quite sensitive for this, I'm afraid.
+
+Regards,
+Helge F.
+
+On 1/19/07, Ptitjes <ptitjes at beuz.org> wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA1
+>
+> Hello Hedge,
+>
+> Maybe, if you don't have any processing to do in between the two
+> computers, but just transmit the data then you should grab sound using
+> Javasound directly in PCM format too...
+>
+> My 2 cents. Didier.
+>
+> Helge Fredriksen a ?crit :
+> > Hello!
+> >
+> > I was hoping to use JJack to grab sound from a standard sound card on
+> > Linux and output it using JavaSound on another machine using plain
+> > byte buffers as transfer media. However, I'm dependent of using PCM
+> > encoded sound. Is it possible to do such encoding before I get the
+> > frames into JJack, alternatively do it here? Anyone experienced with
+> > such encoding?
+> >
+> > Also, I'm wondering if anyone can explain the term framerate/framesize
+> > in JavaSound to me?
+> > How does these parameters compare to sample frequency and sample bit size?
+> >
+> > Regards,
+> > Helge Fredriksen
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.4.6 (GNU/Linux)
+> Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+>
+> iD8DBQFFsKesevl7X0o02SQRAh3WAJ9cJI0lCtNMEX8U6cjnFL++rTjFIACePmYP
+> A3XtyYMoc7lLMv3npiwvDTc=
+> =67Ky
+> -----END PGP SIGNATURE-----
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+
+
+From helgeingvart at gmail.com  Fri Jan 19 22:55:07 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Fri, 19 Jan 2007 22:55:07 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <200701191125.36847.contact@petersalomonsen.com>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+	<200701191125.36847.contact@petersalomonsen.com>
+Message-ID: <e78383b30701191355q3ef57763w5807bf2cb9589c9d@mail.gmail.com>
+
+OK, this looks really promising.
+
+It seems you are implementing a TargetDataLine, which is nicely fitted to
+the JavaSound framework.
+
+Is the PCM coded buffer nicely fitted into a 1102 length buffer which
+I get from doing a
+
+targetDataLine.read(buffer) with a  AudioFormat of
+
+AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512, false);
+
+using the slow JavaSound target data line? buffer beeing a byte buffer that is.
+
+Helge
+
+On 1/19/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+> > Hello!
+> >
+> > I was hoping to use JJack to grab sound from a standard sound card on
+> > Linux and output it using JavaSound on another machine using plain
+> > byte buffers as transfer media. However, I'm dependent of using PCM
+> > encoded sound. Is it possible to do such encoding before I get the
+> > frames into JJack, alternatively do it here? Anyone experienced with
+> > such encoding?
+>
+> Float to PCM can be done like this:
+>
+> FloatBuffer left, FloatBuffer right
+>
+> int n = 0;
+>                         for(int i = 0;i<iCapacity; i++)
+>                         {
+>                                 // Left
+>                                 int sampleL = (int)(left.get(i)*(32768));
+>                                 // Right
+>                                 int sampleR = (int)(right.get(i)*(32768));
+>
+>                                 // Left
+>                                 outBuffer[n++] = ((byte)((sampleL & 0xff00) >> 8));
+>                                 outBuffer[n++] = ((byte)(sampleL & 0xff));
+>
+>                                 if(!mono)
+>                                 {
+>                                         // Right
+>                                         outBuffer[n++] = ((byte)((sampleR & 0xff00) >> 8));
+>                                         outBuffer[n++] = ((byte)(sampleR & 0xff));
+>                                 }
+>                         }
+>
+> > Also, I'm wondering if anyone can explain the term framerate/framesize
+> > in JavaSound to me?
+>
+> > How does these parameters compare to sample frequency and sample bit size?
+>
+> framerate is the same as samplerate (samples per seconds) - framerate will
+> always be the same regardless of how many channels you have. Framesize =
+> (bits per sample / 8) * (number of channels).
+>
+> A full example of the jjack float to pcm encoding can be found in:
+>
+> com.frinika.audio.drivers.jack.AudioInput.java (from Frinika -
+> www.frinika.com)
+>
+> regards,
+>
+> Peter
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+
+
+From helgeingvart at gmail.com  Wed Jan 24 13:29:33 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Wed, 24 Jan 2007 13:29:33 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <e78383b30701191355q3ef57763w5807bf2cb9589c9d@mail.gmail.com>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+	<200701191125.36847.contact@petersalomonsen.com>
+	<e78383b30701191355q3ef57763w5807bf2cb9589c9d@mail.gmail.com>
+Message-ID: <e78383b30701240429o6c2c6493pbadd0654f3cdd1b9@mail.gmail.com>
+
+Hello again.
+
+I'm trying to setup the frinika project on my brand new Dell Optiplex
+machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
+everything,
+seeing arch=AMD64 beeing default (not sure if this has any effect on
+the compiling, though).
+
+However, trying to use this lib through IDEA:
+
+java.lang.UnsatisfiedLinkError:
+/home/helge/devel/frinika/libfrinika.so: Can't load this .so (machine
+code=0xb7da) on a IA 32-bit platform
+
+Anyone that can help me? How can I compile it so that it will load? I know this
+isn't quite a jjack question...
+
+Regards,
+Helge F.
+
+On 1/19/07, Helge Fredriksen <helgeingvart at gmail.com> wrote:
+> OK, this looks really promising.
+>
+> It seems you are implementing a TargetDataLine, which is nicely fitted to
+> the JavaSound framework.
+>
+> Is the PCM coded buffer nicely fitted into a 1102 length buffer which
+> I get from doing a
+>
+> targetDataLine.read(buffer) with a  AudioFormat of
+>
+> AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512, false);
+>
+> using the slow JavaSound target data line? buffer beeing a byte buffer that is.
+>
+> Helge
+>
+> On 1/19/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> > On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+> > > Hello!
+> > >
+> > > I was hoping to use JJack to grab sound from a standard sound card on
+> > > Linux and output it using JavaSound on another machine using plain
+> > > byte buffers as transfer media. However, I'm dependent of using PCM
+> > > encoded sound. Is it possible to do such encoding before I get the
+> > > frames into JJack, alternatively do it here? Anyone experienced with
+> > > such encoding?
+> >
+> > Float to PCM can be done like this:
+> >
+> > FloatBuffer left, FloatBuffer right
+> >
+> > int n = 0;
+> >                         for(int i = 0;i<iCapacity; i++)
+> >                         {
+> >                                 // Left
+> >                                 int sampleL = (int)(left.get(i)*(32768));
+> >                                 // Right
+> >                                 int sampleR = (int)(right.get(i)*(32768));
+> >
+> >                                 // Left
+> >                                 outBuffer[n++] = ((byte)((sampleL & 0xff00) >> 8));
+> >                                 outBuffer[n++] = ((byte)(sampleL & 0xff));
+> >
+> >                                 if(!mono)
+> >                                 {
+> >                                         // Right
+> >                                         outBuffer[n++] = ((byte)((sampleR & 0xff00) >> 8));
+> >                                         outBuffer[n++] = ((byte)(sampleR & 0xff));
+> >                                 }
+> >                         }
+> >
+> > > Also, I'm wondering if anyone can explain the term framerate/framesize
+> > > in JavaSound to me?
+> >
+> > > How does these parameters compare to sample frequency and sample bit size?
+> >
+> > framerate is the same as samplerate (samples per seconds) - framerate will
+> > always be the same regardless of how many channels you have. Framesize =
+> > (bits per sample / 8) * (number of channels).
+> >
+> > A full example of the jjack float to pcm encoding can be found in:
+> >
+> > com.frinika.audio.drivers.jack.AudioInput.java (from Frinika -
+> > www.frinika.com)
+> >
+> > regards,
+> >
+> > Peter
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+>
+
+
+From contact at petersalomonsen.com  Wed Jan 24 14:05:05 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Wed, 24 Jan 2007 14:05:05 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <e78383b30701240429o6c2c6493pbadd0654f3cdd1b9@mail.gmail.com>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+	<e78383b30701191355q3ef57763w5807bf2cb9589c9d@mail.gmail.com>
+	<e78383b30701240429o6c2c6493pbadd0654f3cdd1b9@mail.gmail.com>
+Message-ID: <200701241405.05840.contact@petersalomonsen.com>
+
+Hi,
+
+You should use the ant scripts (build.xml) to compile a amd64 compatible 
+version. Or you should be able to find it under /src/lib/amd64/linux/.
+
+I've also updated the jjack project with support for amd64 (if you get the cvs 
+version and use the ant script).
+
+cheers,
+
+Peter
+
+On Wednesday 24 January 2007 13:29, Helge Fredriksen wrote:
+> Hello again.
+>
+> I'm trying to setup the frinika project on my brand new Dell Optiplex
+> machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
+> everything,
+> seeing arch=AMD64 beeing default (not sure if this has any effect on
+> the compiling, though).
+>
+> However, trying to use this lib through IDEA:
+>
+> java.lang.UnsatisfiedLinkError:
+> /home/helge/devel/frinika/libfrinika.so: Can't load this .so (machine
+> code=0xb7da) on a IA 32-bit platform
+>
+> Anyone that can help me? How can I compile it so that it will load? I know
+> this isn't quite a jjack question...
+>
+> Regards,
+> Helge F.
+>
+> On 1/19/07, Helge Fredriksen <helgeingvart at gmail.com> wrote:
+> > OK, this looks really promising.
+> >
+> > It seems you are implementing a TargetDataLine, which is nicely fitted to
+> > the JavaSound framework.
+> >
+> > Is the PCM coded buffer nicely fitted into a 1102 length buffer which
+> > I get from doing a
+> >
+> > targetDataLine.read(buffer) with a  AudioFormat of
+> >
+> > AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
+> > false);
+> >
+> > using the slow JavaSound target data line? buffer beeing a byte buffer
+> > that is.
+> >
+> > Helge
+> >
+> > On 1/19/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> > > On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+> > > > Hello!
+> > > >
+> > > > I was hoping to use JJack to grab sound from a standard sound card on
+> > > > Linux and output it using JavaSound on another machine using plain
+> > > > byte buffers as transfer media. However, I'm dependent of using PCM
+> > > > encoded sound. Is it possible to do such encoding before I get the
+> > > > frames into JJack, alternatively do it here? Anyone experienced with
+> > > > such encoding?
+> > >
+> > > Float to PCM can be done like this:
+> > >
+> > > FloatBuffer left, FloatBuffer right
+> > >
+> > > int n = 0;
+> > >                         for(int i = 0;i<iCapacity; i++)
+> > >                         {
+> > >                                 // Left
+> > >                                 int sampleL =
+> > > (int)(left.get(i)*(32768)); // Right
+> > >                                 int sampleR =
+> > > (int)(right.get(i)*(32768));
+> > >
+> > >                                 // Left
+> > >                                 outBuffer[n++] = ((byte)((sampleL &
+> > > 0xff00) >> 8)); outBuffer[n++] = ((byte)(sampleL & 0xff));
+> > >
+> > >                                 if(!mono)
+> > >                                 {
+> > >                                         // Right
+> > >                                         outBuffer[n++] =
+> > > ((byte)((sampleR & 0xff00) >> 8)); outBuffer[n++] = ((byte)(sampleR &
+> > > 0xff)); }
+> > >                         }
+> > >
+> > > > Also, I'm wondering if anyone can explain the term
+> > > > framerate/framesize in JavaSound to me?
+> > > >
+> > > > How does these parameters compare to sample frequency and sample bit
+> > > > size?
+> > >
+> > > framerate is the same as samplerate (samples per seconds) - framerate
+> > > will always be the same regardless of how many channels you have.
+> > > Framesize = (bits per sample / 8) * (number of channels).
+> > >
+> > > A full example of the jjack float to pcm encoding can be found in:
+> > >
+> > > com.frinika.audio.drivers.jack.AudioInput.java (from Frinika -
+> > > www.frinika.com)
+> > >
+> > > regards,
+> > >
+> > > Peter
+> > > _______________________________________________
+> > > jjack-users mailing list
+> > > jjack-users at lists.berlios.de
+> > > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+From helgeingvart at gmail.com  Wed Jan 24 15:28:47 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Wed, 24 Jan 2007 15:28:47 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <200701241405.05840.contact@petersalomonsen.com>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+	<e78383b30701191355q3ef57763w5807bf2cb9589c9d@mail.gmail.com>
+	<e78383b30701240429o6c2c6493pbadd0654f3cdd1b9@mail.gmail.com>
+	<200701241405.05840.contact@petersalomonsen.com>
+Message-ID: <e78383b30701240628m4cf5b913i8feedd292ca1be9f@mail.gmail.com>
+
+Getting this now:
+
+de.gulden.framework.jjack.JJackException: cannot register jack client,
+jack server not running?
+
+Even though, started it on the command line using this command (with outprints)
+
+helge at morrison:~/devel/jjack/lib$ jackd -v -d alsa -d hw:0 -r 44100 -s
+getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_alsa.so
+getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_dummy.so
+getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_oss.so
+jackd 0.101.1
+Copyright 2001-2005 Paul Davis and others.
+jackd comes with ABSOLUTELY NO WARRANTY
+This is free software, and you are welcome to redistribute it
+under certain conditions; see the file COPYING for details
+
+JACK compiled with System V SHM support.
+server `default' registered
+loading driver ..
+apparent rate = 44100
+creating alsa driver ...
+hw:0|hw:0|1024|2|44100|0|0|nomon|swmeter|soft-mode|32bit
+control device hw:0
+configuring for 44100Hz, period = 1024 frames, buffer = 2 periods
+nperiods = 2 for capture
+nperiods = 2 for playback
+registered builtin port type 32 bit float mono audio
+required capabilities not available
+capabilities: =
+new client: alsa_pcm, id = 1 type 1 @ 0x8058a98 fd = -1
+new buffer size 1024
+registered port alsa_pcm:capture_1, offset = 4096
+registered port alsa_pcm:capture_2, offset = 8192
+registered port alsa_pcm:playback_1, offset = 0
+registered port alsa_pcm:playback_2, offset = 0
+++ jack_rechain_graph():
+client alsa_pcm: internal client, execution_order=0.
+-- jack_rechain_graph()
+6617 waiting for signals
+load = 0.0129 max usecs: 6.000, spare = 23213.000
+load = 0.0194 max usecs: 6.000, spare = 23213.000
+load = 0.0226 max usecs: 6.000, spare = 23213.000
+load = 0.0221 max usecs: 5.000, spare = 23214.000
+load = 0.0240 max usecs: 6.000, spare = 23213.000
+load = 0.0227 max usecs: 5.000, spare = 23214.000
+load = 0.0243 max usecs: 6.000, spare = 23213.000
+
+
+Regards,
+Helge
+
+
+
+On 1/24/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> Hi,
+>
+> You should use the ant scripts (build.xml) to compile a amd64 compatible
+> version. Or you should be able to find it under /src/lib/amd64/linux/.
+>
+> I've also updated the jjack project with support for amd64 (if you get the cvs
+> version and use the ant script).
+>
+> cheers,
+>
+> Peter
+>
+> On Wednesday 24 January 2007 13:29, Helge Fredriksen wrote:
+> > Hello again.
+> >
+> > I'm trying to setup the frinika project on my brand new Dell Optiplex
+> > machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
+> > everything,
+> > seeing arch=AMD64 beeing default (not sure if this has any effect on
+> > the compiling, though).
+> >
+> > However, trying to use this lib through IDEA:
+> >
+> > java.lang.UnsatisfiedLinkError:
+> > /home/helge/devel/frinika/libfrinika.so: Can't load this .so (machine
+> > code=0xb7da) on a IA 32-bit platform
+> >
+> > Anyone that can help me? How can I compile it so that it will load? I know
+> > this isn't quite a jjack question...
+> >
+> > Regards,
+> > Helge F.
+> >
+> > On 1/19/07, Helge Fredriksen <helgeingvart at gmail.com> wrote:
+> > > OK, this looks really promising.
+> > >
+> > > It seems you are implementing a TargetDataLine, which is nicely fitted to
+> > > the JavaSound framework.
+> > >
+> > > Is the PCM coded buffer nicely fitted into a 1102 length buffer which
+> > > I get from doing a
+> > >
+> > > targetDataLine.read(buffer) with a  AudioFormat of
+> > >
+> > > AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
+> > > false);
+> > >
+> > > using the slow JavaSound target data line? buffer beeing a byte buffer
+> > > that is.
+> > >
+> > > Helge
+> > >
+> > > On 1/19/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> > > > On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+> > > > > Hello!
+> > > > >
+> > > > > I was hoping to use JJack to grab sound from a standard sound card on
+> > > > > Linux and output it using JavaSound on another machine using plain
+> > > > > byte buffers as transfer media. However, I'm dependent of using PCM
+> > > > > encoded sound. Is it possible to do such encoding before I get the
+> > > > > frames into JJack, alternatively do it here? Anyone experienced with
+> > > > > such encoding?
+> > > >
+> > > > Float to PCM can be done like this:
+> > > >
+> > > > FloatBuffer left, FloatBuffer right
+> > > >
+> > > > int n = 0;
+> > > >                         for(int i = 0;i<iCapacity; i++)
+> > > >                         {
+> > > >                                 // Left
+> > > >                                 int sampleL =
+> > > > (int)(left.get(i)*(32768)); // Right
+> > > >                                 int sampleR =
+> > > > (int)(right.get(i)*(32768));
+> > > >
+> > > >                                 // Left
+> > > >                                 outBuffer[n++] = ((byte)((sampleL &
+> > > > 0xff00) >> 8)); outBuffer[n++] = ((byte)(sampleL & 0xff));
+> > > >
+> > > >                                 if(!mono)
+> > > >                                 {
+> > > >                                         // Right
+> > > >                                         outBuffer[n++] =
+> > > > ((byte)((sampleR & 0xff00) >> 8)); outBuffer[n++] = ((byte)(sampleR &
+> > > > 0xff)); }
+> > > >                         }
+> > > >
+> > > > > Also, I'm wondering if anyone can explain the term
+> > > > > framerate/framesize in JavaSound to me?
+> > > > >
+> > > > > How does these parameters compare to sample frequency and sample bit
+> > > > > size?
+> > > >
+> > > > framerate is the same as samplerate (samples per seconds) - framerate
+> > > > will always be the same regardless of how many channels you have.
+> > > > Framesize = (bits per sample / 8) * (number of channels).
+> > > >
+> > > > A full example of the jjack float to pcm encoding can be found in:
+> > > >
+> > > > com.frinika.audio.drivers.jack.AudioInput.java (from Frinika -
+> > > > www.frinika.com)
+> > > >
+> > > > regards,
+> > > >
+> > > > Peter
+> > > > _______________________________________________
+> > > > jjack-users mailing list
+> > > > jjack-users at lists.berlios.de
+> > > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+
+
+From contact at petersalomonsen.com  Wed Jan 24 16:05:05 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Wed, 24 Jan 2007 16:05:05 +0100
+Subject: [jjack-users] Encoding
+In-Reply-To: <e78383b30701240628m4cf5b913i8feedd292ca1be9f@mail.gmail.com>
+References: <e78383b30701190151q54426422u6f4e08b6c70e5f8b@mail.gmail.com>
+	<200701241405.05840.contact@petersalomonsen.com>
+	<e78383b30701240628m4cf5b913i8feedd292ca1be9f@mail.gmail.com>
+Message-ID: <200701241605.05719.contact@petersalomonsen.com>
+
+Can you verify with e.g. Frinika or jjack binary that you actually can conect 
+to jack?
+
+I use kubuntu edgy on AMD64 myself, and I use normally qjackctl to start jack. 
+I start jack - then frinika...
+
+cheers,
+
+Peter
+
+On Wednesday 24 January 2007 15:28, Helge Fredriksen wrote:
+> Getting this now:
+>
+> de.gulden.framework.jjack.JJackException: cannot register jack client,
+> jack server not running?
+>
+> Even though, started it on the command line using this command (with
+> outprints)
+>
+> helge at morrison:~/devel/jjack/lib$ jackd -v -d alsa -d hw:0 -r 44100 -s
+> getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_alsa.so
+> getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_dummy.so
+> getting driver descriptor from /usr/lib/libjack0.100.0-0/jack_oss.so
+> jackd 0.101.1
+> Copyright 2001-2005 Paul Davis and others.
+> jackd comes with ABSOLUTELY NO WARRANTY
+> This is free software, and you are welcome to redistribute it
+> under certain conditions; see the file COPYING for details
+>
+> JACK compiled with System V SHM support.
+> server `default' registered
+> loading driver ..
+> apparent rate = 44100
+> creating alsa driver ...
+> hw:0|hw:0|1024|2|44100|0|0|nomon|swmeter|soft-mode|32bit
+> control device hw:0
+> configuring for 44100Hz, period = 1024 frames, buffer = 2 periods
+> nperiods = 2 for capture
+> nperiods = 2 for playback
+> registered builtin port type 32 bit float mono audio
+> required capabilities not available
+> capabilities: =
+> new client: alsa_pcm, id = 1 type 1 @ 0x8058a98 fd = -1
+> new buffer size 1024
+> registered port alsa_pcm:capture_1, offset = 4096
+> registered port alsa_pcm:capture_2, offset = 8192
+> registered port alsa_pcm:playback_1, offset = 0
+> registered port alsa_pcm:playback_2, offset = 0
+> ++ jack_rechain_graph():
+> client alsa_pcm: internal client, execution_order=0.
+> -- jack_rechain_graph()
+> 6617 waiting for signals
+> load = 0.0129 max usecs: 6.000, spare = 23213.000
+> load = 0.0194 max usecs: 6.000, spare = 23213.000
+> load = 0.0226 max usecs: 6.000, spare = 23213.000
+> load = 0.0221 max usecs: 5.000, spare = 23214.000
+> load = 0.0240 max usecs: 6.000, spare = 23213.000
+> load = 0.0227 max usecs: 5.000, spare = 23214.000
+> load = 0.0243 max usecs: 6.000, spare = 23213.000
+>
+>
+> Regards,
+> Helge
+>
+> On 1/24/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> > Hi,
+> >
+> > You should use the ant scripts (build.xml) to compile a amd64 compatible
+> > version. Or you should be able to find it under /src/lib/amd64/linux/.
+> >
+> > I've also updated the jjack project with support for amd64 (if you get
+> > the cvs version and use the ant script).
+> >
+> > cheers,
+> >
+> > Peter
+> >
+> > On Wednesday 24 January 2007 13:29, Helge Fredriksen wrote:
+> > > Hello again.
+> > >
+> > > I'm trying to setup the frinika project on my brand new Dell Optiplex
+> > > machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
+> > > everything,
+> > > seeing arch=AMD64 beeing default (not sure if this has any effect on
+> > > the compiling, though).
+> > >
+> > > However, trying to use this lib through IDEA:
+> > >
+> > > java.lang.UnsatisfiedLinkError:
+> > > /home/helge/devel/frinika/libfrinika.so: Can't load this .so (machine
+> > > code=0xb7da) on a IA 32-bit platform
+> > >
+> > > Anyone that can help me? How can I compile it so that it will load? I
+> > > know this isn't quite a jjack question...
+> > >
+> > > Regards,
+> > > Helge F.
+> > >
+> > > On 1/19/07, Helge Fredriksen <helgeingvart at gmail.com> wrote:
+> > > > OK, this looks really promising.
+> > > >
+> > > > It seems you are implementing a TargetDataLine, which is nicely
+> > > > fitted to the JavaSound framework.
+> > > >
+> > > > Is the PCM coded buffer nicely fitted into a 1102 length buffer which
+> > > > I get from doing a
+> > > >
+> > > > targetDataLine.read(buffer) with a  AudioFormat of
+> > > >
+> > > > AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
+> > > > false);
+> > > >
+> > > > using the slow JavaSound target data line? buffer beeing a byte
+> > > > buffer that is.
+> > > >
+> > > > Helge
+> > > >
+> > > > On 1/19/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+> > > > > On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+> > > > > > Hello!
+> > > > > >
+> > > > > > I was hoping to use JJack to grab sound from a standard sound
+> > > > > > card on Linux and output it using JavaSound on another machine
+> > > > > > using plain byte buffers as transfer media. However, I'm
+> > > > > > dependent of using PCM encoded sound. Is it possible to do such
+> > > > > > encoding before I get the frames into JJack, alternatively do it
+> > > > > > here? Anyone experienced with such encoding?
+> > > > >
+> > > > > Float to PCM can be done like this:
+> > > > >
+> > > > > FloatBuffer left, FloatBuffer right
+> > > > >
+> > > > > int n = 0;
+> > > > >                         for(int i = 0;i<iCapacity; i++)
+> > > > >                         {
+> > > > >                                 // Left
+> > > > >                                 int sampleL =
+> > > > > (int)(left.get(i)*(32768)); // Right
+> > > > >                                 int sampleR =
+> > > > > (int)(right.get(i)*(32768));
+> > > > >
+> > > > >                                 // Left
+> > > > >                                 outBuffer[n++] = ((byte)((sampleL &
+> > > > > 0xff00) >> 8)); outBuffer[n++] = ((byte)(sampleL & 0xff));
+> > > > >
+> > > > >                                 if(!mono)
+> > > > >                                 {
+> > > > >                                         // Right
+> > > > >                                         outBuffer[n++] =
+> > > > > ((byte)((sampleR & 0xff00) >> 8)); outBuffer[n++] = ((byte)(sampleR
+> > > > > & 0xff)); }
+> > > > >                         }
+> > > > >
+> > > > > > Also, I'm wondering if anyone can explain the term
+> > > > > > framerate/framesize in JavaSound to me?
+> > > > > >
+> > > > > > How does these parameters compare to sample frequency and sample
+> > > > > > bit size?
+> > > > >
+> > > > > framerate is the same as samplerate (samples per seconds) -
+> > > > > framerate will always be the same regardless of how many channels
+> > > > > you have. Framesize = (bits per sample / 8) * (number of channels).
+> > > > >
+> > > > > A full example of the jjack float to pcm encoding can be found in:
+> > > > >
+> > > > > com.frinika.audio.drivers.jack.AudioInput.java (from Frinika -
+> > > > > www.frinika.com)
+> > > > >
+> > > > > regards,
+> > > > >
+> > > > > Peter
+> > > > > _______________________________________________
+> > > > > jjack-users mailing list
+> > > > > jjack-users at lists.berlios.de
+> > > > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> > >
+> > > _______________________________________________
+> > > jjack-users mailing list
+> > > jjack-users at lists.berlios.de
+> > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+

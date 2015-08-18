@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JNA binding
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JNA%20binding&In-Reply-To=%3Cda05bb0906200820rd28950v994f21307b86234c%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000115.html">
+   <LINK REL="Next"  HREF="000117.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JNA binding</H1>
+    <B>Peter Brinkmann</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JNA%20binding&In-Reply-To=%3Cda05bb0906200820rd28950v994f21307b86234c%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JNA binding">peter.brinkmann at googlemail.com
+       </A><BR>
+    <I>Sat Jun 20 17:20:44 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000115.html">[jjack-users] JNA binding
+</A></li>
+        <LI>Next message: <A HREF="000117.html">[jjack-users] JNA binding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#116">[ date ]</a>
+              <a href="thread.html#116">[ thread ]</a>
+              <a href="subject.html#116">[ subject ]</a>
+              <a href="author.html#116">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Neil,
+I also came up against the singe client limitation, and I reworked JJack so
+that it now supports multiple clients.  I also slimmed down the jack process
+callback so that you may see a small performance increase.  You can find the
+new version at
+<A HREF="http://svn.berlios.de/svnroot/repos/jjack/branches/v04-proposal.">http://svn.berlios.de/svnroot/repos/jjack/branches/v04-proposal.</A>
+
+The original functionality of JJack remains unchanged, but the native bridge
+moved into a new class called JJackNativeClient that is a minimal wrapper
+for the native code.
+Best,
+    Peter
+
+PS:  I made a number of changes since I last wrote to this list.  In
+particular, I removed the small difference in thread attachment that I
+mentioned earlier, so that the original functionality of JJack is now fully
+preserved, and I updated the ant buildfile to work for both Mac and Linux.
+
+
+On Sat, Jun 20, 2009 at 10:04 AM, Neil C Smith &lt;neilcsmith.net@
+googlemail.com&gt; wrote:
+
+&gt;<i> Hi All,
+</I>&gt;<i>
+</I>&gt;<i> Firstly, a big thank you to those who've put time into developing JJack -
+</I>&gt;<i> I've been using JJack happily for a few projects until now.  However on a
+</I>&gt;<i> current project I'm working on I was coming across some issues to do with
+</I>&gt;<i> the single client limitation, lack of access to the full Jack API and
+</I>&gt;<i> deployment problems.  Having been an occasional reader, rather than a
+</I>&gt;<i> subscriber, to this list I'd missed some of the recent development
+</I>&gt;<i> discussions addressing some of these concerns.  Hopefully this message will
+</I>&gt;<i> still be of some interest.
+</I>&gt;<i>
+</I>&gt;<i> I had decided a while back to experiment with a JNA binding to Jack, and
+</I>&gt;<i> finally got around to looking at this yesterday.  I used JNAerator to create
+</I>&gt;<i> the majority of the Java interface from the Jack header files, though they
+</I>&gt;<i> needed some tweaking by hand and are not feature complete yet - will add
+</I>&gt;<i> MIDI and Transport code ASAP - as I concentrated on getting the audio stuff
+</I>&gt;<i> working.  Anyway, after a couple of hours of tweaking, I've got some working
+</I>&gt;<i> code to access Jack and a simple audio client interface to test this.  I was
+</I>&gt;<i> a bit wary that the extra overhead of JNA vs custom JNI might make this
+</I>&gt;<i> unfeasible, but am pleasantly surprised by the results.  Have tried it on
+</I>&gt;<i> two different Linux setups, one running with a realtime kernel, and it all
+</I>&gt;<i> seems to run nicely.  JNA should pick up the Mac and Windows libs
+</I>&gt;<i> automatically but it's not something I can test.  I haven't done any real
+</I>&gt;<i> benchmarking, but on the realtime kernel machine there appears to be about a
+</I>&gt;<i> 3-5% CPU difference above JJack, however this is only an 800MHz tablet
+</I>&gt;<i> (Indamixx) so on something with a bit more grunt it should be less
+</I>&gt;<i> noticeable.  It also happily runs with RT privileges, without any XRuns.
+</I>&gt;<i>
+</I>&gt;<i> I've put the test code as is up at
+</I>&gt;<i> <A HREF="http://code.google.com/p/java-audio-utils/">http://code.google.com/p/java-audio-utils/</A>  - bear in mind it's a bit
+</I>&gt;<i> untidy and undocumented though! :-)  I have no intention of trying to
+</I>&gt;<i> compete with the scope of JJack for this, but will probably look to improve
+</I>&gt;<i> it as a bare bones wrapper for my own needs.  However, I wonder if this
+</I>&gt;<i> approach might be of interest for future development of JJack - even if not
+</I>&gt;<i> for the process callback if the overhead is thought to be too much, it might
+</I>&gt;<i> be an easier way of adding full access to the rest of the Jack API.
+</I>&gt;<i>
+</I>&gt;<i> Best wishes,
+</I>&gt;<i>
+</I>&gt;<i> Neil
+</I>&gt;<i>
+</I>&gt;<i> --
+</I>&gt;<i> Neil C Smith
+</I>&gt;<i> Sound &amp; InterMedia Artist / Arts &amp; Technology Adviser
+</I>&gt;<i> <A HREF="http://neilcsmith.net">http://neilcsmith.net</A>
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20090620/df4ab63f/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20090620/df4ab63f/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000115.html">[jjack-users] JNA binding
+</A></li>
+	<LI>Next message: <A HREF="000117.html">[jjack-users] JNA binding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#116">[ date ]</a>
+              <a href="thread.html#116">[ thread ]</a>
+              <a href="subject.html#116">[ subject ]</a>
+              <a href="author.html#116">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

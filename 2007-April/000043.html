@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Javasound interfaces for JJack
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Javasound%20interfaces%20for%20JJack&In-Reply-To=%3C200704091652.45987.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000045.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Javasound interfaces for JJack</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Javasound%20interfaces%20for%20JJack&In-Reply-To=%3C200704091652.45987.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] Javasound interfaces for JJack">contact at petersalomonsen.com
+       </A><BR>
+    <I>Mon Apr  9 16:52:45 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000045.html">[jjack-users] Javasound interfaces for JJack
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#43">[ date ]</a>
+              <a href="thread.html#43">[ thread ]</a>
+              <a href="subject.html#43">[ subject ]</a>
+              <a href="author.html#43">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+I started an implementation of Javasound interfaces for JJack in the JJack 
+cvs. The purpose is so that you should be able to plug applications written 
+for javasound directly onto jjack.
+
+What happens is that JJack pops up as a new audio device in javasound.
+
+A demonstration showing the basic principles of how this works can be found 
+here (in jjack cvs):
+
+com.petersalomonsen.jjack.javasound.JJackMixerProviderTest
+
+It streams a wav file from your disk through javasound to jjack.
+
+For Frinika this means that we can use Toots JavaSoundAudioServer also for 
+jack, and that way we automatically get support for large buffersizes in jack 
+without jumpy metronome and notes/events.
+
+NOTE: I still have to fix the RT mem allocation bug in libjack.c (this is 
+fixed in Frinika but still not committed back to the jjack project) 
+
+Else you should find that this implementation adds the stability of jack to 
+javasound apps. The javasound SourceDataLine.write blocking mechanism is 
+implemented using wait() and notify(), and is controlled directly by the jack 
+thread - meaning that we won't have the problem with unpredictable wakeups 
+from Thread.sleep() or yield..
+
+cheers,
+
+Peter
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000045.html">[jjack-users] Javasound interfaces for JJack
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#43">[ date ]</a>
+              <a href="thread.html#43">[ thread ]</a>
+              <a href="subject.html#43">[ subject ]</a>
+              <a href="author.html#43">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

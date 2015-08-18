@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Patterns for exposing more Jack functionality
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-March/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Patterns%20for%20exposing%20more%20Jack%20functionality&In-Reply-To=%3C20090305081445.GN10330%40bzzt.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000101.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Patterns for exposing more Jack functionality</H1>
+    <B>Arnout Engelen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Patterns%20for%20exposing%20more%20Jack%20functionality&In-Reply-To=%3C20090305081445.GN10330%40bzzt.net%3E"
+       TITLE="[jjack-users] Patterns for exposing more Jack functionality">jjack at bzzt.net
+       </A><BR>
+    <I>Thu Mar  5 09:14:45 CET 2009</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000101.html">[jjack-users] Garbage collection
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#100">[ date ]</a>
+              <a href="thread.html#100">[ thread ]</a>
+              <a href="subject.html#100">[ subject ]</a>
+              <a href="author.html#100">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+I might like to take a stab at exposing some more Jack functionality though 
+JJack, starting with transport-related functionality.
+
+I'd like to discuss what would be a neat way to do this. It seems convenient
+to keep all 'native' methods in the same file (JJackSystem on the java side 
+and libjjack.c on the c side). I think those native signatures should be as 
+close to the jack counterparts as possible.
+
+'Client' code wouldn't call these native methods directly, but instead call 
+a 'wrapper' method that might do some conversions and such. Those 'wrapper'
+methods could be static methods in different classes, grouping the 
+functionality into logical chunks (e.g. 'JJackTransport', 'JJackMidi' etc).
+
+Jack often works by passing in a struct to hold either a parameter or a kind of
+'return value'. We could follow that pattern, and put a piece of memory in
+INF to temporarily hold the values.
+
+The native side of 'jack_transport_query' wrapper would then look something 
+like this:
+
+/*
+ * Class:     de_gulden_framework_jjack_JJackSystem
+ * Method:    nativeTransportQuery
+ * Signature: (Lde/gulden/framework/jjack/JJackPosition;)I
+ */
+JNIEXPORT jint JNICALL Java_de_gulden_framework_jjack_JJackSystem_nativeTransportQuery
+  (JNIEnv *env, jclass cls, jobject position)
+{
+        INF inf = getInf(env, cls);
+        int state = jack_transport_query(inf-&gt;client, &amp;inf-&gt;position);
+
+        setIntField(env, position, &quot;beat&quot;, inf-&gt;position.beat);
+        setIntField(env, position, &quot;bar&quot;, inf-&gt;position.bar);
+        setIntField(env, position, &quot;tick&quot;, inf-&gt;position.tick);
+
+        return state;
+}
+
+and the Java side:
+
+public class JJackTransport
+{
+	/**
+	 * fills the static fields of {@link JJackPosition} with the current
+	 * position
+	 */
+	public static JJackTransportState query(JJackPosition position)
+	{
+		return JJackTransportState.values()[JJackSystem.nativeTransportQuery(position)];
+	}
+}
+
+(of course more fields should be added, and JJackTransport would also get 
+static methods for starting, stopping, relocation, etc).
+
+Is that a reasonable approach, or is there a better way? I'm quite new to JNI,
+so I might have some best practices to learn :).
+
+The build.xml now specifies Java version 1.4. What would you think about 
+raising that to java5? It's been out for a while, and has some nice features
+(like new enumerations and generics). 
+
+
+Kind regards,
+
+Arnout Engelen
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000101.html">[jjack-users] Garbage collection
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#100">[ date ]</a>
+              <a href="thread.html#100">[ thread ]</a>
+              <a href="subject.html#100">[ subject ]</a>
+              <a href="author.html#100">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

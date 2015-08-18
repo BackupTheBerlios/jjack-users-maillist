@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Encoding
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-January/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Encoding&In-Reply-To=%3C200701241405.05840.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000025.html">
+   <LINK REL="Next"  HREF="000027.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Encoding</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Encoding&In-Reply-To=%3C200701241405.05840.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] Encoding">contact at petersalomonsen.com
+       </A><BR>
+    <I>Wed Jan 24 14:05:05 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000025.html">[jjack-users] Encoding
+</A></li>
+        <LI>Next message: <A HREF="000027.html">[jjack-users] Encoding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#26">[ date ]</a>
+              <a href="thread.html#26">[ thread ]</a>
+              <a href="subject.html#26">[ subject ]</a>
+              <a href="author.html#26">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+You should use the ant scripts (build.xml) to compile a amd64 compatible 
+version. Or you should be able to find it under /src/lib/amd64/linux/.
+
+I've also updated the jjack project with support for amd64 (if you get the cvs 
+version and use the ant script).
+
+cheers,
+
+Peter
+
+On Wednesday 24 January 2007 13:29, Helge Fredriksen wrote:
+&gt;<i> Hello again.
+</I>&gt;<i>
+</I>&gt;<i> I'm trying to setup the frinika project on my brand new Dell Optiplex
+</I>&gt;<i> machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
+</I>&gt;<i> everything,
+</I>&gt;<i> seeing arch=AMD64 beeing default (not sure if this has any effect on
+</I>&gt;<i> the compiling, though).
+</I>&gt;<i>
+</I>&gt;<i> However, trying to use this lib through IDEA:
+</I>&gt;<i>
+</I>&gt;<i> java.lang.UnsatisfiedLinkError:
+</I>&gt;<i> /home/helge/devel/frinika/libfrinika.so: Can't load this .so (machine
+</I>&gt;<i> code=0xb7da) on a IA 32-bit platform
+</I>&gt;<i>
+</I>&gt;<i> Anyone that can help me? How can I compile it so that it will load? I know
+</I>&gt;<i> this isn't quite a jjack question...
+</I>&gt;<i>
+</I>&gt;<i> Regards,
+</I>&gt;<i> Helge F.
+</I>&gt;<i>
+</I>&gt;<i> On 1/19/07, Helge Fredriksen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">helgeingvart at gmail.com</A>&gt; wrote:
+</I>&gt;<i> &gt; OK, this looks really promising.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; It seems you are implementing a TargetDataLine, which is nicely fitted to
+</I>&gt;<i> &gt; the JavaSound framework.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Is the PCM coded buffer nicely fitted into a 1102 length buffer which
+</I>&gt;<i> &gt; I get from doing a
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; targetDataLine.read(buffer) with a  AudioFormat of
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
+</I>&gt;<i> &gt; false);
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; using the slow JavaSound target data line? buffer beeing a byte buffer
+</I>&gt;<i> &gt; that is.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Helge
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; On 1/19/07, Peter Salomonsen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">contact at petersalomonsen.com</A>&gt; wrote:
+</I>&gt;<i> &gt; &gt; On Friday 19 January 2007 10:51, Helge Fredriksen wrote:
+</I>&gt;<i> &gt; &gt; &gt; Hello!
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; I was hoping to use JJack to grab sound from a standard sound card on
+</I>&gt;<i> &gt; &gt; &gt; Linux and output it using JavaSound on another machine using plain
+</I>&gt;<i> &gt; &gt; &gt; byte buffers as transfer media. However, I'm dependent of using PCM
+</I>&gt;<i> &gt; &gt; &gt; encoded sound. Is it possible to do such encoding before I get the
+</I>&gt;<i> &gt; &gt; &gt; frames into JJack, alternatively do it here? Anyone experienced with
+</I>&gt;<i> &gt; &gt; &gt; such encoding?
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; Float to PCM can be done like this:
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; FloatBuffer left, FloatBuffer right
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; int n = 0;
+</I>&gt;<i> &gt; &gt;                         for(int i = 0;i&lt;iCapacity; i++)
+</I>&gt;<i> &gt; &gt;                         {
+</I>&gt;<i> &gt; &gt;                                 // Left
+</I>&gt;<i> &gt; &gt;                                 int sampleL =
+</I>&gt;<i> &gt; &gt; (int)(left.get(i)*(32768)); // Right
+</I>&gt;<i> &gt; &gt;                                 int sampleR =
+</I>&gt;<i> &gt; &gt; (int)(right.get(i)*(32768));
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt;                                 // Left
+</I>&gt;<i> &gt; &gt;                                 outBuffer[n++] = ((byte)((sampleL &amp;
+</I>&gt;<i> &gt; &gt; 0xff00) &gt;&gt; 8)); outBuffer[n++] = ((byte)(sampleL &amp; 0xff));
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt;                                 if(!mono)
+</I>&gt;<i> &gt; &gt;                                 {
+</I>&gt;<i> &gt; &gt;                                         // Right
+</I>&gt;<i> &gt; &gt;                                         outBuffer[n++] =
+</I>&gt;<i> &gt; &gt; ((byte)((sampleR &amp; 0xff00) &gt;&gt; 8)); outBuffer[n++] = ((byte)(sampleR &amp;
+</I>&gt;<i> &gt; &gt; 0xff)); }
+</I>&gt;<i> &gt; &gt;                         }
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; Also, I'm wondering if anyone can explain the term
+</I>&gt;<i> &gt; &gt; &gt; framerate/framesize in JavaSound to me?
+</I>&gt;<i> &gt; &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; How does these parameters compare to sample frequency and sample bit
+</I>&gt;<i> &gt; &gt; &gt; size?
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; framerate is the same as samplerate (samples per seconds) - framerate
+</I>&gt;<i> &gt; &gt; will always be the same regardless of how many channels you have.
+</I>&gt;<i> &gt; &gt; Framesize = (bits per sample / 8) * (number of channels).
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; A full example of the jjack float to pcm encoding can be found in:
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; com.frinika.audio.drivers.jack.AudioInput.java (from Frinika -
+</I>&gt;<i> &gt; &gt; www.frinika.com)
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; regards,
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; Peter
+</I>&gt;<i> &gt; &gt; _______________________________________________
+</I>&gt;<i> &gt; &gt; jjack-users mailing list
+</I>&gt;<i> &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000025.html">[jjack-users] Encoding
+</A></li>
+	<LI>Next message: <A HREF="000027.html">[jjack-users] Encoding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#26">[ date ]</a>
+              <a href="thread.html#26">[ thread ]</a>
+              <a href="subject.html#26">[ subject ]</a>
+              <a href="author.html#26">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,432 @@
+From andrew at acooke.org  Sun Jul  1 18:16:05 2007
+From: andrew at acooke.org (andrew cooke)
+Date: Sun, 1 Jul 2007 12:16:05 -0400 (CLT)
+Subject: [jjack-users] Lifetime Management (jack_shutdown)
+Message-ID: <2366.127.0.0.1.1183306565.squirrel@localhost>
+
+
+How do I know when Jack has stopped calling my JJack application?  Jack
+provides a callback for this, but I can find anything similar in JJack.
+
+(I don't know if this is the latest code -
+http://www.koders.com/c/fidF85C7C2E5B91492A20C70FBEAD7990A074D24562.aspx -
+but it has a call to jack_shutdown commented out.)
+
+Thanks,
+Andrew
+
+
+
+
+
+
+From mail at jensgulden.de  Tue Jul  3 12:44:34 2007
+From: mail at jensgulden.de (Jens Gulden)
+Date: Tue, 03 Jul 2007 12:44:34 +0200
+Subject: [jjack-users] Lifetime Management (jack_shutdown)
+In-Reply-To: <2366.127.0.0.1.1183306565.squirrel@localhost>
+References: <2366.127.0.0.1.1183306565.squirrel@localhost>
+Message-ID: <468A2892.2020104@jensgulden.de>
+
+Hello Andrew,
+
+> ...jack_shutdown... I can find anything similar in JJack.
+
+This is not implemented by now, I think just because it hasn't been needed before.
+Can you add it yourself? I think it would just be a simple wrap from a native callback function to a 
+static Java method in JJackSystem. See (*env)->CallStaticVoidMethod... elsewhere in the code on how 
+to do that, maybe in combination with (*jvm)->AttachCurrentThread(jvm, &inf->env, NULL).
+
+> (I don't know if this is the latest code - http://www.koders.com/...
+
+The original development CVS repository is here: http://developer.berlios.de/cvs/?group_id=1786
+
+Hope that helps,
+Jens
+
+
+andrew cooke schrieb:
+> How do I know when Jack has stopped calling my JJack application?  Jack
+> provides a callback for this, but I can find anything similar in JJack.
+> 
+> (I don't know if this is the latest code -
+> http://www.koders.com/c/fidF85C7C2E5B91492A20C70FBEAD7990A074D24562.aspx -
+> but it has a call to jack_shutdown commented out.)
+> 
+> Thanks,
+> Andrew
+> 
+> 
+> 
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From andrew at acooke.org  Fri Jul  6 07:28:43 2007
+From: andrew at acooke.org (andrew cooke)
+Date: Fri, 6 Jul 2007 01:28:43 -0400 (CLT)
+Subject: [jjack-users] Problems with arrays when no output data
+Message-ID: <27337.127.0.0.1.1183699723.squirrel@localhost>
+
+
+Hi,
+
+I am seeing (with the CVS code) null pointer errors (actually, I don't see
+them - the code silently fails - but they are occurring in
+JJackSystem.processBytes()) when I register a client with no output
+channels.
+
+It seems that in this case the array of input ByteBuffers is full of null
+values.  In other words, on the Java side, in[0] is null.
+
+I have no idea why - the JNI code seems OK.  However, while trying to work
+out what is happening I have stumbled across some odd behaviour that may
+be related.
+
+The C code in process, where the buffers are built, includes
+
+   (*env)->SetObjectArrayElement(env, inf->byteBufferArray[mode], i,
+byteBuffer);
+
+if this is followed by
+
+   (*env)->GetObjectArrayElement(env, inf->byteBufferArray[mode], i)
+
+the value returned is 8 larger than the value set (the address of
+byteBuffer).  Furthermore, repeated calls to GetObjectArrayElement return
+progressively larger values.  This is very odd - seems like there's some
+kind of memory mix-up.
+
+I need to sleep.  Thought writing this might make things clearer (doesn't
+seem to have helped) or ring a bell with someone else.  Any comments
+welcome.
+
+Cheers,
+Andrew
+
+PS AMD64.  The two things I have changed, neither of which have helped are:
+
+1 - move
+  inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+to before the loop over ports, so that it is called even if there are zero
+ports.
+
+2 - change a hardcoded "4" to sizeof (jack_default_audio_sample_t)
+
+
+
+From andrew at acooke.org  Tue Jul 10 02:06:38 2007
+From: andrew at acooke.org (andrew cooke)
+Date: Mon, 9 Jul 2007 20:06:38 -0400 (CLT)
+Subject: [jjack-users] Diff for libjjack.c
+Message-ID: <6070.200.120.169.16.1184025998.squirrel@acooke.dyndns.org>
+
+The following is a context diff for libjjack.c.  It contains three changes:
+
+- The size of the sample is found using size() rather than being
+  hardcoded as 4
+- Some ints are cast to jsize which is long on 64 bit systems (see
+ftp://www6.software.ibm.com/software/developer/jdk/64bitporting/64BitJavaPortingGuide.pdf)
+- The allocation of inf->byteBufferArray[mode] is made outside the loop
+  over ports.  This avoids a null pointer exception in Java when there are
+  zero ports (eg for output on a "consumer only" process).
+
+Of these, only the last is critical to me; the others were just added
+because they seemed to improve the code.  Please could at least the last
+of these changes be including in the CVS tree?  I am working on a client
+that uses JJack and is affected by the nullpointer error (and I don't want
+to have to distribute my own branch of JJack if possible).
+
+Thanks,
+Andrew
+
+qp6 pkg: diff -c jjack/src/de/gulden/framework/jjack/libjjack.c
+jjack-cvs/src/de/gulden/framework/jjack/libjjack.c
+*** jjack/src/de/gulden/framework/jjack/libjjack.c      2007-07-09
+19:51:26.000000000 -0400
+--- jjack-cvs/src/de/gulden/framework/jjack/libjjack.c  2007-07-09
+19:44:23.000000000 -0400
+***************
+*** 343,359 ****
+
+      /* allocate DirectByteBuffer objects */
+      for (mode=INPUT; mode<=OUTPUT; mode++) {
+-               if(inf->byteBufferArray[mode]==0)
+-               inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+(jsize)inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+                for (i=0; i < inf->portCount[mode]; i++) {
+                    // Only reallocate if the buffer position changes
+                        jack_default_audio_sample_t *tempSampleBuffer =
+(jack_default_audio_sample_t *)
+jack_port_get_buffer(inf->port[mode][i], nframes);
+
+                        if(tempSampleBuffer!=inf->sampleBuffers[mode][i])
+                        {
+                                inf->sampleBuffers[mode][i] =
+tempSampleBuffer;
+!                       jobject byteBuffer =
+(*env)->NewDirectByteBuffer(env, inf->sampleBuffers[mode][i],
+(jsize)(nframes*sizeof(jack_default_audio_sample_t)));
+!               (*env)->SetObjectArrayElement(env,
+inf->byteBufferArray[mode], (jsize)i, byteBuffer);
+                        }
+          }
+      }
+--- 343,359 ----
+
+      /* allocate DirectByteBuffer objects */
+      for (mode=INPUT; mode<=OUTPUT; mode++) {
+                for (i=0; i < inf->portCount[mode]; i++) {
++                       if(inf->byteBufferArray[mode]==0)
++               inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+                    // Only reallocate if the buffer position changes
+                        jack_default_audio_sample_t *tempSampleBuffer =
+(jack_default_audio_sample_t *)
+jack_port_get_buffer(inf->port[mode][i], nframes);
+
+                        if(tempSampleBuffer!=inf->sampleBuffers[mode][i])
+                        {
+                                inf->sampleBuffers[mode][i] =
+tempSampleBuffer;
+!                       jobject byteBuffer =
+(*env)->NewDirectByteBuffer(env , inf->sampleBuffers[mode][i] ,
+nframes*4);
+!               (*env)->SetObjectArrayElement(env,
+inf->byteBufferArray[mode], i, byteBuffer);
+                        }
+          }
+      }
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: libjjack.c.diff
+Type: text/x-patch
+Size: 2000 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070709/76aa6bf8/attachment.bin>
+
+From contact at petersalomonsen.com  Tue Jul 10 20:34:44 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Tue, 10 Jul 2007 20:34:44 +0200
+Subject: [jjack-users] Diff for libjjack.c
+In-Reply-To: <6070.200.120.169.16.1184025998.squirrel@acooke.dyndns.org>
+References: <6070.200.120.169.16.1184025998.squirrel@acooke.dyndns.org>
+Message-ID: <200707102034.45035.contact@petersalomonsen.com>
+
+Hi Andrew,
+
+Thanks for your patch. I'm using a 64-bit system myself (ubuntu 7.04 amd64), 
+and must admit I've never run into the problems you describe, but I will 
+review your patch and commit the changes.. Please give me a few days for 
+this.
+
+Thanks for your contribution.
+
+Best regards,
+
+Peter
+
+On Tuesday 10 July 2007 02:06:38 andrew cooke wrote:
+> The following is a context diff for libjjack.c.  It contains three changes:
+>
+> - The size of the sample is found using size() rather than being
+>   hardcoded as 4
+> - Some ints are cast to jsize which is long on 64 bit systems (see
+> ftp://www6.software.ibm.com/software/developer/jdk/64bitporting/64BitJavaPo
+>rtingGuide.pdf) - The allocation of inf->byteBufferArray[mode] is made
+> outside the loop over ports.  This avoids a null pointer exception in Java
+> when there are zero ports (eg for output on a "consumer only" process).
+>
+> Of these, only the last is critical to me; the others were just added
+> because they seemed to improve the code.  Please could at least the last
+> of these changes be including in the CVS tree?  I am working on a client
+> that uses JJack and is affected by the nullpointer error (and I don't want
+> to have to distribute my own branch of JJack if possible).
+>
+> Thanks,
+> Andrew
+>
+> qp6 pkg: diff -c jjack/src/de/gulden/framework/jjack/libjjack.c
+> jjack-cvs/src/de/gulden/framework/jjack/libjjack.c
+> *** jjack/src/de/gulden/framework/jjack/libjjack.c      2007-07-09
+> 19:51:26.000000000 -0400
+> --- jjack-cvs/src/de/gulden/framework/jjack/libjjack.c  2007-07-09
+> 19:44:23.000000000 -0400
+> ***************
+> *** 343,359 ****
+>
+>       /* allocate DirectByteBuffer objects */
+>       for (mode=INPUT; mode<=OUTPUT; mode++) {
+> -               if(inf->byteBufferArray[mode]==0)
+> -               inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+> (jsize)inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+>                 for (i=0; i < inf->portCount[mode]; i++) {
+>                     // Only reallocate if the buffer position changes
+>                         jack_default_audio_sample_t *tempSampleBuffer =
+> (jack_default_audio_sample_t *)
+> jack_port_get_buffer(inf->port[mode][i], nframes);
+>
+>                         if(tempSampleBuffer!=inf->sampleBuffers[mode][i])
+>                         {
+>                                 inf->sampleBuffers[mode][i] =
+> tempSampleBuffer;
+> !                       jobject byteBuffer =
+> (*env)->NewDirectByteBuffer(env, inf->sampleBuffers[mode][i],
+> (jsize)(nframes*sizeof(jack_default_audio_sample_t)));
+> !               (*env)->SetObjectArrayElement(env,
+> inf->byteBufferArray[mode], (jsize)i, byteBuffer);
+>                         }
+>           }
+>       }
+> --- 343,359 ----
+>
+>       /* allocate DirectByteBuffer objects */
+>       for (mode=INPUT; mode<=OUTPUT; mode++) {
+>                 for (i=0; i < inf->portCount[mode]; i++) {
+> +                       if(inf->byteBufferArray[mode]==0)
+> +               inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+> inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+>                     // Only reallocate if the buffer position changes
+>                         jack_default_audio_sample_t *tempSampleBuffer =
+> (jack_default_audio_sample_t *)
+> jack_port_get_buffer(inf->port[mode][i], nframes);
+>
+>                         if(tempSampleBuffer!=inf->sampleBuffers[mode][i])
+>                         {
+>                                 inf->sampleBuffers[mode][i] =
+> tempSampleBuffer;
+> !                       jobject byteBuffer =
+> (*env)->NewDirectByteBuffer(env , inf->sampleBuffers[mode][i] ,
+> nframes*4);
+> !               (*env)->SetObjectArrayElement(env,
+> inf->byteBufferArray[mode], i, byteBuffer);
+>                         }
+>           }
+>       }
+
+
+
+
+From contact at petersalomonsen.com  Tue Jul 10 21:05:33 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Tue, 10 Jul 2007 21:05:33 +0200
+Subject: [jjack-users] Diff for libjjack.c
+In-Reply-To: <6070.200.120.169.16.1184025998.squirrel@acooke.dyndns.org>
+References: <6070.200.120.169.16.1184025998.squirrel@acooke.dyndns.org>
+Message-ID: <200707102105.33510.contact@petersalomonsen.com>
+
+Hi Andrew,
+
+Just tested your patch (wasn't as much as I thought :) - it all makes sense. 
+It's commited to CVS.
+
+Thanks again!
+
+cheers,
+
+Peter
+
+On Tuesday 10 July 2007 02:06:38 andrew cooke wrote:
+> The following is a context diff for libjjack.c.  It contains three changes:
+>
+> - The size of the sample is found using size() rather than being
+>   hardcoded as 4
+> - Some ints are cast to jsize which is long on 64 bit systems (see
+> ftp://www6.software.ibm.com/software/developer/jdk/64bitporting/64BitJavaPo
+>rtingGuide.pdf) - The allocation of inf->byteBufferArray[mode] is made
+> outside the loop over ports.  This avoids a null pointer exception in Java
+> when there are zero ports (eg for output on a "consumer only" process).
+>
+> Of these, only the last is critical to me; the others were just added
+> because they seemed to improve the code.  Please could at least the last
+> of these changes be including in the CVS tree?  I am working on a client
+> that uses JJack and is affected by the nullpointer error (and I don't want
+> to have to distribute my own branch of JJack if possible).
+>
+> Thanks,
+> Andrew
+>
+> qp6 pkg: diff -c jjack/src/de/gulden/framework/jjack/libjjack.c
+> jjack-cvs/src/de/gulden/framework/jjack/libjjack.c
+> *** jjack/src/de/gulden/framework/jjack/libjjack.c      2007-07-09
+> 19:51:26.000000000 -0400
+> --- jjack-cvs/src/de/gulden/framework/jjack/libjjack.c  2007-07-09
+> 19:44:23.000000000 -0400
+> ***************
+> *** 343,359 ****
+>
+>       /* allocate DirectByteBuffer objects */
+>       for (mode=INPUT; mode<=OUTPUT; mode++) {
+> -               if(inf->byteBufferArray[mode]==0)
+> -               inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+> (jsize)inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+>                 for (i=0; i < inf->portCount[mode]; i++) {
+>                     // Only reallocate if the buffer position changes
+>                         jack_default_audio_sample_t *tempSampleBuffer =
+> (jack_default_audio_sample_t *)
+> jack_port_get_buffer(inf->port[mode][i], nframes);
+>
+>                         if(tempSampleBuffer!=inf->sampleBuffers[mode][i])
+>                         {
+>                                 inf->sampleBuffers[mode][i] =
+> tempSampleBuffer;
+> !                       jobject byteBuffer =
+> (*env)->NewDirectByteBuffer(env, inf->sampleBuffers[mode][i],
+> (jsize)(nframes*sizeof(jack_default_audio_sample_t)));
+> !               (*env)->SetObjectArrayElement(env,
+> inf->byteBufferArray[mode], (jsize)i, byteBuffer);
+>                         }
+>           }
+>       }
+> --- 343,359 ----
+>
+>       /* allocate DirectByteBuffer objects */
+>       for (mode=INPUT; mode<=OUTPUT; mode++) {
+>                 for (i=0; i < inf->portCount[mode]; i++) {
+> +                       if(inf->byteBufferArray[mode]==0)
+> +               inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+> inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+>                     // Only reallocate if the buffer position changes
+>                         jack_default_audio_sample_t *tempSampleBuffer =
+> (jack_default_audio_sample_t *)
+> jack_port_get_buffer(inf->port[mode][i], nframes);
+>
+>                         if(tempSampleBuffer!=inf->sampleBuffers[mode][i])
+>                         {
+>                                 inf->sampleBuffers[mode][i] =
+> tempSampleBuffer;
+> !                       jobject byteBuffer =
+> (*env)->NewDirectByteBuffer(env , inf->sampleBuffers[mode][i] ,
+> nframes*4);
+> !               (*env)->SetObjectArrayElement(env,
+> inf->byteBufferArray[mode], i, byteBuffer);
+>                         }
+>           }
+>       }
+
+
+
+
+From andrew at acooke.org  Thu Jul 12 03:24:48 2007
+From: andrew at acooke.org (andrew cooke)
+Date: Wed, 11 Jul 2007 21:24:48 -0400 (CLT)
+Subject: [jjack-users] JJack based Airport Express Client
+Message-ID: <5910.127.0.0.1.1184203488.squirrel@localhost>
+
+
+Thanks for the support from the JJack dev.
+
+FYI I just made a first release (beta quality) of an Airport Express
+client using JJack  http://www.acooke.org/jara/jjjuste/
+
+Cheers,
+Andrew
+
+
+
+

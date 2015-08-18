@@ -1,0 +1,1019 @@
+From Oliver.Rettig at orat.de  Mon May 11 10:56:24 2009
+From: Oliver.Rettig at orat.de (Oliver Rettig)
+Date: Mon, 11 May 2009 10:56:24 +0200
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <20090305082342.GO10330@bzzt.net>
+References: <20090305082342.GO10330@bzzt.net>
+Message-ID: <200905111056.24223.Oliver.Rettig@orat.de>
+
+Hallo,
+on standard virtual machine the gc stops execution of all threads and there is 
+no possiblity to prevent the GC from running. Some gc can be configured a way 
+that the duration of the stops are small but it stays critical. My experience 
+is that to excute the GC explicitly before starting the realtime 
+audioprocessing works fine if your programm does not create much objects.
+
+best regards
+Oliver
+> Hi,
+>
+> If the garbage collector runs during audio processing, wouldn't that be
+> likely to make processing too slow and get the application kicked as a
+> jack client?
+>
+> Is it possible to prevent the GC from running while processing? Does JNI
+> already guarantee that? Or should we just be careful not to do any memory
+> allocations while processing audio (which might be quite hard in the
+> presence of threads)?
+>
+>
+> Arnout
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+
+From eespjl at bath.ac.uk  Mon May 11 11:39:09 2009
+From: eespjl at bath.ac.uk (Paul John Leonard)
+Date: Mon, 11 May 2009 10:39:09 +0100
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <200905111056.24223.Oliver.Rettig@orat.de>
+References: <20090305082342.GO10330@bzzt.net>
+	<200905111056.24223.Oliver.Rettig@orat.de>
+Message-ID: <1242034749.13921.66.camel@faraday>
+
+Hi,
+
+ The suns rt (real time) JVM can sort out these GC problems. But
+unfortunately it is only free for academics. 
+
+cheers Paul.
+
+
+On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig wrote:
+> Hallo,
+> on standard virtual machine the gc stops execution of all threads and there is 
+> no possiblity to prevent the GC from running. Some gc can be configured a way 
+> that the duration of the stops are small but it stays critical. My experience 
+> is that to excute the GC explicitly before starting the realtime 
+> audioprocessing works fine if your programm does not create much objects.
+> 
+> best regards
+> Oliver
+> > Hi,
+> >
+> > If the garbage collector runs during audio processing, wouldn't that be
+> > likely to make processing too slow and get the application kicked as a
+> > jack client?
+> >
+> > Is it possible to prevent the GC from running while processing? Does JNI
+> > already guarantee that? Or should we just be careful not to do any memory
+> > allocations while processing audio (which might be quite hard in the
+> > presence of threads)?
+> >
+> >
+> > Arnout
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> 
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From contact at petersalomonsen.com  Mon May 11 12:16:49 2009
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Mon, 11 May 2009 12:16:49 +0200
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <1242034749.13921.66.camel@faraday>
+References: <20090305082342.GO10330@bzzt.net>
+	<200905111056.24223.Oliver.Rettig@orat.de>
+	<1242034749.13921.66.camel@faraday>
+Message-ID: <e4451f0c0905110316o695fcd7es88633ccf578f2a77@mail.gmail.com>
+
+Hi,
+
+But when running frinika with rt prio as we do, doesn't this at least mean
+that the audio thread has priority over gc?
+
+cheers,
+
+Peter
+
+On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard <eespjl at bath.ac.uk>wrote:
+
+> Hi,
+>
+>  The suns rt (real time) JVM can sort out these GC problems. But
+> unfortunately it is only free for academics.
+>
+> cheers Paul.
+>
+>
+> On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig wrote:
+> > Hallo,
+> > on standard virtual machine the gc stops execution of all threads and
+> there is
+> > no possiblity to prevent the GC from running. Some gc can be configured a
+> way
+> > that the duration of the stops are small but it stays critical. My
+> experience
+> > is that to excute the GC explicitly before starting the realtime
+> > audioprocessing works fine if your programm does not create much objects.
+> >
+> > best regards
+> > Oliver
+> > > Hi,
+> > >
+> > > If the garbage collector runs during audio processing, wouldn't that be
+> > > likely to make processing too slow and get the application kicked as a
+> > > jack client?
+> > >
+> > > Is it possible to prevent the GC from running while processing? Does
+> JNI
+> > > already guarantee that? Or should we just be careful not to do any
+> memory
+> > > allocations while processing audio (which might be quite hard in the
+> > > presence of threads)?
+> > >
+> > >
+> > > Arnout
+> > > _______________________________________________
+> > > jjack-users mailing list
+> > > jjack-users at lists.berlios.de
+> > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090511/60d39114/attachment.html>
+
+From eespjl at bath.ac.uk  Mon May 11 13:06:52 2009
+From: eespjl at bath.ac.uk (Paul John Leonard)
+Date: Mon, 11 May 2009 12:06:52 +0100
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <e4451f0c0905110316o695fcd7es88633ccf578f2a77@mail.gmail.com>
+References: <20090305082342.GO10330@bzzt.net>
+	<200905111056.24223.Oliver.Rettig@orat.de>
+	<1242034749.13921.66.camel@faraday>
+	<e4451f0c0905110316o695fcd7es88633ccf578f2a77@mail.gmail.com>
+Message-ID: <1242040012.13921.89.camel@faraday>
+
+Hi Peter,
+
+ An interesting point. Since the detailed workings of the the JVM are
+not defined a difficult one to answer. I believe that in the standard
+JVM during GC all java threads (including the high proirity ones) might
+be halted for critical stages of GC. 
+
+ My guess is that on a single processor machine if you are doing work on
+the audio thread then GC collection will not be triggered. 
+But a sleeping audio thread might not wake up on schedule if there is
+garbage collection going on.
+
+ On a multiprocessor machine then the GC could be triggered by another
+thread. And here I start to get very out of my depth. Can the JVM halt
+all the other processing threads ?  I don't think it needs to halt a
+thread that is executing the code in the JNI because this is essentially
+decoupled. But if you are doing processing in java then it might be
+halted?
+
+ But this is just guess work . . .
+
+ Another source of glitches is the JIT.   
+
+cheers Paul.
+
+ 
+
+On Mon, 2009-05-11 at 12:16 +0200, Peter Salomonsen wrote:
+> Hi,
+> 
+> But when running frinika with rt prio as we do, doesn't this at least
+> mean that the audio thread has priority over gc?
+> 
+> cheers,
+> 
+> Peter
+> 
+> On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard
+> <eespjl at bath.ac.uk> wrote:
+>         Hi,
+>         
+>          The suns rt (real time) JVM can sort out these GC problems.
+>         But
+>         unfortunately it is only free for academics.
+>         
+>         cheers Paul.
+>         
+>         
+>         
+>         On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig wrote:
+>         > Hallo,
+>         > on standard virtual machine the gc stops execution of all
+>         threads and there is
+>         > no possiblity to prevent the GC from running. Some gc can be
+>         configured a way
+>         > that the duration of the stops are small but it stays
+>         critical. My experience
+>         > is that to excute the GC explicitly before starting the
+>         realtime
+>         > audioprocessing works fine if your programm does not create
+>         much objects.
+>         >
+>         > best regards
+>         > Oliver
+>         > > Hi,
+>         > >
+>         > > If the garbage collector runs during audio processing,
+>         wouldn't that be
+>         > > likely to make processing too slow and get the application
+>         kicked as a
+>         > > jack client?
+>         > >
+>         > > Is it possible to prevent the GC from running while
+>         processing? Does JNI
+>         > > already guarantee that? Or should we just be careful not
+>         to do any memory
+>         > > allocations while processing audio (which might be quite
+>         hard in the
+>         > > presence of threads)?
+>         > >
+>         > >
+>         > > Arnout
+>         > > _______________________________________________
+>         > > jjack-users mailing list
+>         > > jjack-users at lists.berlios.de
+>         > > https://lists.berlios.de/mailman/listinfo/jjack-users
+>         >
+>         >
+>         > _______________________________________________
+>         > jjack-users mailing list
+>         > jjack-users at lists.berlios.de
+>         > https://lists.berlios.de/mailman/listinfo/jjack-users
+>         
+>         _______________________________________________
+>         jjack-users mailing list
+>         jjack-users at lists.berlios.de
+>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>         
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From contact at petersalomonsen.com  Mon May 11 13:13:08 2009
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Mon, 11 May 2009 13:13:08 +0200
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <1242040012.13921.89.camel@faraday>
+References: <20090305082342.GO10330@bzzt.net>
+	<200905111056.24223.Oliver.Rettig@orat.de>
+	<1242034749.13921.66.camel@faraday>
+	<e4451f0c0905110316o695fcd7es88633ccf578f2a77@mail.gmail.com>
+	<1242040012.13921.89.camel@faraday>
+Message-ID: <e4451f0c0905110413k3c1296d8t1a246118b8b6e491@mail.gmail.com>
+
+I mean, since we are able to freeze the system entirely with the Frinika
+realtime patch - I cannot see how any GC can be going on, since we're not
+even able to power off the machine... :)
+
+cheers,
+
+Peter
+
+On Mon, May 11, 2009 at 1:06 PM, Paul John Leonard <eespjl at bath.ac.uk>wrote:
+
+> Hi Peter,
+>
+>  An interesting point. Since the detailed workings of the the JVM are
+> not defined a difficult one to answer. I believe that in the standard
+> JVM during GC all java threads (including the high proirity ones) might
+> be halted for critical stages of GC.
+>
+>  My guess is that on a single processor machine if you are doing work on
+> the audio thread then GC collection will not be triggered.
+> But a sleeping audio thread might not wake up on schedule if there is
+> garbage collection going on.
+>
+>  On a multiprocessor machine then the GC could be triggered by another
+> thread. And here I start to get very out of my depth. Can the JVM halt
+> all the other processing threads ?  I don't think it needs to halt a
+> thread that is executing the code in the JNI because this is essentially
+> decoupled. But if you are doing processing in java then it might be
+> halted?
+>
+>  But this is just guess work . . .
+>
+>  Another source of glitches is the JIT.
+>
+> cheers Paul.
+>
+>
+>
+> On Mon, 2009-05-11 at 12:16 +0200, Peter Salomonsen wrote:
+> > Hi,
+> >
+> > But when running frinika with rt prio as we do, doesn't this at least
+> > mean that the audio thread has priority over gc?
+> >
+> > cheers,
+> >
+> > Peter
+> >
+> > On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard
+> > <eespjl at bath.ac.uk> wrote:
+> >         Hi,
+> >
+> >          The suns rt (real time) JVM can sort out these GC problems.
+> >         But
+> >         unfortunately it is only free for academics.
+> >
+> >         cheers Paul.
+> >
+> >
+> >
+> >         On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig wrote:
+> >         > Hallo,
+> >         > on standard virtual machine the gc stops execution of all
+> >         threads and there is
+> >         > no possiblity to prevent the GC from running. Some gc can be
+> >         configured a way
+> >         > that the duration of the stops are small but it stays
+> >         critical. My experience
+> >         > is that to excute the GC explicitly before starting the
+> >         realtime
+> >         > audioprocessing works fine if your programm does not create
+> >         much objects.
+> >         >
+> >         > best regards
+> >         > Oliver
+> >         > > Hi,
+> >         > >
+> >         > > If the garbage collector runs during audio processing,
+> >         wouldn't that be
+> >         > > likely to make processing too slow and get the application
+> >         kicked as a
+> >         > > jack client?
+> >         > >
+> >         > > Is it possible to prevent the GC from running while
+> >         processing? Does JNI
+> >         > > already guarantee that? Or should we just be careful not
+> >         to do any memory
+> >         > > allocations while processing audio (which might be quite
+> >         hard in the
+> >         > > presence of threads)?
+> >         > >
+> >         > >
+> >         > > Arnout
+> >         > > _______________________________________________
+> >         > > jjack-users mailing list
+> >         > > jjack-users at lists.berlios.de
+> >         > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >         >
+> >         >
+> >         > _______________________________________________
+> >         > jjack-users mailing list
+> >         > jjack-users at lists.berlios.de
+> >         > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> >         _______________________________________________
+> >         jjack-users mailing list
+> >         jjack-users at lists.berlios.de
+> >         https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090511/e0b2d230/attachment.html>
+
+From eespjl at bath.ac.uk  Mon May 11 15:28:52 2009
+From: eespjl at bath.ac.uk (Paul John Leonard)
+Date: Mon, 11 May 2009 14:28:52 +0100
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <e4451f0c0905110413k3c1296d8t1a246118b8b6e491@mail.gmail.com>
+References: <20090305082342.GO10330@bzzt.net>
+	<200905111056.24223.Oliver.Rettig@orat.de>
+	<1242034749.13921.66.camel@faraday>
+	<e4451f0c0905110316o695fcd7es88633ccf578f2a77@mail.gmail.com>
+	<1242040012.13921.89.camel@faraday>
+	<e4451f0c0905110413k3c1296d8t1a246118b8b6e491@mail.gmail.com>
+Message-ID: <1242048532.13921.105.camel@faraday>
+
+ Yes I agree in this case, but I have not experienced this absolute
+freeze on a dual core machine until the latest changes of toot?  Since
+the audio is meant to run on a single thread we should always have some
+free CPU if we are on a dual core machine. I think there is a recent bug
+in frinika or toot.
+
+BTW this might be useful 
+
+http://en.wikipedia.org/wiki/Reisub
+
+This is getting a bit off topic for jjack ?
+
+cheers Paul.
+ 
+
+On Mon, 2009-05-11 at 13:13 +0200, Peter Salomonsen wrote:
+> I mean, since we are able to freeze the system entirely with the
+> Frinika realtime patch - I cannot see how any GC can be going on,
+> since we're not even able to power off the machine... :)
+> 
+> cheers,
+> 
+> Peter
+> 
+> On Mon, May 11, 2009 at 1:06 PM, Paul John Leonard <eespjl at bath.ac.uk>
+> wrote:
+>         Hi Peter,
+>         
+>          An interesting point. Since the detailed workings of the the
+>         JVM are
+>         not defined a difficult one to answer. I believe that in the
+>         standard
+>         JVM during GC all java threads (including the high proirity
+>         ones) might
+>         be halted for critical stages of GC.
+>         
+>          My guess is that on a single processor machine if you are
+>         doing work on
+>         the audio thread then GC collection will not be triggered.
+>         But a sleeping audio thread might not wake up on schedule if
+>         there is
+>         garbage collection going on.
+>         
+>          On a multiprocessor machine then the GC could be triggered by
+>         another
+>         thread. And here I start to get very out of my depth. Can the
+>         JVM halt
+>         all the other processing threads ?  I don't think it needs to
+>         halt a
+>         thread that is executing the code in the JNI because this is
+>         essentially
+>         decoupled. But if you are doing processing in java then it
+>         might be
+>         halted?
+>         
+>          But this is just guess work . . .
+>         
+>          Another source of glitches is the JIT.
+>         
+>         cheers Paul.
+>         
+>         
+>         
+>         
+>         On Mon, 2009-05-11 at 12:16 +0200, Peter Salomonsen wrote:
+>         > Hi,
+>         >
+>         > But when running frinika with rt prio as we do, doesn't this
+>         at least
+>         > mean that the audio thread has priority over gc?
+>         >
+>         > cheers,
+>         >
+>         > Peter
+>         >
+>         > On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard
+>         > <eespjl at bath.ac.uk> wrote:
+>         >         Hi,
+>         >
+>         >          The suns rt (real time) JVM can sort out these GC
+>         problems.
+>         >         But
+>         >         unfortunately it is only free for academics.
+>         >
+>         >         cheers Paul.
+>         >
+>         >
+>         >
+>         >         On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig
+>         wrote:
+>         >         > Hallo,
+>         >         > on standard virtual machine the gc stops execution
+>         of all
+>         >         threads and there is
+>         >         > no possiblity to prevent the GC from running. Some
+>         gc can be
+>         >         configured a way
+>         >         > that the duration of the stops are small but it
+>         stays
+>         >         critical. My experience
+>         >         > is that to excute the GC explicitly before
+>         starting the
+>         >         realtime
+>         >         > audioprocessing works fine if your programm does
+>         not create
+>         >         much objects.
+>         >         >
+>         >         > best regards
+>         >         > Oliver
+>         >         > > Hi,
+>         >         > >
+>         >         > > If the garbage collector runs during audio
+>         processing,
+>         >         wouldn't that be
+>         >         > > likely to make processing too slow and get the
+>         application
+>         >         kicked as a
+>         >         > > jack client?
+>         >         > >
+>         >         > > Is it possible to prevent the GC from running
+>         while
+>         >         processing? Does JNI
+>         >         > > already guarantee that? Or should we just be
+>         careful not
+>         >         to do any memory
+>         >         > > allocations while processing audio (which might
+>         be quite
+>         >         hard in the
+>         >         > > presence of threads)?
+>         >         > >
+>         >         > >
+>         >         > > Arnout
+>         >         > > _______________________________________________
+>         >         > > jjack-users mailing list
+>         >         > > jjack-users at lists.berlios.de
+>         >         > >
+>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>         >         >
+>         >         >
+>         >         > _______________________________________________
+>         >         > jjack-users mailing list
+>         >         > jjack-users at lists.berlios.de
+>         >         >
+>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>         >
+>         >         _______________________________________________
+>         >         jjack-users mailing list
+>         >         jjack-users at lists.berlios.de
+>         >
+>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>         >
+>         >
+>         > _______________________________________________
+>         > jjack-users mailing list
+>         > jjack-users at lists.berlios.de
+>         > https://lists.berlios.de/mailman/listinfo/jjack-users
+>         
+>         _______________________________________________
+>         jjack-users mailing list
+>         jjack-users at lists.berlios.de
+>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>         
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From contact at petersalomonsen.com  Mon May 11 22:18:39 2009
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Mon, 11 May 2009 22:18:39 +0200
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <1242048532.13921.105.camel@faraday>
+References: <20090305082342.GO10330@bzzt.net>
+	<200905111056.24223.Oliver.Rettig@orat.de>
+	<1242034749.13921.66.camel@faraday>
+	<e4451f0c0905110316o695fcd7es88633ccf578f2a77@mail.gmail.com>
+	<1242040012.13921.89.camel@faraday>
+	<e4451f0c0905110413k3c1296d8t1a246118b8b6e491@mail.gmail.com>
+	<1242048532.13921.105.camel@faraday>
+Message-ID: <e4451f0c0905111318t63a9542ek5eb53e4dce3aca82@mail.gmail.com>
+
+Cool. Wasn't aware of magic sysreq key. I also managed to freeze my
+dual core using latest toot.
+
+However back to jack, I believe if jack runs with rt, the call to
+jjack will be part of the jack rt thread, thus priority over gc. But i
+still experience xruns with jack rt, but nothing to do with java.
+
+Cheers, peter
+
+2009/5/11, Paul John Leonard <eespjl at bath.ac.uk>:
+>  Yes I agree in this case, but I have not experienced this absolute
+> freeze on a dual core machine until the latest changes of toot?  Since
+> the audio is meant to run on a single thread we should always have some
+> free CPU if we are on a dual core machine. I think there is a recent bug
+> in frinika or toot.
+>
+> BTW this might be useful
+>
+> http://en.wikipedia.org/wiki/Reisub
+>
+> This is getting a bit off topic for jjack ?
+>
+> cheers Paul.
+>
+>
+> On Mon, 2009-05-11 at 13:13 +0200, Peter Salomonsen wrote:
+>> I mean, since we are able to freeze the system entirely with the
+>> Frinika realtime patch - I cannot see how any GC can be going on,
+>> since we're not even able to power off the machine... :)
+>>
+>> cheers,
+>>
+>> Peter
+>>
+>> On Mon, May 11, 2009 at 1:06 PM, Paul John Leonard <eespjl at bath.ac.uk>
+>> wrote:
+>>         Hi Peter,
+>>
+>>          An interesting point. Since the detailed workings of the the
+>>         JVM are
+>>         not defined a difficult one to answer. I believe that in the
+>>         standard
+>>         JVM during GC all java threads (including the high proirity
+>>         ones) might
+>>         be halted for critical stages of GC.
+>>
+>>          My guess is that on a single processor machine if you are
+>>         doing work on
+>>         the audio thread then GC collection will not be triggered.
+>>         But a sleeping audio thread might not wake up on schedule if
+>>         there is
+>>         garbage collection going on.
+>>
+>>          On a multiprocessor machine then the GC could be triggered by
+>>         another
+>>         thread. And here I start to get very out of my depth. Can the
+>>         JVM halt
+>>         all the other processing threads ?  I don't think it needs to
+>>         halt a
+>>         thread that is executing the code in the JNI because this is
+>>         essentially
+>>         decoupled. But if you are doing processing in java then it
+>>         might be
+>>         halted?
+>>
+>>          But this is just guess work . . .
+>>
+>>          Another source of glitches is the JIT.
+>>
+>>         cheers Paul.
+>>
+>>
+>>
+>>
+>>         On Mon, 2009-05-11 at 12:16 +0200, Peter Salomonsen wrote:
+>>         > Hi,
+>>         >
+>>         > But when running frinika with rt prio as we do, doesn't this
+>>         at least
+>>         > mean that the audio thread has priority over gc?
+>>         >
+>>         > cheers,
+>>         >
+>>         > Peter
+>>         >
+>>         > On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard
+>>         > <eespjl at bath.ac.uk> wrote:
+>>         >         Hi,
+>>         >
+>>         >          The suns rt (real time) JVM can sort out these GC
+>>         problems.
+>>         >         But
+>>         >         unfortunately it is only free for academics.
+>>         >
+>>         >         cheers Paul.
+>>         >
+>>         >
+>>         >
+>>         >         On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig
+>>         wrote:
+>>         >         > Hallo,
+>>         >         > on standard virtual machine the gc stops execution
+>>         of all
+>>         >         threads and there is
+>>         >         > no possiblity to prevent the GC from running. Some
+>>         gc can be
+>>         >         configured a way
+>>         >         > that the duration of the stops are small but it
+>>         stays
+>>         >         critical. My experience
+>>         >         > is that to excute the GC explicitly before
+>>         starting the
+>>         >         realtime
+>>         >         > audioprocessing works fine if your programm does
+>>         not create
+>>         >         much objects.
+>>         >         >
+>>         >         > best regards
+>>         >         > Oliver
+>>         >         > > Hi,
+>>         >         > >
+>>         >         > > If the garbage collector runs during audio
+>>         processing,
+>>         >         wouldn't that be
+>>         >         > > likely to make processing too slow and get the
+>>         application
+>>         >         kicked as a
+>>         >         > > jack client?
+>>         >         > >
+>>         >         > > Is it possible to prevent the GC from running
+>>         while
+>>         >         processing? Does JNI
+>>         >         > > already guarantee that? Or should we just be
+>>         careful not
+>>         >         to do any memory
+>>         >         > > allocations while processing audio (which might
+>>         be quite
+>>         >         hard in the
+>>         >         > > presence of threads)?
+>>         >         > >
+>>         >         > >
+>>         >         > > Arnout
+>>         >         > > _______________________________________________
+>>         >         > > jjack-users mailing list
+>>         >         > > jjack-users at lists.berlios.de
+>>         >         > >
+>>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>>         >         >
+>>         >         >
+>>         >         > _______________________________________________
+>>         >         > jjack-users mailing list
+>>         >         > jjack-users at lists.berlios.de
+>>         >         >
+>>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>>         >
+>>         >         _______________________________________________
+>>         >         jjack-users mailing list
+>>         >         jjack-users at lists.berlios.de
+>>         >
+>>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>>         >
+>>         >
+>>         > _______________________________________________
+>>         > jjack-users mailing list
+>>         > jjack-users at lists.berlios.de
+>>         > https://lists.berlios.de/mailman/listinfo/jjack-users
+>>
+>>         _______________________________________________
+>>         jjack-users mailing list
+>>         jjack-users at lists.berlios.de
+>>         https://lists.berlios.de/mailman/listinfo/jjack-users
+>>
+>>
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+
+-- 
+Sendt fra min mobile enhet
+
+
+From eespjl at bath.ac.uk  Tue May 12 10:07:44 2009
+From: eespjl at bath.ac.uk (Paul John Leonard)
+Date: Tue, 12 May 2009 09:07:44 +0100
+Subject: [jjack-users] Garbage collection
+In-Reply-To: <e4451f0c0905111318t63a9542ek5eb53e4dce3aca82@mail.gmail.com>
+References: <20090305082342.GO10330@bzzt.net>
+	<200905111056.24223.Oliver.Rettig@orat.de>
+	<1242034749.13921.66.camel@faraday>
+	<e4451f0c0905110316o695fcd7es88633ccf578f2a77@mail.gmail.com>
+	<1242040012.13921.89.camel@faraday>
+	<e4451f0c0905110413k3c1296d8t1a246118b8b6e491@mail.gmail.com>
+	<1242048532.13921.105.camel@faraday>
+	<e4451f0c0905111318t63a9542ek5eb53e4dce3aca82@mail.gmail.com>
+Message-ID: <1242115664.13921.109.camel@faraday>
+
+Hi Peter,
+
+ I frooze my X just running firefox and acroread last night. So the
+situation is not clear for me.
+
+ With jack I found more smaller buffers worked better (3 worked better
+than 2). 
+
+ cheers Paul.
+
+
+On Mon, 2009-05-11 at 22:18 +0200, Peter Salomonsen wrote:
+> Cool. Wasn't aware of magic sysreq key. I also managed to freeze my
+> dual core using latest toot.
+> 
+> However back to jack, I believe if jack runs with rt, the call to
+> jjack will be part of the jack rt thread, thus priority over gc. But i
+> still experience xruns with jack rt, but nothing to do with java.
+> 
+> Cheers, peter
+> 
+> 2009/5/11, Paul John Leonard <eespjl at bath.ac.uk>:
+> >  Yes I agree in this case, but I have not experienced this absolute
+> > freeze on a dual core machine until the latest changes of toot?  Since
+> > the audio is meant to run on a single thread we should always have some
+> > free CPU if we are on a dual core machine. I think there is a recent bug
+> > in frinika or toot.
+> >
+> > BTW this might be useful
+> >
+> > http://en.wikipedia.org/wiki/Reisub
+> >
+> > This is getting a bit off topic for jjack ?
+> >
+> > cheers Paul.
+> >
+> >
+> > On Mon, 2009-05-11 at 13:13 +0200, Peter Salomonsen wrote:
+> >> I mean, since we are able to freeze the system entirely with the
+> >> Frinika realtime patch - I cannot see how any GC can be going on,
+> >> since we're not even able to power off the machine... :)
+> >>
+> >> cheers,
+> >>
+> >> Peter
+> >>
+> >> On Mon, May 11, 2009 at 1:06 PM, Paul John Leonard <eespjl at bath.ac.uk>
+> >> wrote:
+> >>         Hi Peter,
+> >>
+> >>          An interesting point. Since the detailed workings of the the
+> >>         JVM are
+> >>         not defined a difficult one to answer. I believe that in the
+> >>         standard
+> >>         JVM during GC all java threads (including the high proirity
+> >>         ones) might
+> >>         be halted for critical stages of GC.
+> >>
+> >>          My guess is that on a single processor machine if you are
+> >>         doing work on
+> >>         the audio thread then GC collection will not be triggered.
+> >>         But a sleeping audio thread might not wake up on schedule if
+> >>         there is
+> >>         garbage collection going on.
+> >>
+> >>          On a multiprocessor machine then the GC could be triggered by
+> >>         another
+> >>         thread. And here I start to get very out of my depth. Can the
+> >>         JVM halt
+> >>         all the other processing threads ?  I don't think it needs to
+> >>         halt a
+> >>         thread that is executing the code in the JNI because this is
+> >>         essentially
+> >>         decoupled. But if you are doing processing in java then it
+> >>         might be
+> >>         halted?
+> >>
+> >>          But this is just guess work . . .
+> >>
+> >>          Another source of glitches is the JIT.
+> >>
+> >>         cheers Paul.
+> >>
+> >>
+> >>
+> >>
+> >>         On Mon, 2009-05-11 at 12:16 +0200, Peter Salomonsen wrote:
+> >>         > Hi,
+> >>         >
+> >>         > But when running frinika with rt prio as we do, doesn't this
+> >>         at least
+> >>         > mean that the audio thread has priority over gc?
+> >>         >
+> >>         > cheers,
+> >>         >
+> >>         > Peter
+> >>         >
+> >>         > On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard
+> >>         > <eespjl at bath.ac.uk> wrote:
+> >>         >         Hi,
+> >>         >
+> >>         >          The suns rt (real time) JVM can sort out these GC
+> >>         problems.
+> >>         >         But
+> >>         >         unfortunately it is only free for academics.
+> >>         >
+> >>         >         cheers Paul.
+> >>         >
+> >>         >
+> >>         >
+> >>         >         On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig
+> >>         wrote:
+> >>         >         > Hallo,
+> >>         >         > on standard virtual machine the gc stops execution
+> >>         of all
+> >>         >         threads and there is
+> >>         >         > no possiblity to prevent the GC from running. Some
+> >>         gc can be
+> >>         >         configured a way
+> >>         >         > that the duration of the stops are small but it
+> >>         stays
+> >>         >         critical. My experience
+> >>         >         > is that to excute the GC explicitly before
+> >>         starting the
+> >>         >         realtime
+> >>         >         > audioprocessing works fine if your programm does
+> >>         not create
+> >>         >         much objects.
+> >>         >         >
+> >>         >         > best regards
+> >>         >         > Oliver
+> >>         >         > > Hi,
+> >>         >         > >
+> >>         >         > > If the garbage collector runs during audio
+> >>         processing,
+> >>         >         wouldn't that be
+> >>         >         > > likely to make processing too slow and get the
+> >>         application
+> >>         >         kicked as a
+> >>         >         > > jack client?
+> >>         >         > >
+> >>         >         > > Is it possible to prevent the GC from running
+> >>         while
+> >>         >         processing? Does JNI
+> >>         >         > > already guarantee that? Or should we just be
+> >>         careful not
+> >>         >         to do any memory
+> >>         >         > > allocations while processing audio (which might
+> >>         be quite
+> >>         >         hard in the
+> >>         >         > > presence of threads)?
+> >>         >         > >
+> >>         >         > >
+> >>         >         > > Arnout
+> >>         >         > > _______________________________________________
+> >>         >         > > jjack-users mailing list
+> >>         >         > > jjack-users at lists.berlios.de
+> >>         >         > >
+> >>         https://lists.berlios.de/mailman/listinfo/jjack-users
+> >>         >         >
+> >>         >         >
+> >>         >         > _______________________________________________
+> >>         >         > jjack-users mailing list
+> >>         >         > jjack-users at lists.berlios.de
+> >>         >         >
+> >>         https://lists.berlios.de/mailman/listinfo/jjack-users
+> >>         >
+> >>         >         _______________________________________________
+> >>         >         jjack-users mailing list
+> >>         >         jjack-users at lists.berlios.de
+> >>         >
+> >>         https://lists.berlios.de/mailman/listinfo/jjack-users
+> >>         >
+> >>         >
+> >>         > _______________________________________________
+> >>         > jjack-users mailing list
+> >>         > jjack-users at lists.berlios.de
+> >>         > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >>
+> >>         _______________________________________________
+> >>         jjack-users mailing list
+> >>         jjack-users at lists.berlios.de
+> >>         https://lists.berlios.de/mailman/listinfo/jjack-users
+> >>
+> >>
+> >> _______________________________________________
+> >> jjack-users mailing list
+> >> jjack-users at lists.berlios.de
+> >> https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> 
+
+
+

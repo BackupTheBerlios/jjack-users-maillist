@@ -1,0 +1,284 @@
+From helgeingvart at gmail.com  Wed Jun  6 15:34:15 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Wed, 6 Jun 2007 15:34:15 +0200
+Subject: [jjack-users] Controlling master volume
+Message-ID: <e78383b30706060634w486f9c80lda88c09de0f4d05b@mail.gmail.com>
+
+Hello!
+
+I'm using JavaSound (soon in combination with JJack) and I'm wondering if
+it's possible somehow to control the master gain on the ALSA device, mic and
+speaker separately (or Microsoft audio device) itself using some kind call
+via JavaSound or similar. It seems like getting the lines from the mixer and
+query for controls like this:
+
+mixer.getControl(FloatControl.Type.VOLUME) or
+line.getControl(FloatControl.Type.VOLUME)
+
+gives little success on Linux at least.
+
+Any ideas?
+
+Regards,
+Helge Fredriksen
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070606/ee495d94/attachment.html>
+
+From contact at petersalomonsen.com  Wed Jun  6 19:24:21 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Wed, 06 Jun 2007 19:24:21 +0200
+Subject: [jjack-users] Controlling master volume
+In-Reply-To: <e78383b30706060634w486f9c80lda88c09de0f4d05b@mail.gmail.com>
+References: <e78383b30706060634w486f9c80lda88c09de0f4d05b@mail.gmail.com>
+Message-ID: <200706061924.21714.contact@petersalomonsen.com>
+
+Hi,
+
+Since this is a pure javasound related question, I'm sure you'll get an answer 
+if you post to:
+
+JAVASOUND-INTEREST at java.sun.com
+
+Regards,
+
+Peter
+
+On Wednesday 06 June 2007 15:34:15 Helge Fredriksen wrote:
+> Hello!
+>
+> I'm using JavaSound (soon in combination with JJack) and I'm wondering if
+> it's possible somehow to control the master gain on the ALSA device, mic
+> and speaker separately (or Microsoft audio device) itself using some kind
+> call via JavaSound or similar. It seems like getting the lines from the
+> mixer and query for controls like this:
+>
+> mixer.getControl(FloatControl.Type.VOLUME) or
+> line.getControl(FloatControl.Type.VOLUME)
+>
+> gives little success on Linux at least.
+>
+> Any ideas?
+>
+> Regards,
+> Helge Fredriksen
+
+
+
+
+From andrew at acooke.org  Wed Jun 27 05:22:49 2007
+From: andrew at acooke.org (andrew cooke)
+Date: Tue, 26 Jun 2007 23:22:49 -0400 (CLT)
+Subject: [jjack-users] Problems with JJack on Suse 10.2
+Message-ID: <19591.127.0.0.1.1182914569.squirrel@localhost>
+
+
+I assume the first thing to do is compile everything myself, but just in
+case...
+
+...is there any obvious fix for the following problem, seen when using
+JJack as built for Suse 10.2 (dowloaded from the "packman" respository):
+
+qps personal: jjack.sh de.gulden.application.jjack.clients.Oscillator
+java virtual machine used: /usr/lib64/jvm/java/bin/java
+classpath used:
+/usr/share/java/jjack.jar:/usr/share/java/jjack-clients.jar:/usr/share/java/liquidlnf.jar
+main class used: JJack
+flags used:
+options used: -Djava.library.path=/usr/lib64
+arguments used: de.gulden.application.jjack.clients.Oscillator
+natively registering jack client "JJack"
+JACK tmpdir identified as [/dev/shm]
+using 2 input ports, 2 output ports
+#
+# An unexpected error has been detected by HotSpot Virtual Machine:
+#
+#  SIGSEGV (0xb) at pc=0x00002aaaad5913bd, pid=31238, tid=47663924895504
+#
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (1.5.0_10-b03 mixed mode)
+# Problematic frame:
+# C  [libjjack.so+0x23bd] 
+Java_de_gulden_framework_jjack_JJackSystem_nativeStart+0x34
+#
+# An error report file with more information is saved as hs_err_pid31238.log
+#
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+#
+/usr/share/java-utils/java-functions: line 117: 31238 Aborted             
+   $JAVACMD $FLAGS -classpath $CLASSPATH $OPTIONS $MAIN_CLASS "$@"
+
+Thanks,
+Andrew
+
+
+
+From mail at jensgulden.de  Wed Jun 27 10:49:54 2007
+From: mail at jensgulden.de (Jens Gulden)
+Date: Wed, 27 Jun 2007 10:49:54 +0200
+Subject: [jjack-users] Problems with JJack on Suse 10.2
+In-Reply-To: <19591.127.0.0.1.1182914569.squirrel@localhost>
+References: <19591.127.0.0.1.1182914569.squirrel@localhost>
+Message-ID: <468224B2.30208@jensgulden.de>
+
+Hello Andrew,
+
+it looks like you are runing a 64 bit system. There is at least one known bug in version 0.2 which 
+can make JJack refuse to run on 64 bit systems (size of INF pointer). This has been fixed in the 
+meantime, but is only available via CVS by now.
+
+So, yes, please try to compile everthing yourself, and be sure to use the most current code from CVS 
+(see http://developer.berlios.de/cvs/?group_id=1786). Besides fixing the 64 bit bug there have been 
+MANY improvements to JJack since version 0.2, because other developers have joined in. (I myself 
+didn't have time yet to try out all the new things, but expect JJack on CVS to look already pretty 
+different than release 0.2.)
+
+Btw., JJack 0.2 also runs unstable on "normal" 32 bit Intel machines, I got such SIGSEGV crashes 
+also quite often when performing benchmark tests recently. I expect the current CVS code to also be 
+more stable on 32 bit machines.
+
+Hope that helps,
+Jens
+
+
+andrew cooke schrieb:
+> I assume the first thing to do is compile everything myself, but just in
+> case...
+> 
+> ...is there any obvious fix for the following problem, seen when using
+> JJack as built for Suse 10.2 (dowloaded from the "packman" respository):
+> 
+> qps personal: jjack.sh de.gulden.application.jjack.clients.Oscillator
+> java virtual machine used: /usr/lib64/jvm/java/bin/java
+> classpath used:
+> /usr/share/java/jjack.jar:/usr/share/java/jjack-clients.jar:/usr/share/java/liquidlnf.jar
+> main class used: JJack
+> flags used:
+> options used: -Djava.library.path=/usr/lib64
+> arguments used: de.gulden.application.jjack.clients.Oscillator
+> natively registering jack client "JJack"
+> JACK tmpdir identified as [/dev/shm]
+> using 2 input ports, 2 output ports
+> #
+> # An unexpected error has been detected by HotSpot Virtual Machine:
+> #
+> #  SIGSEGV (0xb) at pc=0x00002aaaad5913bd, pid=31238, tid=47663924895504
+> #
+> # Java VM: Java HotSpot(TM) 64-Bit Server VM (1.5.0_10-b03 mixed mode)
+> # Problematic frame:
+> # C  [libjjack.so+0x23bd] 
+> Java_de_gulden_framework_jjack_JJackSystem_nativeStart+0x34
+> #
+> # An error report file with more information is saved as hs_err_pid31238.log
+> #
+> # If you would like to submit a bug report, please visit:
+> #   http://java.sun.com/webapps/bugreport/crash.jsp
+> #
+> /usr/share/java-utils/java-functions: line 117: 31238 Aborted             
+>    $JAVACMD $FLAGS -classpath $CLASSPATH $OPTIONS $MAIN_CLASS "$@"
+> 
+> Thanks,
+> Andrew
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From andrew at acooke.org  Thu Jun 28 03:01:35 2007
+From: andrew at acooke.org (andrew cooke)
+Date: Wed, 27 Jun 2007 21:01:35 -0400 (CLT)
+Subject: [jjack-users] Problems with JJack on Suse 10.2
+In-Reply-To: <468224B2.30208@jensgulden.de>
+References: <19591.127.0.0.1.1182914569.squirrel@localhost>
+	<468224B2.30208@jensgulden.de>
+Message-ID: <24810.127.0.0.1.1182992495.squirrel@localhost>
+
+
+Thanks.  The CVS head compiled and runs fine (both the demo code and my
+own initial attempt at a client).
+
+Cheers,
+Andrew
+
+
+> Hello Andrew,
+>
+> it looks like you are runing a 64 bit system. There is at least one known
+> bug in version 0.2 which
+> can make JJack refuse to run on 64 bit systems (size of INF pointer). This
+> has been fixed in the
+> meantime, but is only available via CVS by now.
+>
+> So, yes, please try to compile everthing yourself, and be sure to use the
+> most current code from CVS
+> (see http://developer.berlios.de/cvs/?group_id=1786). Besides fixing the
+> 64 bit bug there have been
+> MANY improvements to JJack since version 0.2, because other developers
+> have joined in. (I myself
+> didn't have time yet to try out all the new things, but expect JJack on
+> CVS to look already pretty
+> different than release 0.2.)
+>
+> Btw., JJack 0.2 also runs unstable on "normal" 32 bit Intel machines, I
+> got such SIGSEGV crashes
+> also quite often when performing benchmark tests recently. I expect the
+> current CVS code to also be
+> more stable on 32 bit machines.
+>
+> Hope that helps,
+> Jens
+>
+>
+> andrew cooke schrieb:
+>> I assume the first thing to do is compile everything myself, but just in
+>> case...
+>>
+>> ...is there any obvious fix for the following problem, seen when using
+>> JJack as built for Suse 10.2 (dowloaded from the "packman" respository):
+>>
+>> qps personal: jjack.sh de.gulden.application.jjack.clients.Oscillator
+>> java virtual machine used: /usr/lib64/jvm/java/bin/java
+>> classpath used:
+>> /usr/share/java/jjack.jar:/usr/share/java/jjack-clients.jar:/usr/share/java/liquidlnf.jar
+>> main class used: JJack
+>> flags used:
+>> options used: -Djava.library.path=/usr/lib64
+>> arguments used: de.gulden.application.jjack.clients.Oscillator
+>> natively registering jack client "JJack"
+>> JACK tmpdir identified as [/dev/shm]
+>> using 2 input ports, 2 output ports
+>> #
+>> # An unexpected error has been detected by HotSpot Virtual Machine:
+>> #
+>> #  SIGSEGV (0xb) at pc=0x00002aaaad5913bd, pid=31238, tid=47663924895504
+>> #
+>> # Java VM: Java HotSpot(TM) 64-Bit Server VM (1.5.0_10-b03 mixed mode)
+>> # Problematic frame:
+>> # C  [libjjack.so+0x23bd]
+>> Java_de_gulden_framework_jjack_JJackSystem_nativeStart+0x34
+>> #
+>> # An error report file with more information is saved as
+>> hs_err_pid31238.log
+>> #
+>> # If you would like to submit a bug report, please visit:
+>> #   http://java.sun.com/webapps/bugreport/crash.jsp
+>> #
+>> /usr/share/java-utils/java-functions: line 117: 31238 Aborted
+>>    $JAVACMD $FLAGS -classpath $CLASSPATH $OPTIONS $MAIN_CLASS "$@"
+>>
+>> Thanks,
+>> Andrew
+>>
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+
+
+
+

@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Problems with JJack on Suse 10.2
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20JJack%20on%20Suse%2010.2&In-Reply-To=%3C19591.127.0.0.1.1182914569.squirrel%40localhost%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000058.html">
+   <LINK REL="Next"  HREF="000060.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Problems with JJack on Suse 10.2</H1>
+    <B>andrew cooke</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20JJack%20on%20Suse%2010.2&In-Reply-To=%3C19591.127.0.0.1.1182914569.squirrel%40localhost%3E"
+       TITLE="[jjack-users] Problems with JJack on Suse 10.2">andrew at acooke.org
+       </A><BR>
+    <I>Wed Jun 27 05:22:49 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000058.html">[jjack-users] Controlling master volume
+</A></li>
+        <LI>Next message: <A HREF="000060.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#59">[ date ]</a>
+              <a href="thread.html#59">[ thread ]</a>
+              <a href="subject.html#59">[ subject ]</a>
+              <a href="author.html#59">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>
+I assume the first thing to do is compile everything myself, but just in
+case...
+
+...is there any obvious fix for the following problem, seen when using
+JJack as built for Suse 10.2 (dowloaded from the &quot;packman&quot; respository):
+
+qps personal: jjack.sh de.gulden.application.jjack.clients.Oscillator
+java virtual machine used: /usr/lib64/jvm/java/bin/java
+classpath used:
+/usr/share/java/jjack.jar:/usr/share/java/jjack-clients.jar:/usr/share/java/liquidlnf.jar
+main class used: JJack
+flags used:
+options used: -Djava.library.path=/usr/lib64
+arguments used: de.gulden.application.jjack.clients.Oscillator
+natively registering jack client &quot;JJack&quot;
+JACK tmpdir identified as [/dev/shm]
+using 2 input ports, 2 output ports
+#
+# An unexpected error has been detected by HotSpot Virtual Machine:
+#
+#  SIGSEGV (0xb) at pc=0x00002aaaad5913bd, pid=31238, tid=47663924895504
+#
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (1.5.0_10-b03 mixed mode)
+# Problematic frame:
+# C  [libjjack.so+0x23bd] 
+Java_de_gulden_framework_jjack_JJackSystem_nativeStart+0x34
+#
+# An error report file with more information is saved as hs_err_pid31238.log
+#
+# If you would like to submit a bug report, please visit:
+#   <A HREF="http://java.sun.com/webapps/bugreport/crash.jsp">http://java.sun.com/webapps/bugreport/crash.jsp</A>
+#
+/usr/share/java-utils/java-functions: line 117: 31238 Aborted             
+   $JAVACMD $FLAGS -classpath $CLASSPATH $OPTIONS $MAIN_CLASS &quot;$@&quot;
+
+Thanks,
+Andrew
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000058.html">[jjack-users] Controlling master volume
+</A></li>
+	<LI>Next message: <A HREF="000060.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#59">[ date ]</a>
+              <a href="thread.html#59">[ thread ]</a>
+              <a href="subject.html#59">[ subject ]</a>
+              <a href="author.html#59">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

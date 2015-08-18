@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Problems with JJack on Suse 10.2
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20JJack%20on%20Suse%2010.2&In-Reply-To=%3C24810.127.0.0.1.1182992495.squirrel%40localhost%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000060.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Problems with JJack on Suse 10.2</H1>
+    <B>andrew cooke</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20JJack%20on%20Suse%2010.2&In-Reply-To=%3C24810.127.0.0.1.1182992495.squirrel%40localhost%3E"
+       TITLE="[jjack-users] Problems with JJack on Suse 10.2">andrew at acooke.org
+       </A><BR>
+    <I>Thu Jun 28 03:01:35 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000060.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#61">[ date ]</a>
+              <a href="thread.html#61">[ thread ]</a>
+              <a href="subject.html#61">[ subject ]</a>
+              <a href="author.html#61">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>
+Thanks.  The CVS head compiled and runs fine (both the demo code and my
+own initial attempt at a client).
+
+Cheers,
+Andrew
+
+
+&gt;<i> Hello Andrew,
+</I>&gt;<i>
+</I>&gt;<i> it looks like you are runing a 64 bit system. There is at least one known
+</I>&gt;<i> bug in version 0.2 which
+</I>&gt;<i> can make JJack refuse to run on 64 bit systems (size of INF pointer). This
+</I>&gt;<i> has been fixed in the
+</I>&gt;<i> meantime, but is only available via CVS by now.
+</I>&gt;<i>
+</I>&gt;<i> So, yes, please try to compile everthing yourself, and be sure to use the
+</I>&gt;<i> most current code from CVS
+</I>&gt;<i> (see <A HREF="http://developer.berlios.de/cvs/?group_id=1786">http://developer.berlios.de/cvs/?group_id=1786</A>). Besides fixing the
+</I>&gt;<i> 64 bit bug there have been
+</I>&gt;<i> MANY improvements to JJack since version 0.2, because other developers
+</I>&gt;<i> have joined in. (I myself
+</I>&gt;<i> didn't have time yet to try out all the new things, but expect JJack on
+</I>&gt;<i> CVS to look already pretty
+</I>&gt;<i> different than release 0.2.)
+</I>&gt;<i>
+</I>&gt;<i> Btw., JJack 0.2 also runs unstable on &quot;normal&quot; 32 bit Intel machines, I
+</I>&gt;<i> got such SIGSEGV crashes
+</I>&gt;<i> also quite often when performing benchmark tests recently. I expect the
+</I>&gt;<i> current CVS code to also be
+</I>&gt;<i> more stable on 32 bit machines.
+</I>&gt;<i>
+</I>&gt;<i> Hope that helps,
+</I>&gt;<i> Jens
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i> andrew cooke schrieb:
+</I>&gt;&gt;<i> I assume the first thing to do is compile everything myself, but just in
+</I>&gt;&gt;<i> case...
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> ...is there any obvious fix for the following problem, seen when using
+</I>&gt;&gt;<i> JJack as built for Suse 10.2 (dowloaded from the &quot;packman&quot; respository):
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> qps personal: jjack.sh de.gulden.application.jjack.clients.Oscillator
+</I>&gt;&gt;<i> java virtual machine used: /usr/lib64/jvm/java/bin/java
+</I>&gt;&gt;<i> classpath used:
+</I>&gt;&gt;<i> /usr/share/java/jjack.jar:/usr/share/java/jjack-clients.jar:/usr/share/java/liquidlnf.jar
+</I>&gt;&gt;<i> main class used: JJack
+</I>&gt;&gt;<i> flags used:
+</I>&gt;&gt;<i> options used: -Djava.library.path=/usr/lib64
+</I>&gt;&gt;<i> arguments used: de.gulden.application.jjack.clients.Oscillator
+</I>&gt;&gt;<i> natively registering jack client &quot;JJack&quot;
+</I>&gt;&gt;<i> JACK tmpdir identified as [/dev/shm]
+</I>&gt;&gt;<i> using 2 input ports, 2 output ports
+</I>&gt;&gt;<i> #
+</I>&gt;&gt;<i> # An unexpected error has been detected by HotSpot Virtual Machine:
+</I>&gt;&gt;<i> #
+</I>&gt;&gt;<i> #  SIGSEGV (0xb) at pc=0x00002aaaad5913bd, pid=31238, tid=47663924895504
+</I>&gt;&gt;<i> #
+</I>&gt;&gt;<i> # Java VM: Java HotSpot(TM) 64-Bit Server VM (1.5.0_10-b03 mixed mode)
+</I>&gt;&gt;<i> # Problematic frame:
+</I>&gt;&gt;<i> # C  [libjjack.so+0x23bd]
+</I>&gt;&gt;<i> Java_de_gulden_framework_jjack_JJackSystem_nativeStart+0x34
+</I>&gt;&gt;<i> #
+</I>&gt;&gt;<i> # An error report file with more information is saved as
+</I>&gt;&gt;<i> hs_err_pid31238.log
+</I>&gt;&gt;<i> #
+</I>&gt;&gt;<i> # If you would like to submit a bug report, please visit:
+</I>&gt;&gt;<i> #   <A HREF="http://java.sun.com/webapps/bugreport/crash.jsp">http://java.sun.com/webapps/bugreport/crash.jsp</A>
+</I>&gt;&gt;<i> #
+</I>&gt;&gt;<i> /usr/share/java-utils/java-functions: line 117: 31238 Aborted
+</I>&gt;&gt;<i>    $JAVACMD $FLAGS -classpath $CLASSPATH $OPTIONS $MAIN_CLASS &quot;$@&quot;
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> Thanks,
+</I>&gt;&gt;<i> Andrew
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> _______________________________________________
+</I>&gt;&gt;<i> jjack-users mailing list
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000060.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#61">[ date ]</a>
+              <a href="thread.html#61">[ thread ]</a>
+              <a href="subject.html#61">[ subject ]</a>
+              <a href="author.html#61">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

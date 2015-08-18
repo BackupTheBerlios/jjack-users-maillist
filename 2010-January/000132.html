@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack and Jack compilation and linking on	different OS X systems
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2010-January/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20and%20Jack%20compilation%20and%20linking%20on%0A%09different%20OS%20X%20systems&In-Reply-To=%3C943A32EE-978A-4342-A318-7B93DDABB6D2%40icarus.nu%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000131.html">
+   <LINK REL="Next"  HREF="000133.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack and Jack compilation and linking on	different OS X systems</H1>
+    <B>Oliver Bown</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20and%20Jack%20compilation%20and%20linking%20on%0A%09different%20OS%20X%20systems&In-Reply-To=%3C943A32EE-978A-4342-A318-7B93DDABB6D2%40icarus.nu%3E"
+       TITLE="[jjack-users] JJack and Jack compilation and linking on	different OS X systems">ollie at icarus.nu
+       </A><BR>
+    <I>Tue Jan 12 04:16:22 CET 2010</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000131.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+        <LI>Next message: <A HREF="000133.html">[jjack-users] undefined symbol: jack_client_new
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#132">[ date ]</a>
+              <a href="thread.html#132">[ thread ]</a>
+              <a href="subject.html#132">[ subject ]</a>
+              <a href="author.html#132">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello again.
+
+problem solved. Apologies if the following is obvious, but it will probably be helpful to someone.
+
+Modern Macs are 64 bit machines, but Mac OS has continued to be 32 bit up to and including Leopard. Snow Leopard is 64 bit. This is all well known. 
+
+What is less obvious is that 64-bit Java 6 causes the system to search for 64 bit native libraries, even when running on Leopard, and you need 64-bit libraries all the way down. i.e., you need 64-bit libjjack.jnilib, and you need 64-bit jack installed. Therefore, the advice given on the Jack download page to Mac users is slightly problematic as far as JJack is concerned. Leopard users who download the 32-bit only version and then try to run JJack in Java 6 will encounter the problem I have been having. They need to make sure they instead download and install the version identified as being for Snow Leopard. This should immediately resolve the problem. I'm not sure if there are additional reasons why using the Snow Leopard version would be a problem, except for users of older 32 bit Macs (who obviously won't have the 64-bit Java 6 installed anyway). The Universal Binary mechanism seems to work perfectly well in resolving which library to load, so you might as well have all the architectures in there (x84_64, i386, ppc, ppc64).
+
+In general I think this would be preferable for the JJack makefile too. To get the Universal Binary libjjack I modified the gcc_mac target in the build.xml file (in v04-proposal) as follows (there's probably a neater way to do this)...
+
+&lt;target name=&quot;gcc_mac&quot; if=&quot;isMacOSX&quot;&gt;
+    &lt;exec executable=&quot;gcc&quot; dir=&quot;src/de/gulden/framework/jjack&quot; failonerror=&quot;yes&quot;&gt;
+      &lt;arg value=&quot;-I/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers&quot;/&gt;
+      &lt;arg value=&quot;-I/usr/local/include/jack&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;x86_64&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;i386&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;ppc&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;ppc64&quot;/&gt;
+      &lt;arg value=&quot;-c&quot;/&gt;
+      &lt;arg value=&quot;libjjack.c&quot;/&gt;
+    &lt;/exec&gt;
+    &lt;exec executable=&quot;gcc&quot; dir=&quot;src/de/gulden/framework/jjack&quot; failonerror=&quot;yes&quot;&gt;
+      &lt;arg value=&quot;-dynamiclib&quot;/&gt;
+      &lt;arg value=&quot;-ljack&quot;/&gt;
+      &lt;arg value=&quot;-L/usr/local/lib&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;x86_64&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;i386&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;ppc&quot;/&gt;
+      &lt;arg value=&quot;-arch&quot;/&gt;
+      &lt;arg value=&quot;ppc64&quot;/&gt;
+      &lt;arg value=&quot;-o&quot;/&gt;
+      &lt;arg value=&quot;../../../../../lib/${os.arch}/${os.name}/libjjack.dylib&quot;/&gt;
+      &lt;arg value=&quot;libjjack.o&quot;/&gt;
+    &lt;/exec&gt;
+  &lt;/target&gt;
+
+Cheers,
+
+Ollie
+
+On 06/01/2010, at 2:12 PM, Oliver Bown wrote:
+
+&gt;<i> Cheers Peter,
+</I>&gt;<i> 
+</I>&gt;<i> I'm going on a short holiday. I'll let you know how this works when I'm back. 
+</I>&gt;<i> 
+</I>&gt;<i> Hopefully it will be possible to get JJack building standard UBs and reporting these linking errors with more accurate detail on OS X as I've become REALLY dependent on it recently, but I'm always finding it behaving differently on different systems and confusing the hell out of me. I'd be glad to help on this front. 
+</I>&gt;<i> 
+</I>&gt;<i> I'm not saying it's not my stupidity that's to blame! But there's nothing wrong with a bit more idiot-proofing.
+</I>&gt;<i> 
+</I>&gt;<i> Anyway, hooray for JJack. Without it, JavaSound would be very boring on OS X.
+</I>&gt;<i> 
+</I>&gt;<i> Ollie
+</I>&gt;<i> 
+</I>&gt;<i> On 06/01/2010, at 1:56 PM, Peter Brinkmann wrote:
+</I>&gt;<i> 
+</I>&gt;&gt;<i> 
+</I>&gt;&gt;<i> Hi Ollie,
+</I>&gt;&gt;<i>  
+</I>&gt;&gt;<i> 	/Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter: no matching architecture in universal wrapper
+</I>&gt;&gt;<i> 
+</I>&gt;&gt;<i> That part looks like trouble.  I just looked at the Jack OS X download page, and I noticed that they have 32-bit binaries for Leopard, and 64-bit binaries for Snow Leopard only.  If JJack was compiled for 64-bit under Snow Leopard, then that may cause trouble for Leopard.  I would just rebuild everything (both Jack and JJack) under Leopard and hope that that'll solve the problem.
+</I>&gt;&gt;<i> Good luck,
+</I>&gt;&gt;<i>      Peter
+</I>&gt;&gt;<i> 
+</I>&gt;&gt;<i> _______________________________________________
+</I>&gt;&gt;<i> jjack-users mailing list
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> 
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000131.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+	<LI>Next message: <A HREF="000133.html">[jjack-users] undefined symbol: jack_client_new
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#132">[ date ]</a>
+              <a href="thread.html#132">[ thread ]</a>
+              <a href="subject.html#132">[ subject ]</a>
+              <a href="author.html#132">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

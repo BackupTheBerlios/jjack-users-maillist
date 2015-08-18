@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Problems with JJack on Suse 10.2
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20JJack%20on%20Suse%2010.2&In-Reply-To=%3C468224B2.30208%40jensgulden.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000059.html">
+   <LINK REL="Next"  HREF="000061.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Problems with JJack on Suse 10.2</H1>
+    <B>Jens Gulden</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20JJack%20on%20Suse%2010.2&In-Reply-To=%3C468224B2.30208%40jensgulden.de%3E"
+       TITLE="[jjack-users] Problems with JJack on Suse 10.2">mail at jensgulden.de
+       </A><BR>
+    <I>Wed Jun 27 10:49:54 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000059.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+        <LI>Next message: <A HREF="000061.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#60">[ date ]</a>
+              <a href="thread.html#60">[ thread ]</a>
+              <a href="subject.html#60">[ subject ]</a>
+              <a href="author.html#60">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello Andrew,
+
+it looks like you are runing a 64 bit system. There is at least one known bug in version 0.2 which 
+can make JJack refuse to run on 64 bit systems (size of INF pointer). This has been fixed in the 
+meantime, but is only available via CVS by now.
+
+So, yes, please try to compile everthing yourself, and be sure to use the most current code from CVS 
+(see <A HREF="http://developer.berlios.de/cvs/?group_id=1786">http://developer.berlios.de/cvs/?group_id=1786</A>). Besides fixing the 64 bit bug there have been 
+MANY improvements to JJack since version 0.2, because other developers have joined in. (I myself 
+didn't have time yet to try out all the new things, but expect JJack on CVS to look already pretty 
+different than release 0.2.)
+
+Btw., JJack 0.2 also runs unstable on &quot;normal&quot; 32 bit Intel machines, I got such SIGSEGV crashes 
+also quite often when performing benchmark tests recently. I expect the current CVS code to also be 
+more stable on 32 bit machines.
+
+Hope that helps,
+Jens
+
+
+andrew cooke schrieb:
+&gt;<i> I assume the first thing to do is compile everything myself, but just in
+</I>&gt;<i> case...
+</I>&gt;<i> 
+</I>&gt;<i> ...is there any obvious fix for the following problem, seen when using
+</I>&gt;<i> JJack as built for Suse 10.2 (dowloaded from the &quot;packman&quot; respository):
+</I>&gt;<i> 
+</I>&gt;<i> qps personal: jjack.sh de.gulden.application.jjack.clients.Oscillator
+</I>&gt;<i> java virtual machine used: /usr/lib64/jvm/java/bin/java
+</I>&gt;<i> classpath used:
+</I>&gt;<i> /usr/share/java/jjack.jar:/usr/share/java/jjack-clients.jar:/usr/share/java/liquidlnf.jar
+</I>&gt;<i> main class used: JJack
+</I>&gt;<i> flags used:
+</I>&gt;<i> options used: -Djava.library.path=/usr/lib64
+</I>&gt;<i> arguments used: de.gulden.application.jjack.clients.Oscillator
+</I>&gt;<i> natively registering jack client &quot;JJack&quot;
+</I>&gt;<i> JACK tmpdir identified as [/dev/shm]
+</I>&gt;<i> using 2 input ports, 2 output ports
+</I>&gt;<i> #
+</I>&gt;<i> # An unexpected error has been detected by HotSpot Virtual Machine:
+</I>&gt;<i> #
+</I>&gt;<i> #  SIGSEGV (0xb) at pc=0x00002aaaad5913bd, pid=31238, tid=47663924895504
+</I>&gt;<i> #
+</I>&gt;<i> # Java VM: Java HotSpot(TM) 64-Bit Server VM (1.5.0_10-b03 mixed mode)
+</I>&gt;<i> # Problematic frame:
+</I>&gt;<i> # C  [libjjack.so+0x23bd] 
+</I>&gt;<i> Java_de_gulden_framework_jjack_JJackSystem_nativeStart+0x34
+</I>&gt;<i> #
+</I>&gt;<i> # An error report file with more information is saved as hs_err_pid31238.log
+</I>&gt;<i> #
+</I>&gt;<i> # If you would like to submit a bug report, please visit:
+</I>&gt;<i> #   <A HREF="http://java.sun.com/webapps/bugreport/crash.jsp">http://java.sun.com/webapps/bugreport/crash.jsp</A>
+</I>&gt;<i> #
+</I>&gt;<i> /usr/share/java-utils/java-functions: line 117: 31238 Aborted             
+</I>&gt;<i>    $JAVACMD $FLAGS -classpath $CLASSPATH $OPTIONS $MAIN_CLASS &quot;$@&quot;
+</I>&gt;<i> 
+</I>&gt;<i> Thanks,
+</I>&gt;<i> Andrew
+</I>&gt;<i> 
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000059.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+	<LI>Next message: <A HREF="000061.html">[jjack-users] Problems with JJack on Suse 10.2
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#60">[ date ]</a>
+              <a href="thread.html#60">[ thread ]</a>
+              <a href="subject.html#60">[ subject ]</a>
+              <a href="author.html#60">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

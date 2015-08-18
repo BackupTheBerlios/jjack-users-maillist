@@ -1,0 +1,23 @@
+From mail at jensgulden.de  Sun Dec 30 21:34:37 2007
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sun, 30 Dec 2007 21:34:37 +0100
+Subject: [jjack-users] JJack 0.3 released - JACK for Java
+Message-ID: <477800DD.7090901@jensgulden.de>
+
+Hello,
+
+JJack 0.3 has been released: http://jjack.berlios.de/
+
+JJack is a JACK audio driver for the Java Sound API and a framework for the Java programming 
+language. It allows Java applications to use the JACK Audio Connection Kit.
+
+Changes in release 0.3:
+- now works as Java Sound driver for JACK, just add lib/jjack.jar to the classpath
+- includes pre-compiled native libraries for i386/Linux, amd64/Linux and Mac OS
+- ability to auto-load native library from local lib folder on Linux systems
+- several bug-fixes and feature additions
+
+Happy New Year 2008,
+Jens Gulden
+
+

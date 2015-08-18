@@ -1,0 +1,712 @@
+From helgeingvart at gmail.com  Fri Aug 17 18:01:54 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Fri, 17 Aug 2007 18:01:54 +0200
+Subject: [jjack-users] Error
+Message-ID: <e78383b30708170901u6d188cbel6f67ee2e49f9ec04@mail.gmail.com>
+
+Hello!
+
+I'm trying to run the sample program JJackMixerProviderTest with this
+library path
+
+-Djava.library.path=/home/helge/devel/jjack/lib/i386/Linux
+
+where the libjjack.so resides
+
+Exception in thread "main" javax.sound.sampled.LineUnavailableException:
+Audio Device Unavailable
+    at com.sun.media.sound.HeadspaceMixer.nResume(Native Method)
+    at com.sun.media.sound.HeadspaceMixer.implOpen(HeadspaceMixer.java:346)
+    at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:286)
+    at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:323)
+    at com.sun.media.sound.AbstractDataLine.open(AbstractDataLine.java:103)
+    at com.sun.media.sound.MixerSourceLine.open(MixerSourceLine.java:39)
+    at com.petersalomonsen.jjack.javasound.JJackMixerProviderTest.main(
+JJackMixerProviderTest.java:53)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(
+NativeMethodAccessorImpl.java:39)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(
+DelegatingMethodAccessorImpl.java:25)
+    at java.lang.reflect.Method.invoke(Method.java:597)
+    at com.intellij.rt.execution.application.AppMain.main(AppMain.java:90)
+
+It seems like in the example, the infos from
+
+Info[] infos = AudioSystem.getMixerInfo();
+
+do not contain the desired JJack info necessary to initialize. Probably
+something I have to do to get the JJack system registered as a valid
+JavaSound mixer?
+
+Moreover, if the jackd happens not to be running, the jre crashes:
+
+Intel [plughw:0,0]
+Java Sound Audio Engine
+Port Intel [hw:0]
+#
+# An unexpected error has been detected by Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x90584379, pid=4818, tid=3084487568
+#
+# Java VM: Java HotSpot(TM) Server VM (1.6.0-b105 mixed mode)
+# Problematic frame:
+# C  [libjack-0.100.0.so.0+0xb379]  jack_get_sample_rate+0x9
+#
+# An error report file with more information is saved as hs_err_pid4818.log
+#
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+#
+natively registering jack client "JJack"
+
+Regards,
+Helge Fredriksen
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070817/decc6db3/attachment.html>
+
+From contact at petersalomonsen.com  Sat Aug 18 09:07:51 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Sat, 18 Aug 2007 09:07:51 +0200
+Subject: [jjack-users] Error
+In-Reply-To: <e78383b30708170901u6d188cbel6f67ee2e49f9ec04@mail.gmail.com>
+References: <e78383b30708170901u6d188cbel6f67ee2e49f9ec04@mail.gmail.com>
+Message-ID: <e4451f0c0708180007n7c1a50u99d29d9821247961@mail.gmail.com>
+
+Hi,
+
+If you look at de.gulden.framework.jjack.JJackSystem :
+
+        try
+        {
+            // try loading native library from system lib (library path)
+            System.loadLibrary("jjack");
+        } catch(Throwable e)
+        {
+            // Else look in the local lib folder
+            File file = new File("lib/"+System.getProperty("os.arch
+")+"/"+System.getProperty("os.name")+"/libjjack.so");
+            String libJJackFileName = file.getAbsolutePath();
+            System.load(libJJackFileName);
+        }
+
+You see that you really don't have to set any library path.
+
+If you do so (as you've done), you must make sure that it's the correct one
+compiled for your platform. The current cvs only contains a 64 bit binary -
+and if you're using 32 bit you have to build this yourself (but it's as
+simple as running the all target of the ant build script).
+
+cheers,
+
+Peter
+
+On 8/17/07, Helge Fredriksen <helgeingvart at gmail.com> wrote:
+>
+> Hello!
+>
+> I'm trying to run the sample program JJackMixerProviderTest with this
+> library path
+>
+> -Djava.library.path=/home/helge/devel/jjack/lib/i386/Linux
+>
+> where the libjjack.so resides
+>
+> Exception in thread "main" javax.sound.sampled.LineUnavailableException:
+> Audio Device Unavailable
+>     at com.sun.media.sound.HeadspaceMixer.nResume(Native Method)
+>     at com.sun.media.sound.HeadspaceMixer.implOpen(HeadspaceMixer.java
+> :346)
+>     at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:286)
+>     at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:323)
+>     at com.sun.media.sound.AbstractDataLine.open(AbstractDataLine.java:103)
+>
+>     at com.sun.media.sound.MixerSourceLine.open(MixerSourceLine.java:39)
+>     at com.petersalomonsen.jjack.javasound.JJackMixerProviderTest.main(
+> JJackMixerProviderTest.java:53)
+>     at sun.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
+>     at sun.reflect.NativeMethodAccessorImpl.invoke(
+> NativeMethodAccessorImpl.java:39)
+>     at sun.reflect.DelegatingMethodAccessorImpl.invoke(
+> DelegatingMethodAccessorImpl.java:25)
+>     at java.lang.reflect.Method.invoke (Method.java:597)
+>     at com.intellij.rt.execution.application.AppMain.main(AppMain.java:90)
+>
+> It seems like in the example, the infos from
+>
+> Info[] infos = AudioSystem.getMixerInfo();
+>
+> do not contain the desired JJack info necessary to initialize. Probably
+> something I have to do to get the JJack system registered as a valid
+> JavaSound mixer?
+>
+> Moreover, if the jackd happens not to be running, the jre crashes:
+>
+> Intel [plughw:0,0]
+> Java Sound Audio Engine
+> Port Intel [hw:0]
+> #
+> # An unexpected error has been detected by Java Runtime Environment:
+> #
+> #  SIGSEGV (0xb) at pc=0x90584379, pid=4818, tid=3084487568
+> #
+> # Java VM: Java HotSpot(TM) Server VM (1.6.0-b105 mixed mode)
+> # Problematic frame:
+> # C  [libjack-0.100.0.so.0+0xb379]  jack_get_sample_rate+0x9
+> #
+> # An error report file with more information is saved as
+> hs_err_pid4818.log
+> #
+> # If you would like to submit a bug report, please visit:
+> #   http://java.sun.com/webapps/bugreport/crash.jsp
+> #
+> natively registering jack client "JJack"
+>
+> Regards,
+> Helge Fredriksen
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070818/c2fdd7a3/attachment.html>
+
+From helgeingvart at gmail.com  Sat Aug 18 19:19:25 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Sat, 18 Aug 2007 19:19:25 +0200
+Subject: [jjack-users] Error
+In-Reply-To: <e4451f0c0708180007n7c1a50u99d29d9821247961@mail.gmail.com>
+References: <e78383b30708170901u6d188cbel6f67ee2e49f9ec04@mail.gmail.com>
+	<e4451f0c0708180007n7c1a50u99d29d9821247961@mail.gmail.com>
+Message-ID: <e78383b30708181019j76b4f51xf7e68bd0c742b78d@mail.gmail.com>
+
+On 8/18/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
+>
+> Hi,
+>
+> If you look at de.gulden.framework.jjack.JJackSystem :
+>
+>         try
+>         {
+>             // try loading native library from system lib (library path)
+>             System.loadLibrary("jjack");
+>         } catch(Throwable e)
+>         {
+>             // Else look in the local lib folder
+>             File file = new File("lib/"+System.getProperty("os.arch")+"/"+System.getProperty("
+> os.name")+"/libjjack.so");
+>             String libJJackFileName = file.getAbsolutePath();
+>             System.load(libJJackFileName);
+>         }
+>
+
+You see that you really don't have to set any library path.
+
+
+OK, if working dir is set to the  jjack home directory...
+
+
+> If you do so (as you've done), you must make sure that it's the correct
+> one compiled for your platform. The current cvs only contains a 64 bit
+> binary - and if you're using 32 bit you have to build this yourself (but
+> it's as simple as running the all target of the ant build script).
+
+
+I don't think there were any  binary included in the cvs repo.  The ant
+script build.xml contained a target for making this libjjack.so, which I
+built together with the jjack jars. So I think that there shouldn't be any
+problems with the binary.
+
+After a bit more testing, it turns out that the my problem was related to
+how you automatically set up JJackMixerProvider via the setup in
+META-INF/services which were picked up by the JavaSound AudioSystem when
+launched via the jar files, but which my dear IntelliJ system could not
+detect.
+
+Thus, when running it from the IDE, I need to call the JJackMixerProvider
+directly, not via calls to the AudioSystem. then everything works smoothly.
+
+However, I have more questions.
+
+1) When trying to grab from the lines opened, my code just hangs in this
+loop:
+
+        while (true) {
+            lineIn.read(buf, 0, buf.length);
+            lineOut.write(buf, 0, buf.length);
+            noise.write(buf, 0, buf.length);
+        }
+
+I have tried to start the jackd deamon with 44100 samle rate (default beeing
+48000), and forcing short as sample size, with no luck. Also, I have tried
+to use qjackctl to connect JJack input/output to the alsa playback and
+capture also with no luck.
+
+2) I would like to use jjack for mixing other sounds in together with voice
+beeing tranfered from the network. I had expected to see more jjack clients
+popping up when executing
+
+       SourceDataLine noise = (SourceDataLine)mixer.getLine(
+mixer.getSourceLineInfo()[0]);
+        noise.open(format, 512);
+        noise.start();
+
+but this was not the case. When I insert two different sounds into the two
+different SourceDataLines available, where is the mixing taking place? Would
+this mixing be "latency-free" like the rest of the jack system? If it is
+necessary to install more than one jjack client to utilize the real-time
+jack mixing capabilities, is that available in the same process, or do I
+need to lauch several jvm's?
+
+Regards,
+Helge Fredriksen
+
+
+cheers,
+>
+> Peter
+>
+> On 8/17/07, Helge Fredriksen <helgeingvart at gmail.com > wrote:
+>
+> > Hello!
+> >
+> > I'm trying to run the sample program JJackMixerProviderTest with this
+> > library path
+> >
+> > -Djava.library.path=/home/helge/devel/jjack/lib/i386/Linux
+> >
+> > where the libjjack.so resides
+> >
+> > Exception in thread "main" javax.sound.sampled.LineUnavailableException:
+> > Audio Device Unavailable
+> >     at com.sun.media.sound.HeadspaceMixer.nResume(Native Method)
+> >     at com.sun.media.sound.HeadspaceMixer.implOpen(HeadspaceMixer.java
+> > :346)
+> >     at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:286)
+> >     at com.sun.media.sound.AbstractMixer.open(AbstractMixer.java:323)
+> >     at com.sun.media.sound.AbstractDataLine.open(AbstractDataLine.java:103)
+> >
+> >     at com.sun.media.sound.MixerSourceLine.open(MixerSourceLine.java:39)
+> >     at com.petersalomonsen.jjack.javasound.JJackMixerProviderTest.main(
+> > JJackMixerProviderTest.java:53)
+> >     at sun.reflect.NativeMethodAccessorImpl.invoke0 (Native Method)
+> >     at sun.reflect.NativeMethodAccessorImpl.invoke(
+> > NativeMethodAccessorImpl.java:39)
+> >     at sun.reflect.DelegatingMethodAccessorImpl.invoke(
+> > DelegatingMethodAccessorImpl.java:25)
+> >     at java.lang.reflect.Method.invoke (Method.java:597)
+> >     at com.intellij.rt.execution.application.AppMain.main(AppMain.java
+> > :90)
+> >
+> > It seems like in the example, the infos from
+> >
+> > Info[] infos = AudioSystem.getMixerInfo();
+> >
+> > do not contain the desired JJack info necessary to initialize. Probably
+> > something I have to do to get the JJack system registered as a valid
+> > JavaSound mixer?
+> >
+> > Moreover, if the jackd happens not to be running, the jre crashes:
+> >
+> > Intel [plughw:0,0]
+> > Java Sound Audio Engine
+> > Port Intel [hw:0]
+> > #
+> > # An unexpected error has been detected by Java Runtime Environment:
+> > #
+> > #  SIGSEGV (0xb) at pc=0x90584379, pid=4818, tid=3084487568
+> > #
+> > # Java VM: Java HotSpot(TM) Server VM (1.6.0-b105 mixed mode)
+> > # Problematic frame:
+> > # C  [libjack-0.100.0.so.0+0xb379]  jack_get_sample_rate+0x9
+> > #
+> > # An error report file with more information is saved as
+> > hs_err_pid4818.log
+> > #
+> > # If you would like to submit a bug report, please visit:
+> > #   http://java.sun.com/webapps/bugreport/crash.jsp
+> > #
+> > natively registering jack client "JJack"
+> >
+> > Regards,
+> > Helge Fredriksen
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> >
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070818/ef826db8/attachment.html>
+
+From contact at petersalomonsen.com  Sun Aug 19 08:17:09 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Sun, 19 Aug 2007 08:17:09 +0200
+Subject: [jjack-users] Error
+In-Reply-To: <e78383b30708181019j76b4f51xf7e68bd0c742b78d@mail.gmail.com>
+References: <e78383b30708170901u6d188cbel6f67ee2e49f9ec04@mail.gmail.com>
+	<e4451f0c0708180007n7c1a50u99d29d9821247961@mail.gmail.com>
+	<e78383b30708181019j76b4f51xf7e68bd0c742b78d@mail.gmail.com>
+Message-ID: <e4451f0c0708182317h3e48dd0ai7e4ee21fa7befb4f@mail.gmail.com>
+
+On 8/18/07, Helge Fredriksen <helgeingvart at gmail.com> wrote:
+>
+> 1) When trying to grab from the lines opened, my code just hangs in this
+> loop:
+>
+>         while (true) {
+>             lineIn.read(buf, 0, buf.length);
+>             lineOut.write(buf, 0, buf.length);
+>             noise.write(buf, 0, buf.length);
+>         }
+>
+> I have tried to start the jackd deamon with 44100 samle rate (default
+> beeing 48000), and forcing short as sample size, with no luck. Also, I have
+> tried to use qjackctl to connect JJack input/output to the alsa playback and
+> capture also with no luck.
+>
+
+I'm not sure if I understand what you mean  that your code hangs - this is a
+forever loop - and it surely won't stop, but the expected result should be
+that the jjack-clients input is sent to the output. The noise dataline, what
+does this do?
+
+2) I would like to use jjack for mixing other sounds in together with voice
+> beeing tranfered from the network. I had expected to see more jjack clients
+> popping up when executing
+>
+>        SourceDataLine noise = (SourceDataLine)mixer.getLine(
+> mixer.getSourceLineInfo()[0]);
+>         noise.open(format, 512);
+>         noise.start();
+>
+> but this was not the case. When I insert two different sounds into the two
+> different SourceDataLines available, where is the mixing taking place? Would
+> this mixing be "latency-free" like the rest of the jack system? If it is
+> necessary to install more than one jjack client to utilize the real-time
+> jack mixing capabilities, is that available in the same process, or do I
+> need to lauch several jvm's?
+>
+
+ You can open more than two ports using the ports environment variable:
+
+http://jjack.berlios.de/jjack.html#mozTocId628724
+
+If I understand you correct, you want to use the jack patching mechanism for
+connecting signals (mixing)? Otherwise I would recommend that do the mixing
+internally in your application (before writing to lineOut).
+
+regards,
+
+Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070819/79ed1fbd/attachment.html>
+
+From helgeingvart at gmail.com  Sun Aug 19 22:36:19 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Sun, 19 Aug 2007 22:36:19 +0200
+Subject: [jjack-users] Error
+In-Reply-To: <e4451f0c0708182317h3e48dd0ai7e4ee21fa7befb4f@mail.gmail.com>
+References: <e78383b30708170901u6d188cbel6f67ee2e49f9ec04@mail.gmail.com>
+	<e4451f0c0708180007n7c1a50u99d29d9821247961@mail.gmail.com>
+	<e78383b30708181019j76b4f51xf7e68bd0c742b78d@mail.gmail.com>
+	<e4451f0c0708182317h3e48dd0ai7e4ee21fa7befb4f@mail.gmail.com>
+Message-ID: <e78383b30708191336m423ff9act139903014033947b@mail.gmail.com>
+
+> I'm not sure if I understand what you mean  that your code hangs - this is
+> a forever loop - and it surely won't stop, but the expected result should be
+> that the jjack-clients input is sent to the output. The noise dataline, what
+> does this do?
+>
+
+Bad example, anyway the execution seems to be hanging on
+
+lineIn.read(buf, 0, buf.length);
+
+and also
+
+lineOut.write(buf, 0, buf.length);
+
+Thus, I'm not able to get any data through on my lines, even if I have a
+valid connection towards xmms producing sound for me.
+
+Helge.
+
+
+
+
+
+2) I would like to use jjack for mixing other sounds in together with voice
+> > beeing tranfered from the network. I had expected to see more jjack clients
+> > popping up when executing
+> >
+> >        SourceDataLine noise = (SourceDataLine)mixer.getLine(
+> > mixer.getSourceLineInfo()[0]);
+> >         noise.open(format, 512);
+> >         noise.start();
+> >
+> > but this was not the case. When I insert two different sounds into the
+> > two different SourceDataLines available, where is the mixing taking place?
+> > Would this mixing be "latency-free" like the rest of the jack system? If it
+> > is necessary to install more than one jjack client to utilize the real-time
+> > jack mixing capabilities, is that available in the same process, or do I
+> > need to lauch several jvm's?
+> >
+>
+>  You can open more than two ports using the ports environment variable:
+>
+> http://jjack.berlios.de/jjack.html#mozTocId628724
+>
+> If I understand you correct, you want to use the jack patching mechanism
+> for connecting signals (mixing)? Otherwise I would recommend that do the
+> mixing internally in your application (before writing to lineOut).
+>
+> regards,
+>
+> Peter
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070819/897ec3bb/attachment.html>
+
+From helgeingvart at gmail.com  Wed Aug 29 17:18:20 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Wed, 29 Aug 2007 17:18:20 +0200
+Subject: [jjack-users] JJack target line's not working
+Message-ID: <e78383b30708290818n1f7f0af2j621645a1a52a4768@mail.gmail.com>
+
+Hello!
+
+I've been testing JJack with a modified JJackMixerProviderTest class:
+
+        Info jackMixerInfo = null;
+
+        JJackMixerProvider provider = new JJackMixerProvider();
+        Info[] infos = provider.getMixerInfo();
+
+        System.out.println("length: " + infos.length);
+        for (int i = 0; i < infos.length; i++) {
+            Info info = infos[i];
+            if (info.getName().equals("JJack")) {
+                jackMixerInfo = info;
+            }
+        }
+        AudioFormat format = new AudioFormat(JJackSystem.getSampleRate(),
+16, 1, true, false);
+
+        Mixer mixer = provider.getMixer(jackMixerInfo);
+
+        SourceDataLine lineOut = (SourceDataLine) mixer.getLine(
+mixer.getSourceLineInfo()[0]);
+        if (lineOut instanceof SourceJJackLine) {
+            System.out.println("yes");
+        }
+        lineOut.open(format);
+        lineOut.start();
+
+        TargetDataLine lineIn = (TargetDataLine) mixer.getLine(
+mixer.getTargetLineInfo()[0]);
+        lineIn.open(format);
+        lineIn.start();
+
+        byte[] buf = new byte[256];
+        while (true) {
+            lineIn.read(buf, 0, buf.length);
+            lineOut.write(buf, 0, buf.length);
+        }
+
+I have the following problem:
+
+lineIn.read() seems to do it's job, grabbing nicely those 256 frames.
+However, nothing appear to be written to lineOut. Now, debugging a bit
+closer, I end up finding that
+
+    boolean canReadFloat(int length) {
+        return fifo.availableRead() >= length*2;
+    }
+
+in SourceJJackLine always returns false, and thus this code
+
+            if (line.canReadFloat(length)) {
+                float[] lineBuffer = line.readFloat(length);
+                for (int n = 0; n < length; n++) {
+                    System.out.println("line output: " + (n % channels) +
+channelIndex);
+                    System.out.println("channels: " + channels);
+
+                    e.getOutputs()[(n % channels) + channelIndex].put((n /
+channels), lineBuffer[n]);
+                }
+            }
+
+in JJackMixer's process routine never get's executed.
+
+Why the length*2 in canReadFloat()?
+
+Regards,
+Helge Fredriksen
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070829/d9fc1fec/attachment.html>
+
+From helgeingvart at gmail.com  Wed Aug 29 18:00:29 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Wed, 29 Aug 2007 18:00:29 +0200
+Subject: [jjack-users] Fwd: JJack target line's not working
+In-Reply-To: <e78383b30708290818n1f7f0af2j621645a1a52a4768@mail.gmail.com>
+References: <e78383b30708290818n1f7f0af2j621645a1a52a4768@mail.gmail.com>
+Message-ID: <e78383b30708290900l1f2eb008kff80764f79890732@mail.gmail.com>
+
+Actually, after investigating a bit further, I get these stacks when I do a
+
+try() {
+} catch()
+
+around the process() block  in JJackMixer which is called by native code:
+
+java.lang.ArrayIndexOutOfBoundsException: 512
+    at com.petersalomonsen.jjack.javasound.ByteIntConverter.readInt(
+ByteIntConverter.java:67)
+    at com.petersalomonsen.jjack.javasound.SourceJJackLine.readFloat(
+SourceJJackLine.java:53)
+    at com.petersalomonsen.jjack.javasound.JJackMixer.process(
+JJackMixer.java:106)
+    at de.gulden.framework.jjack.JJackSystem.process(JJackSystem.java:347)
+    at de.gulden.framework.jjack.JJackSystem.processBytes(JJackSystem.java
+:448)
+
+Helge
+
+---------- Forwarded message ----------
+From: Helge Fredriksen <helgeingvart at gmail.com>
+Date: Aug 29, 2007 5:18 PM
+Subject: JJack target line's not working
+To: jjack-users at lists.berlios.de
+
+Hello!
+
+I've been testing JJack with a modified JJackMixerProviderTest class:
+
+        Info jackMixerInfo = null;
+
+        JJackMixerProvider provider = new JJackMixerProvider();
+        Info[] infos = provider.getMixerInfo();
+
+        System.out.println("length: " + infos.length);
+        for (int i = 0; i < infos.length; i++) {
+            Info info = infos[i];
+            if (info.getName().equals("JJack")) {
+                jackMixerInfo = info;
+            }
+        }
+        AudioFormat format = new AudioFormat(JJackSystem.getSampleRate(),
+16, 1, true, false);
+
+        Mixer mixer = provider.getMixer(jackMixerInfo);
+
+        SourceDataLine lineOut = (SourceDataLine) mixer.getLine(
+mixer.getSourceLineInfo()[0]);
+        if (lineOut instanceof SourceJJackLine) {
+            System.out.println("yes");
+        }
+        lineOut.open(format);
+        lineOut.start();
+
+        TargetDataLine lineIn = (TargetDataLine) mixer.getLine(
+mixer.getTargetLineInfo()[0]);
+        lineIn.open(format);
+        lineIn.start();
+
+        byte[] buf = new byte[256];
+        while (true) {
+            lineIn.read(buf, 0, buf.length);
+            lineOut.write(buf, 0, buf.length);
+        }
+
+I have the following problem:
+
+lineIn.read() seems to do it's job, grabbing nicely those 256 frames.
+However, nothing appear to be written to lineOut. Now, debugging a bit
+closer, I end up finding that
+
+    boolean canReadFloat(int length) {
+        return fifo.availableRead() >= length*2;
+    }
+
+in SourceJJackLine always returns false, and thus this code
+
+            if (line.canReadFloat(length)) {
+                float[] lineBuffer = line.readFloat(length);
+                for (int n = 0; n < length; n++) {
+                    System.out.println("line output: " + (n % channels) +
+channelIndex);
+                    System.out.println ("channels: " + channels);
+
+                    e.getOutputs()[(n % channels) + channelIndex].put((n /
+channels), lineBuffer[n]);
+                }
+            }
+
+in JJackMixer's process routine never get's executed.
+
+Why the length*2 in canReadFloat()?
+
+Regards,
+Helge Fredriksen
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070829/7a2a7733/attachment.html>
+
+From helgeingvart at gmail.com  Wed Aug 29 20:09:35 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Wed, 29 Aug 2007 20:09:35 +0200
+Subject: [jjack-users] Fwd: JJack target line's not working
+In-Reply-To: <e78383b30708290900l1f2eb008kff80764f79890732@mail.gmail.com>
+References: <e78383b30708290818n1f7f0af2j621645a1a52a4768@mail.gmail.com>
+	<e78383b30708290900l1f2eb008kff80764f79890732@mail.gmail.com>
+Message-ID: <e78383b30708291109t4497e73dqe964f4157de4a40b@mail.gmail.com>
+
+Sorry, I messed it up... Some test code hanging around in there which
+triggered it. It's working perfectly now...
+
+Thanks for a nice API, anyway!
+
+Regards,
+Helge F.
+
+---------- Forwarded message ----------
+From: Helge Fredriksen <helgeingvart at gmail.com>
+Date: Aug 29, 2007 6:00 PM
+Subject: Fwd: JJack target line's not working
+To: jjack-users at lists.berlios.de
+
+Actually, after investigating a bit further, I get these stacks when I do a
+
+try() {
+} catch()
+...
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070829/7d1ead1f/attachment.html>
+

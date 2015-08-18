@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Error
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Error&In-Reply-To=%3Ce4451f0c0708182317h3e48dd0ai7e4ee21fa7befb4f%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000071.html">
+   <LINK REL="Next"  HREF="000073.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Error</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Error&In-Reply-To=%3Ce4451f0c0708182317h3e48dd0ai7e4ee21fa7befb4f%40mail.gmail.com%3E"
+       TITLE="[jjack-users] Error">contact at petersalomonsen.com
+       </A><BR>
+    <I>Sun Aug 19 08:17:09 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000071.html">[jjack-users] Error
+</A></li>
+        <LI>Next message: <A HREF="000073.html">[jjack-users] Error
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#72">[ date ]</a>
+              <a href="thread.html#72">[ thread ]</a>
+              <a href="subject.html#72">[ subject ]</a>
+              <a href="author.html#72">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On 8/18/07, Helge Fredriksen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">helgeingvart at gmail.com</A>&gt; wrote:
+&gt;<i>
+</I>&gt;<i> 1) When trying to grab from the lines opened, my code just hangs in this
+</I>&gt;<i> loop:
+</I>&gt;<i>
+</I>&gt;<i>         while (true) {
+</I>&gt;<i>             lineIn.read(buf, 0, buf.length);
+</I>&gt;<i>             lineOut.write(buf, 0, buf.length);
+</I>&gt;<i>             noise.write(buf, 0, buf.length);
+</I>&gt;<i>         }
+</I>&gt;<i>
+</I>&gt;<i> I have tried to start the jackd deamon with 44100 samle rate (default
+</I>&gt;<i> beeing 48000), and forcing short as sample size, with no luck. Also, I have
+</I>&gt;<i> tried to use qjackctl to connect JJack input/output to the alsa playback and
+</I>&gt;<i> capture also with no luck.
+</I>&gt;<i>
+</I>
+I'm not sure if I understand what you mean  that your code hangs - this is a
+forever loop - and it surely won't stop, but the expected result should be
+that the jjack-clients input is sent to the output. The noise dataline, what
+does this do?
+
+2) I would like to use jjack for mixing other sounds in together with voice
+&gt;<i> beeing tranfered from the network. I had expected to see more jjack clients
+</I>&gt;<i> popping up when executing
+</I>&gt;<i>
+</I>&gt;<i>        SourceDataLine noise = (SourceDataLine)mixer.getLine(
+</I>&gt;<i> mixer.getSourceLineInfo()[0]);
+</I>&gt;<i>         noise.open(format, 512);
+</I>&gt;<i>         noise.start();
+</I>&gt;<i>
+</I>&gt;<i> but this was not the case. When I insert two different sounds into the two
+</I>&gt;<i> different SourceDataLines available, where is the mixing taking place? Would
+</I>&gt;<i> this mixing be &quot;latency-free&quot; like the rest of the jack system? If it is
+</I>&gt;<i> necessary to install more than one jjack client to utilize the real-time
+</I>&gt;<i> jack mixing capabilities, is that available in the same process, or do I
+</I>&gt;<i> need to lauch several jvm's?
+</I>&gt;<i>
+</I>
+ You can open more than two ports using the ports environment variable:
+
+<A HREF="http://jjack.berlios.de/jjack.html#mozTocId628724">http://jjack.berlios.de/jjack.html#mozTocId628724</A>
+
+If I understand you correct, you want to use the jack patching mechanism for
+connecting signals (mixing)? Otherwise I would recommend that do the mixing
+internally in your application (before writing to lineOut).
+
+regards,
+
+Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20070819/79ed1fbd/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20070819/79ed1fbd/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000071.html">[jjack-users] Error
+</A></li>
+	<LI>Next message: <A HREF="000073.html">[jjack-users] Error
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#72">[ date ]</a>
+              <a href="thread.html#72">[ thread ]</a>
+              <a href="subject.html#72">[ subject ]</a>
+              <a href="author.html#72">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

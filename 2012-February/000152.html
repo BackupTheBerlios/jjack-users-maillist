@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack, Jack2 and Processing
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2012-February/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%2C%20Jack2%20and%20Processing&In-Reply-To=%3CCAHvRSoc8FRCGcKscnNyo9MPP6w_5PA%2BhsjgTN68FCQfU6SWWXA%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000151.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack, Jack2 and Processing</H1>
+    <B>Neil C Smith</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%2C%20Jack2%20and%20Processing&In-Reply-To=%3CCAHvRSoc8FRCGcKscnNyo9MPP6w_5PA%2BhsjgTN68FCQfU6SWWXA%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JJack, Jack2 and Processing">neil at neilcsmith.net
+       </A><BR>
+    <I>Mon Feb 27 16:04:17 CET 2012</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000151.html">[jjack-users] JJack, Jack2 and Processing
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#152">[ date ]</a>
+              <a href="thread.html#152">[ thread ]</a>
+              <a href="subject.html#152">[ subject ]</a>
+              <a href="author.html#152">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+I had this problem ages ago with JJack and Jack2 (then jackdmp) on
+Ubuntu 8.04.  I had to create a symlink from libjack-0.100.0.so.0 to
+one of the existing library files.  There is a problem with the
+library that the JJack binaries are built against.
+
+You could also check out the alternative JAudioLibs Jack binding at
+<A HREF="http://code.google.com/p/java-audio-utils/">http://code.google.com/p/java-audio-utils/</A> which should work without
+issue, and is fully cross-platform.
+
+Incidentally, are you using Jack directly or through the Beads
+Processing library?  Beads is currently switching to JAudioLibs -
+<A HREF="https://groups.google.com/d/topic/beadsproject/oWEVUNHSztE/discussion">https://groups.google.com/d/topic/beadsproject/oWEVUNHSztE/discussion</A>
+
+Best wishes,
+
+Neil
+
+
+On 27 February 2012 11:17,  &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">shanneton at free.fr</A>&gt; wrote:
+&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i> Hello,
+</I>&gt;<i> I try to make Processing work with Jack and consequently I chose JJack to do the
+</I>&gt;<i> job.
+</I>&gt;<i> However, after putting libjjack.so in usr/lib and jjack.jar in the lib folder of
+</I>&gt;<i> processing I get the following message in the console of processing :
+</I>&gt;<i> java.lang.UnsatisfiedLinkError: /usr/lib/libjjack.so: libjack-0.100.0.so.0: Ne
+</I>&gt;<i> peut ouvrir le fichier d'objet partag&#233;: Aucun fichier ou dossier de ce type
+</I>&gt;<i> (in french)
+</I>&gt;<i> It says that the file libjack-0.100.0.so.0 does not exist.
+</I>&gt;<i>
+</I>&gt;<i> in /usr/lib I have :
+</I>&gt;<i> /usr/lib/libjack.so
+</I>&gt;<i> /usr/lib/libjack.so.0
+</I>&gt;<i> /usr/lib/libjack.so.0.0.28
+</I>&gt;<i>
+</I>&gt;<i> I have Jack2 and not Jack on my ubuntu 10.04 system.
+</I>&gt;<i> Thank you for your ideas and help !
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+
+-- 
+Neil C Smith
+Artist : Technologist : Adviser
+<A HREF="http://neilcsmith.net">http://neilcsmith.net</A>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000151.html">[jjack-users] JJack, Jack2 and Processing
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#152">[ date ]</a>
+              <a href="thread.html#152">[ thread ]</a>
+              <a href="subject.html#152">[ subject ]</a>
+              <a href="author.html#152">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

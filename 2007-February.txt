@@ -1,0 +1,727 @@
+From p.j.leonard at bath.ac.uk  Thu Feb  8 12:50:44 2007
+From: p.j.leonard at bath.ac.uk (Paul)
+Date: Thu, 8 Feb 2007 11:50:44 +0000
+Subject: [jjack-users] problems with Java 1.6
+Message-ID: <200702081150.44804.p.j.leonard@bath.ac.uk>
+
+Hi,
+
+ I am trying to use jack with java 1.6
+
+ The JVM crashes in jack_activate (called via the native code and JNI).
+
+ It is OK with java 1.5
+
+ Does any one out there have any clues ?
+
+cheers Paul.
+
+
+
+From mail at jensgulden.de  Sun Feb 11 20:47:53 2007
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sun, 11 Feb 2007 20:47:53 +0100
+Subject: [jjack-users] problems with Java 1.6
+In-Reply-To: <200702081150.44804.p.j.leonard@bath.ac.uk>
+References: <200702081150.44804.p.j.leonard@bath.ac.uk>
+Message-ID: <45CF72E9.6050404@jensgulden.de>
+
+Hello Paul,
+
+thanks for the report. On 2 out of 3 test configurations I also have discovered problems with 
+jdk1.6, while jdk1.5 works fine.
+
+1) On a 2.6.15.5-preempt system with libjack-0.80.0 I get a full crash like this:
+
+# An unexpected error has been detected by Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0xb52068c0, pid=6642, tid=3084819376
+#
+# Java VM: Java HotSpot(TM) Client VM (1.6.0-b105 mixed mode, sharing)
+# Problematic frame:
+# C  [libjack-0.80.0.so.0+0x58c0]  jack_activate+0x20
+
+2) On an old 2.4.24-1-k7 system with libjack-0.80.0.so I simply get a "segmentation fault", again 
+1.5 works fine there.
+
+3) However, on a 2.6.15.2-preempt system with libjack-0.100.0.so (Musix 0.39), I can run both the 
+JJack example clients and Frinika fine under jdk1.5 as weel as jdk1.6.
+
+So maybe there's a correlation with the version of libjack?
+What version of libjack have you installed, Paul? (please take a look at the filenames "libjack-..." 
+in /usr/lib or /usr/local/lib)
+
+best
+Jens
+
+
+Paul schrieb:
+> Hi,
+> 
+>  I am trying to use jack with java 1.6
+> 
+>  The JVM crashes in jack_activate (called via the native code and JNI).
+> 
+>  It is OK with java 1.5
+> 
+>  Does any one out there have any clues ?
+> 
+> cheers Paul.
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From eespjl at bath.ac.uk  Sun Feb 11 21:08:28 2007
+From: eespjl at bath.ac.uk (eespjl at bath.ac.uk)
+Date: Sun, 11 Feb 2007 20:08:28 +0000
+Subject: [jjack-users] problems with Java 1.6
+In-Reply-To: <45CF72E9.6050404@jensgulden.de>
+References: <200702081150.44804.p.j.leonard@bath.ac.uk>
+	<45CF72E9.6050404@jensgulden.de>
+Message-ID: <20070211200828.a3wnyz634ssc4sw4@webmail.bath.ac.uk>
+
+Hi Jens,
+
+  Found the problem on my system after inserting many printf statement 
+into libjack. The C stack size is too small. You can set the size using 
+the JVM parameter.
+
+java -Xss50m
+
+  This cures the problem for me.
+
+  Peter uses 64bit and has no problems even without this. Maybe 
+different jacks have different requirements and JVM different defaults.
+
+  BTW I can now get round trip latency of 130 frames  using the real 
+time jack and Java :-)
+
+  This is a PREMPTIVE  2.6.16 i386  with   jackd 0.102.20  running as root.
+
+  We are also looking at jackdmp for windows. Anyone had any luck with 
+this and jjack ?
+
+cheers Paul.
+
+
+Quoting Jens Gulden <mail at jensgulden.de>:
+
+> Hello Paul,
+>
+> thanks for the report. On 2 out of 3 test configurations I also have 
+> discovered problems with
+> jdk1.6, while jdk1.5 works fine.
+>
+> 1) On a 2.6.15.5-preempt system with libjack-0.80.0 I get a full 
+> crash like this:
+>
+> # An unexpected error has been detected by Java Runtime Environment:
+> #
+> #  SIGSEGV (0xb) at pc=0xb52068c0, pid=6642, tid=3084819376
+> #
+> # Java VM: Java HotSpot(TM) Client VM (1.6.0-b105 mixed mode, sharing)
+> # Problematic frame:
+> # C  [libjack-0.80.0.so.0+0x58c0]  jack_activate+0x20
+>
+> 2) On an old 2.4.24-1-k7 system with libjack-0.80.0.so I simply get a 
+> "segmentation fault", again
+> 1.5 works fine there.
+>
+> 3) However, on a 2.6.15.2-preempt system with libjack-0.100.0.so 
+> (Musix 0.39), I can run both the
+> JJack example clients and Frinika fine under jdk1.5 as weel as jdk1.6.
+>
+> So maybe there's a correlation with the version of libjack?
+> What version of libjack have you installed, Paul? (please take a look 
+> at the filenames "libjack-..."
+> in /usr/lib or /usr/local/lib)
+>
+> best
+> Jens
+>
+>
+> Paul schrieb:
+>> Hi,
+>>
+>>  I am trying to use jack with java 1.6
+>>
+>>  The JVM crashes in jack_activate (called via the native code and JNI).
+>>
+>>  It is OK with java 1.5
+>>
+>>  Does any one out there have any clues ?
+>>
+>> cheers Paul.
+>>
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+
+
+
+
+
+From mail at jensgulden.de  Thu Feb 15 16:14:10 2007
+From: mail at jensgulden.de (Jens Gulden)
+Date: Thu, 15 Feb 2007 16:14:10 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+Message-ID: <45D478C2.9090401@jensgulden.de>
+
+Hello,
+
+several people have reported big differences in latency between using JavaSound and JJack. JavaSound 
+seems to regularly cause latency of about 200ms.
+
+Is there an easy way to measure the latency of JavaSound (some piece of Java code + "latency 
+measurig tool", or something)? How would a small test setup look like?
+I have never used JavaSound for audio before, so I'm very thankful for hints.
+
+What other fundamental differences between JavaSound and JJack are there?
+
+(I'm currently writing a paper about JJack for the Linux Audio Conference LAC '07. The paper is 
+already accepted as a contribution to the conference, and now I want to improve it by adding 
+benchmarks comparing JavaSound and JJack. I'll make a post to this list when the paper is available.)
+
+Many thanks in advance,
+Jens
+
+
+From contact at petersalomonsen.com  Thu Feb 15 17:53:34 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Thu, 15 Feb 2007 17:53:34 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+In-Reply-To: <45D478C2.9090401@jensgulden.de>
+References: <45D478C2.9090401@jensgulden.de>
+Message-ID: <200702151753.34634.contact@petersalomonsen.com>
+
+Hi,
+
+On Thursday 15 February 2007 16:14, Jens Gulden wrote:
+> Hello,o
+>
+> several people have reported big differences in latency between using
+> JavaSound and JJack. JavaSound seems to regularly cause latency of about
+> 200ms.
+
+This is partly correct. It depends on what driver you're using. Javasound can 
+either use it's own java sound engine- which adds lot's of latency. On some 
+platforms and VM's this sound engine is the only option.
+
+On Linux or Windows Javasound is able to go directly to ALSA or WDM - meaning 
+that you obtain the same latency as native stuff. Using ALSA it's no problem 
+to get a latency as low as 5 ms, just using javasound. With WDM on windows it 
+depends on the driver , if it's a KERNEL-STREAMING driver you can obtain very 
+low latencies. Else windows os will add it's 30 ms Kernel mixer latency.
+
+The only problem with low latencies in javasound is realtime priority. Since 
+you're not able to schedule realtime events for writing to the audio device, 
+your audio might be unstable on low latencies.
+
+> Is there an easy way to measure the latency of JavaSound (some piece of
+> Java code + "latency measurig tool", or something)? How would a small test
+> setup look like? I have never used JavaSound for audio before, so I'm very
+> thankful for hints.
+
+We have a test benchmark program we used for this in 
+com.frinika.audio.benchmark.RecordInputRoundtripLatencyTest - that sends a 
+signal out and records it back and measures the delay... Might maybe be a bit 
+tricky to set up. 
+
+> What other fundamental differences between JavaSound and JJack are there?
+
+Basically the API is very different. E.g. JJack reflects the jack api which 
+float based, but javasound lines are pcm byte oriented.
+
+Another major is that javasound doesn't support realtime scheduling, while 
+jjack supports this through the jack realtime feature.
+
+Peter
+
+
+From ptitjes at beuz.org  Thu Feb 15 20:25:52 2007
+From: ptitjes at beuz.org (Ptitjes)
+Date: Thu, 15 Feb 2007 20:25:52 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+In-Reply-To: <45D478C2.9090401@jensgulden.de>
+References: <45D478C2.9090401@jensgulden.de>
+Message-ID: <45D4B3C0.4070800@beuz.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello,
+
+Jens Gulden a ?crit :
+> Hello,
+> 
+> several people have reported big differences in latency between using JavaSound and JJack. JavaSound 
+> seems to regularly cause latency of about 200ms.
+
+I can report better performance with JavaSound using Direct Device
+driver (which directly hold on ALSA) than with JJack (which adds the
+extra layer of Jack) either for capture or playback. You can go down to
+an overall latency (input to output) of 2 or 3 ms.
+
+But, as told Peter, the real advantage of JJack is that it use the
+thread priority of the real-time process thread of Jack.
+
+In Java SE, there is no mean to get real-time priority for a user
+thread. But if you use JNI, you can switch the pthread priority of your
+Java thread.
+
+> What other fundamental differences between JavaSound and JJack are there?
+
+Jack inherent difference is that you can connect any Jack client as you
+wish, whereas once an application holds the ALSA device no other app can
+push sound to it.
+
+Also, as said Peter, Jack client only matters samples as float, so you
+don't have to bother with dithering and al, which is very pratical as a
+developer.
+
+Apart from that, JJack adds lots of stuff above Jack, that i find
+displaced; a channel API; a GUI framework... All those stuff should be
+moved in another library!
+
+> (I'm currently writing a paper about JJack for the Linux Audio Conference LAC '07. The paper is 
+> already accepted as a contribution to the conference, and now I want to improve it by adding 
+> benchmarks comparing JavaSound and JJack. I'll make a post to this list when the paper is available.)
+
+That is great. Maybe audio with Java could be better considered!
+You've got all my support! :)
+++didier
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFF1LPAevl7X0o02SQRAn9WAKCLhYMYoscaCd/9WIikfDaSIxOX8wCfZeWB
+GqNz3SNoG6ehpz6YCLoA8p0=
+=FahX
+-----END PGP SIGNATURE-----
+
+
+
+From helgeingvart at gmail.com  Thu Feb 15 20:57:00 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Thu, 15 Feb 2007 20:57:00 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+In-Reply-To: <45D4B3C0.4070800@beuz.org>
+References: <45D478C2.9090401@jensgulden.de> <45D4B3C0.4070800@beuz.org>
+Message-ID: <e78383b30702151157o3b17d921l618d7308683ea87f@mail.gmail.com>
+
+> I can report better performance with JavaSound using Direct Device
+> driver (which directly hold on ALSA) than with JJack (which adds the
+> extra layer of Jack) either for capture or playback. You can go down to
+> an overall latency (input to output) of 2 or 3 ms.
+
+OK, upon reporting the latency experience with JavaSound, I was mostly
+referring to the Windows platform which we experienced great
+improvement with when using a JNI driver for the sound recording part.
+Sound playback worked OK with standard JavaSound.
+
+> Jack inherent difference is that you can connect any Jack client as you
+> wish, whereas once an application holds the ALSA device no other app can
+> push sound to it.
+
+Yes, this is exactly what frustrates me right now. We are trying to
+write a sound recording device using JavaSound on Linux, but capturing
+sound is not trivial since we experience spurious blocking. We had
+hoped that ALSA had matured with software mixing so that several
+devices could access the device, but this is not the case. It seems
+that we cannot use a standard Ubuntu/Suse desktop for our app, since
+various gstreamer stuff reject us from accessing the sound hardware.
+
+If anyone has some suggestions on how to best resolve this problem, we
+would greatly appreciate it! I have tried using lsof | grep alsa to
+get an overview of all processes using alsa, but this seems not to
+give me the whole story.
+
+> Also, as said Peter, Jack client only matters samples as float, so you
+> don't have to bother with dithering and al, which is very pratical as a
+> developer.
+
+When we occationaly get access to the sound device, we do hear clicks
+and some sort of jitters when capturing sound.
+
+Best regards,
+Helge Fredriksen
+
+
+From ptitjes at beuz.org  Thu Feb 15 23:14:10 2007
+From: ptitjes at beuz.org (Ptitjes)
+Date: Thu, 15 Feb 2007 23:14:10 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+In-Reply-To: <e78383b30702151157o3b17d921l618d7308683ea87f@mail.gmail.com>
+References: <45D478C2.9090401@jensgulden.de> <45D4B3C0.4070800@beuz.org>
+	<e78383b30702151157o3b17d921l618d7308683ea87f@mail.gmail.com>
+Message-ID: <45D4DB32.9080407@beuz.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Helge,
+
+> Yes, this is exactly what frustrates me right now. We are trying to
+> write a sound recording device using JavaSound on Linux, but capturing
+> sound is not trivial since we experience spurious blocking. We had
+> hoped that ALSA had matured with software mixing so that several
+> devices could access the device, but this is not the case. It seems
+> that we cannot use a standard Ubuntu/Suse desktop for our app, since
+> various gstreamer stuff reject us from accessing the sound hardware.
+> 
+> If anyone has some suggestions on how to best resolve this problem, we
+> would greatly appreciate it! I have tried using lsof | grep alsa to
+> get an overview of all processes using alsa, but this seems not to
+> give me the whole story.
+
+Here is how I understand the things working with Gnome (not sure exactly
+but... my 2 cents).
+
+Gnome uses the gstreamer framework. This one provides a complete
+pipeline for processing/rendering multimedia formats (audio/video...).
+Mixing is done among gstreamer-based apps. The final data is sent to an
+output (which can be one of ALSA playback port, esd sound server, ...)
+
+So if your application is not for pro-audio (where you can assume
+presence of jack - in fact it seems jack is closed to pro audio for
+now), then you should stick to a framework as gstreamer (which can send
+audio to most sound servers - and even jack). Else you can make a set of
+plugins for your app to connect to ALSA and all the existing sound
+servers (esd, arts, pulse, jack...)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFF1Nsyevl7X0o02SQRAiOHAJ4mJyYPZU/qejnKYpAzaVynnssxwgCfWkLH
+tqeDueb+vfy8NFnL60BVUu4=
+=ADNU
+-----END PGP SIGNATURE-----
+
+
+
+From helgeingvart at gmail.com  Fri Feb 16 09:11:53 2007
+From: helgeingvart at gmail.com (Helge Fredriksen)
+Date: Fri, 16 Feb 2007 09:11:53 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+In-Reply-To: <45D4DB32.9080407@beuz.org>
+References: <45D478C2.9090401@jensgulden.de> <45D4B3C0.4070800@beuz.org>
+	<e78383b30702151157o3b17d921l618d7308683ea87f@mail.gmail.com>
+	<45D4DB32.9080407@beuz.org>
+Message-ID: <e78383b30702160011l7223ee6fj23bb38b4c5b418f5@mail.gmail.com>
+
+> Gnome uses the gstreamer framework. This one provides a complete
+> pipeline for processing/rendering multimedia formats (audio/video...).
+> Mixing is done among gstreamer-based apps. The final data is sent to an
+> output (which can be one of ALSA playback port, esd sound server, ...)
+
+We already thought about that. However, we would like to be cross
+platform compatible on sound, so that one can use the same API for
+programming both on linux and on Windows. Nice if there were a SPI
+implementation using gstreamer, but it seems like there exist no such
+thing.
+
+Also, an alternative if one stick to Linux only that might work would
+be to lauch jackd early in the boot sequence (before gnome) so that
+jackd got the infamous lock on ALSA. Thus I might get the guaranteed
+access as I want. Any opinion on this?
+
+
+> plugins for your app to connect to ALSA and all the existing sound
+> servers (esd, arts, pulse, jack...)
+
+I were hoping that the existing plugins such as dmix and dsnoop would
+help me out here, but I've seen other hints on the net that you cannot
+configure JavaSound to use a soft device (as defined in .asoundrc) to
+use as main source of sound, or how? I've understood it so that
+JavaSound use the hardware "directly" through ALSA.
+
+I came across this http://gentoo-wiki.com/HOWTO_ALSA_sound_mixer_aka_dmix#jack
+Any opinion about what is going on here?
+
+Regards,
+Helge F.
+
+
+From mail at jensgulden.de  Sat Feb 24 03:54:24 2007
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sat, 24 Feb 2007 03:54:24 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+In-Reply-To: <45D478C2.9090401@jensgulden.de>
+References: <45D478C2.9090401@jensgulden.de>
+Message-ID: <45DFA8E0.4020201@jensgulden.de>
+
+Hello,
+
+Peter Salomonsen wrote:
+ > We have a test benchmark program we used for this in 
+com.frinika.audio.benchmark.RecordInputRoundtripLatencyTest
+
+Thanks again for the hint. I used this piece of code as an entry point for teaching me how to deploy 
+JavaSound. Then I made my own benchmark tool, because I thought one might get more accurate results 
+if 2 machines are used for measuring latency: one for generating the audio signal, and one for 
+measuring the delay between issuing that request and the appearance of the audio signal. (The 
+disadvantage of this apprach is that you necessarily add more latency through the 
+recording/measuring machine, but that's ok as long as your aim is comparing different setups and not 
+getting absolute values.)
+
+General question: Is my approach valid? More details below.
+
+The two most surprising results are:
+
+1) there's a dramatic improve of JavaSound both on Linux and Windows since jdk 1.5 (the 
+horror-stories on 200ms latency have obviously been true in times of jdk1.4, but it has improved a lot)
+
+2) JavaSound seems to be more liable to different hardware and system-configurations: JACK/JJack 
+behaves more stable with respect to providing equal latency for different underlying hardware, while 
+JavaSound sometimes succeeds in achieving very low latency with the tested onboard-audio-hardware 
+(Intel 82801), but falls behind the use of JJack when the tested USB-audio-hardware (Aardvark 
+DirectUSB) is deployed. Depeding on the Linux configuration, there had been high differences in 
+latency when using the USB-audio-device.
+
+A table with results is attached as PDF.
+
+I've added the benchmark tool to JJack's CVS-repository, class 
+de.gulden.framework.jjack.util.benchmark.AudioBenchmark.
+
+More details:
+Machine A is a Pentium M 1400MHz, using either the onboard-sound-card (Intel 82801) or an external 
+USB-audio-interface (Aardvark DirectMix USB3). The latency of this setup is being measured each 
+under a Linux 2.6.15-non-realtime kernel, a 2.6.15-4-realtime kernel, and Windows XP. All three JDK 
+versions 1.4, 1.5 and 1.6 get utilized, each one in combination which each device and each operating 
+system either using JJack (on Linux) or JavaSound output. Machine B is a AMD 800Mhz running a 
+2.6.15-4-realtime Linux (Musix 0.39) and JDK 1.5, this second machine performs the measuring by 
+recording and subsequently analyzing the audio signal generated by machine A in all different setups.
+Both machines have been connected via ethernet, using a direct-link cable (a ?crossed? ethernet 
+cable) which minimizes network latency by avoiding any hubs or ip-switches on the way between the 
+machines. The ICMP-ping times reported by the ?ping?-command result in 0.2 ms and less, so 
+network-transmission latency does not significantly distort the measured results. The audio-output 
+of machine A is connected to the audio input of machine B via an analog (zero-latency .-) cable.
+
+On the software-side, a benchmark application has been written that either runs in server-mode on 
+the machine of which the audio-latency is to be measured (machine A), or in client-mode on the 
+machine which performs the measuring (machine B). The benchmark application has been made part of 
+the JJack package (available via CVS), in class de.gulden.framework.jjack.util.benchmark.AudioBenchmark.
+When run in server mode, the program first initializes the required audio-output device (either via 
+JJack or JavaSound), and then puts itself to sleep by waiting on a UDP network data-package to 
+arrive on port 7777. Once this UDP-package has been received, the program immediately outputs 100 ms 
+of a full-amplitude square signal with an period length of 100 frames. Reacting on the UDP-package 
+has been implemented to happen as soon as possible, both in JJack and JavaSound mode, although the 
+ways of achieving the lowest possible reaction time fudamentally differ in JJack and JavaSound due 
+to the principle difference of a pull-architecture in JACK/JJack and a push-architecture in 
+JavaSound. Once the audio output has been generate, the program waits 100 ms and loops back to 
+waiting for an UDP-package until it gets manually stopped.
+When running in client mode, the program initializes audio-input via JJack and starts recording of 
+one second, then waits 100 ms, issues a UDP-package to port 7777 on the server machine and remembers 
+the amount of empty audio data recorded until the UDP-packge has been sent, waits until the record 
+buffer is filled, cuts off the beginning part recorded before the UDP-package was actually sent, and 
+then searches the recorded audio for the occurrence of a sequence of at least 10 amplitude values 
+above 0.2, which is interpreted as the beginning of the received square waveform signal. The time of 
+?empty? audio data until the waveform begins is calculated and output as latency time.
+Note that this way of measuring of course also includes latency induced by other origins (e.g. 
+little network overhead, which, however, can be considered less with the UDP-ping method than with 
+any custom Midi-device in a real-world realtime-audio application) and of course the latency of the 
+recording audio-input on the client machine. However, the method appears suitable for comparing 
+different combinatios of audio APIs, Java versions, operating systems and hardware to get 
+information on how they relatively compare to each other.
+The JACK server has been run in playback-only mode on the server, and in capture-only mode on the 
+client. Duplex-mode has not been measured.
+
+So, what do you think, are the results plausible? Thanks for comments,
+Jens
+
+
+
+Jens Gulden schrieb:
+> Hello,
+> 
+> several people have reported big differences in latency between using JavaSound and JJack. JavaSound 
+> seems to regularly cause latency of about 200ms.
+> 
+> Is there an easy way to measure the latency of JavaSound (some piece of Java code + "latency 
+> measurig tool", or something)? How would a small test setup look like?
+> I have never used JavaSound for audio before, so I'm very thankful for hints.
+> 
+> What other fundamental differences between JavaSound and JJack are there?
+> 
+> (I'm currently writing a paper about JJack for the Linux Audio Conference LAC '07. The paper is 
+> already accepted as a contribution to the conference, and now I want to improve it by adding 
+> benchmarks comparing JavaSound and JJack. I'll make a post to this list when the paper is available.)
+> 
+> Many thanks in advance,
+> Jens
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: benchmarks-20070223.pdf
+Type: application/pdf
+Size: 26416 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20070224/a4e562f3/attachment.pdf>
+
+From contact at petersalomonsen.com  Sun Feb 25 11:34:12 2007
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Sun, 25 Feb 2007 11:34:12 +0100
+Subject: [jjack-users] comparing JJack and JavaSound, measuring latency
+In-Reply-To: <45DFA8E0.4020201@jensgulden.de>
+References: <45D478C2.9090401@jensgulden.de> <45DFA8E0.4020201@jensgulden.de>
+Message-ID: <200702251134.12937.contact@petersalomonsen.com>
+
+Hi Jens,
+
+I never tried using USB devices - but your observations of javasound latency 
+improvements starting from java 1.5, is the same as mine (you have to use the 
+ALSA or WDM driver though - the old javasound engine is still slow).
+
+Your measurements are quite the same as I've observed (for the onboard 
+soundcards). Also the difference in results with linux and windows (much 
+higher latency on windows) is the same as I've observed.
+
+I have never tried this roundrip measurement using ethernet - only the full 
+duplex approach as used in Frinika. I get to calculate the full roundrip 
+time, and may also estimate the system overhead (by substracting the buffer 
+latency time) - but to separate input / output system overhead is more 
+difficult...
+
+cheers,
+
+Peter
+
+On Saturday 24 February 2007 03:54, Jens Gulden wrote:
+> Hello,
+>
+> Peter Salomonsen wrote:
+>  > We have a test benchmark program we used for this in
+>
+> com.frinika.audio.benchmark.RecordInputRoundtripLatencyTest
+>
+> Thanks again for the hint. I used this piece of code as an entry point for
+> teaching me how to deploy JavaSound. Then I made my own benchmark tool,
+> because I thought one might get more accurate results if 2 machines are
+> used for measuring latency: one for generating the audio signal, and one
+> for measuring the delay between issuing that request and the appearance of
+> the audio signal. (The disadvantage of this apprach is that you necessarily
+> add more latency through the recording/measuring machine, but that's ok as
+> long as your aim is comparing different setups and not getting absolute
+> values.)
+>
+> General question: Is my approach valid? More details below.
+>
+> The two most surprising results are:
+>
+> 1) there's a dramatic improve of JavaSound both on Linux and Windows since
+> jdk 1.5 (the horror-stories on 200ms latency have obviously been true in
+> times of jdk1.4, but it has improved a lot)
+>
+> 2) JavaSound seems to be more liable to different hardware and
+> system-configurations: JACK/JJack behaves more stable with respect to
+> providing equal latency for different underlying hardware, while JavaSound
+> sometimes succeeds in achieving very low latency with the tested
+> onboard-audio-hardware (Intel 82801), but falls behind the use of JJack
+> when the tested USB-audio-hardware (Aardvark DirectUSB) is deployed.
+> Depeding on the Linux configuration, there had been high differences in
+> latency when using the USB-audio-device.
+>
+> A table with results is attached as PDF.
+>
+> I've added the benchmark tool to JJack's CVS-repository, class
+> de.gulden.framework.jjack.util.benchmark.AudioBenchmark.
+>
+> More details:
+> Machine A is a Pentium M 1400MHz, using either the onboard-sound-card
+> (Intel 82801) or an external USB-audio-interface (Aardvark DirectMix USB3).
+> The latency of this setup is being measured each under a Linux
+> 2.6.15-non-realtime kernel, a 2.6.15-4-realtime kernel, and Windows XP. All
+> three JDK versions 1.4, 1.5 and 1.6 get utilized, each one in combination
+> which each device and each operating system either using JJack (on Linux)
+> or JavaSound output. Machine B is a AMD 800Mhz running a 2.6.15-4-realtime
+> Linux (Musix 0.39) and JDK 1.5, this second machine performs the measuring
+> by recording and subsequently analyzing the audio signal generated by
+> machine A in all different setups. Both machines have been connected via
+> ethernet, using a direct-link cable (a ?crossed? ethernet cable) which
+> minimizes network latency by avoiding any hubs or ip-switches on the way
+> between the machines. The ICMP-ping times reported by the ?ping?-command
+> result in 0.2 ms and less, so network-transmission latency does not
+> significantly distort the measured results. The audio-output of machine A
+> is connected to the audio input of machine B via an analog (zero-latency
+> .-) cable.
+>
+> On the software-side, a benchmark application has been written that either
+> runs in server-mode on the machine of which the audio-latency is to be
+> measured (machine A), or in client-mode on the machine which performs the
+> measuring (machine B). The benchmark application has been made part of the
+> JJack package (available via CVS), in class
+> de.gulden.framework.jjack.util.benchmark.AudioBenchmark. When run in server
+> mode, the program first initializes the required audio-output device
+> (either via JJack or JavaSound), and then puts itself to sleep by waiting
+> on a UDP network data-package to arrive on port 7777. Once this UDP-package
+> has been received, the program immediately outputs 100 ms of a
+> full-amplitude square signal with an period length of 100 frames. Reacting
+> on the UDP-package has been implemented to happen as soon as possible, both
+> in JJack and JavaSound mode, although the ways of achieving the lowest
+> possible reaction time fudamentally differ in JJack and JavaSound due to
+> the principle difference of a pull-architecture in JACK/JJack and a
+> push-architecture in JavaSound. Once the audio output has been generate,
+> the program waits 100 ms and loops back to waiting for an UDP-package until
+> it gets manually stopped.
+> When running in client mode, the program initializes audio-input via JJack
+> and starts recording of one second, then waits 100 ms, issues a UDP-package
+> to port 7777 on the server machine and remembers the amount of empty audio
+> data recorded until the UDP-packge has been sent, waits until the record
+> buffer is filled, cuts off the beginning part recorded before the
+> UDP-package was actually sent, and then searches the recorded audio for the
+> occurrence of a sequence of at least 10 amplitude values above 0.2, which
+> is interpreted as the beginning of the received square waveform signal. The
+> time of ?empty? audio data until the waveform begins is calculated and
+> output as latency time. Note that this way of measuring of course also
+> includes latency induced by other origins (e.g. little network overhead,
+> which, however, can be considered less with the UDP-ping method than with
+> any custom Midi-device in a real-world realtime-audio application) and of
+> course the latency of the recording audio-input on the client machine.
+> However, the method appears suitable for comparing different combinatios of
+> audio APIs, Java versions, operating systems and hardware to get
+> information on how they relatively compare to each other.
+> The JACK server has been run in playback-only mode on the server, and in
+> capture-only mode on the client. Duplex-mode has not been measured.
+>
+> So, what do you think, are the results plausible? Thanks for comments,
+> Jens
+>
+> Jens Gulden schrieb:
+> > Hello,
+> >
+> > several people have reported big differences in latency between using
+> > JavaSound and JJack. JavaSound seems to regularly cause latency of about
+> > 200ms.
+> >
+> > Is there an easy way to measure the latency of JavaSound (some piece of
+> > Java code + "latency measurig tool", or something)? How would a small
+> > test setup look like? I have never used JavaSound for audio before, so
+> > I'm very thankful for hints.
+> >
+> > What other fundamental differences between JavaSound and JJack are there?
+> >
+> > (I'm currently writing a paper about JJack for the Linux Audio Conference
+> > LAC '07. The paper is already accepted as a contribution to the
+> > conference, and now I want to improve it by adding benchmarks comparing
+> > JavaSound and JJack. I'll make a post to this list when the paper is
+> > available.)
+> >
+> > Many thanks in advance,
+> > Jens
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+
+

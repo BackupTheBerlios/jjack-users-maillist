@@ -1,0 +1,135 @@
+From shanneton at free.fr  Mon Feb 27 12:17:19 2012
+From: shanneton at free.fr (shanneton at free.fr)
+Date: Mon, 27 Feb 2012 12:17:19 +0100
+Subject: [jjack-users] JJack, Jack2 and Processing
+Message-ID: <1330341439.4f4b663fbe3dd@imp.free.fr>
+
+
+
+Hello,
+I try to make Processing work with Jack and consequently I chose JJack to do the
+job.
+However, after putting libjjack.so in usr/lib and jjack.jar in the lib folder of
+processing I get the following message in the console of processing :
+java.lang.UnsatisfiedLinkError: /usr/lib/libjjack.so: libjack-0.100.0.so.0: Ne
+peut ouvrir le fichier d'objet partag?: Aucun fichier ou dossier de ce type
+(in french)
+It says that the file libjack-0.100.0.so.0 does not exist.
+
+in /usr/lib I have :
+/usr/lib/libjack.so
+/usr/lib/libjack.so.0
+/usr/lib/libjack.so.0.0.28
+
+I have Jack2 and not Jack on my ubuntu 10.04 system.
+Thank you for your ideas and help !
+
+
+
+From contact at petersalomonsen.com  Mon Feb 27 12:35:27 2012
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Mon, 27 Feb 2012 12:35:27 +0100
+Subject: [jjack-users] JJack, Jack2 and Processing
+In-Reply-To: <1330341439.4f4b663fbe3dd@imp.free.fr>
+References: <1330341439.4f4b663fbe3dd@imp.free.fr>
+Message-ID: <CAC4QqpMGG9zQJeGvPjtAqAyjCXckqWwWLJp1KxMM=k7RUcc_sA@mail.gmail.com>
+
+Hi,
+
+I had problems with the 2010 ubuntu versions and jack in general. With
+the latest Ubuntu 11.10 - jjack and jack it worked fine again. I
+haven't checked why this is so.
+
+Regards,
+
+Peter
+
+2012/2/27  <shanneton at free.fr>:
+>
+>
+> Hello,
+> I try to make Processing work with Jack and consequently I chose JJack to do the
+> job.
+> However, after putting libjjack.so in usr/lib and jjack.jar in the lib folder of
+> processing I get the following message in the console of processing :
+> java.lang.UnsatisfiedLinkError: /usr/lib/libjjack.so: libjack-0.100.0.so.0: Ne
+> peut ouvrir le fichier d'objet partag?: Aucun fichier ou dossier de ce type
+> (in french)
+> It says that the file libjack-0.100.0.so.0 does not exist.
+>
+> in /usr/lib I have :
+> /usr/lib/libjack.so
+> /usr/lib/libjack.so.0
+> /usr/lib/libjack.so.0.0.28
+>
+> I have Jack2 and not Jack on my ubuntu 10.04 system.
+> Thank you for your ideas and help !
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+From neil at neilcsmith.net  Mon Feb 27 16:04:17 2012
+From: neil at neilcsmith.net (Neil C Smith)
+Date: Mon, 27 Feb 2012 15:04:17 +0000
+Subject: [jjack-users] JJack, Jack2 and Processing
+In-Reply-To: <1330341439.4f4b663fbe3dd@imp.free.fr>
+References: <1330341439.4f4b663fbe3dd@imp.free.fr>
+Message-ID: <CAHvRSoc8FRCGcKscnNyo9MPP6w_5PA+hsjgTN68FCQfU6SWWXA@mail.gmail.com>
+
+Hi,
+
+I had this problem ages ago with JJack and Jack2 (then jackdmp) on
+Ubuntu 8.04.  I had to create a symlink from libjack-0.100.0.so.0 to
+one of the existing library files.  There is a problem with the
+library that the JJack binaries are built against.
+
+You could also check out the alternative JAudioLibs Jack binding at
+http://code.google.com/p/java-audio-utils/ which should work without
+issue, and is fully cross-platform.
+
+Incidentally, are you using Jack directly or through the Beads
+Processing library?  Beads is currently switching to JAudioLibs -
+https://groups.google.com/d/topic/beadsproject/oWEVUNHSztE/discussion
+
+Best wishes,
+
+Neil
+
+
+On 27 February 2012 11:17,  <shanneton at free.fr> wrote:
+>
+>
+> Hello,
+> I try to make Processing work with Jack and consequently I chose JJack to do the
+> job.
+> However, after putting libjjack.so in usr/lib and jjack.jar in the lib folder of
+> processing I get the following message in the console of processing :
+> java.lang.UnsatisfiedLinkError: /usr/lib/libjjack.so: libjack-0.100.0.so.0: Ne
+> peut ouvrir le fichier d'objet partag?: Aucun fichier ou dossier de ce type
+> (in french)
+> It says that the file libjack-0.100.0.so.0 does not exist.
+>
+> in /usr/lib I have :
+> /usr/lib/libjack.so
+> /usr/lib/libjack.so.0
+> /usr/lib/libjack.so.0.0.28
+>
+> I have Jack2 and not Jack on my ubuntu 10.04 system.
+> Thank you for your ideas and help !
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+-- 
+Neil C Smith
+Artist : Technologist : Adviser
+http://neilcsmith.net
+
+

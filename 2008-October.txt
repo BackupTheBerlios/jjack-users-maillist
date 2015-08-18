@@ -1,0 +1,82 @@
+From arnouten at bzzt.net  Sun Oct 12 12:08:23 2008
+From: arnouten at bzzt.net (Arnout Engelen)
+Date: Sun, 12 Oct 2008 12:08:23 +0200
+Subject: [jjack-users] MIDI
+Message-ID: <20081012100822.GB21736@bzzt.net>
+
+Hi,
+
+I'd like to do JACK-connectable MIDI i/o from an application.
+
+
+From mail at jensgulden.de  Sun Oct 12 14:16:11 2008
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sun, 12 Oct 2008 14:16:11 +0200
+Subject: [jjack-users] MIDI
+In-Reply-To: <20081012100822.GB21736@bzzt.net>
+References: <20081012100822.GB21736@bzzt.net>
+Message-ID: <48F1EA8B.9090009@jensgulden.de>
+
+Hello Arnout,
+
+you wrote:
+> Would adding JACK MIDI to JJack be considered in-scope for JJack? Would
+> it be hard to implement? Just had a quick look, and the JACK MIDI API seems
+> pretty similar to the audio stream API.
+
+Absolutely right, adding MIDI support to JJack will be the next 
+consequential step for a following release. I also don't think it is too 
+hard, but still will be some days of work to do it thoroughly.
+
+Besides that, the audio part of JJack needs further work because it 
+doesn't yet run stable in all environments. And, if possible, JJack 
+should provide some additional management functionality for 
+connecting/disconnecting ports. So there is quite a wishlist for a next 
+release...
+
+> I don't see any recent updates to CVS. Has development moved elsewhere?
+
+...please be patient. Development will carry on, but most likely not 
+before 2009. I've recently had some communication with Dave Phillips 
+(author of "Java Sound & Music Software for Linux") who pointed me to 
+the Jacklab Audio Distribution, and I have set up a development 
+environment on that system. This is very inspiring, I hope there'll be 
+some time during the next months to work with it.
+
+> From what I've seen neither the current Java Sound API implementations
+> nor JJack support JACK or ALSA MIDI.
+
+I think the stock Java Sound implementation can do ALSA Midi, at least 
+in the sense that it provides access to physical MIDI devices. This 
+might be something you can use until JJack MIDI is available.
+
+Best,
+Jens
+
+Arnout Engelen schrieb:
+> Hi,
+> 
+> I'd like to do JACK-connectable MIDI i/o from an application.
+> 
+>>From what I've seen neither the current Java Sound API implementations
+> nor JJack support JACK or ALSA MIDI.
+> 
+> I read in a comment under 
+> http://www.linuxjournal.com/content/java-sound-music-software-linux-part-3
+> that a new release of JJack is coming up, though I don't see any recent
+> updates to CVS. Has development moved elsewhere?
+> 
+> Would adding JACK MIDI to JJack be considered in-scope for JJack? Would
+> it be hard to implement? Just had a quick look, and the JACK MIDI API seems
+> pretty similar to the audio stream API.
+> 
+> 
+> Regards,
+> 
+> Arnout
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+

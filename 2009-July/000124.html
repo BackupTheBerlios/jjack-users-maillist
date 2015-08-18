@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack native client redesign proposal for future	0.4 release
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-July/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%0A%090.4%20release&In-Reply-To=%3C200907220932.37547.Oliver.Rettig%40orat.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000125.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack native client redesign proposal for future	0.4 release</H1>
+    <B>Oliver Rettig</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%0A%090.4%20release&In-Reply-To=%3C200907220932.37547.Oliver.Rettig%40orat.de%3E"
+       TITLE="[jjack-users] JJack native client redesign proposal for future	0.4 release">Oliver.Rettig at orat.de
+       </A><BR>
+    <I>Wed Jul 22 09:32:37 CEST 2009</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000125.html">[jjack-users] v04-proposal update
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#124">[ date ]</a>
+              <a href="thread.html#124">[ thread ]</a>
+              <a href="subject.html#124">[ subject ]</a>
+              <a href="author.html#124">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hallo,
+
+that+s fine to hear that JJack is used. I have made some tests using it 
+directly without JavaSound-bridge. But I run into problem with single core 
+older PCs. I am not sure but I think the garbage collector can be the problem. 
+I get breaks in the audio. 
+
+Does anybody knows if the priority of the audiothread which invokes via JNI 
+the Java code is attached to the priority to the priority of the attached 
+thread executing the JNI-callback?
+
+Does anybody knows if the new gc from Java 7 which can be configured to a 
+maximum break the gc stops the world can solve gc affected breaks? This gc 
+should be backported also to Java 6?
+
+Does anybody has experiences with JJack based on windows kernelstreaming 
+portaudio impl?
+
+best regards
+Oliver
+
+&gt;<i> Ollie,
+</I>&gt;<i>
+</I>&gt;<i> Are you using Jack with realtime priority? Not sure what the deal is with
+</I>&gt;<i> RT on the Mac. I've got JJack running with RT on an 800MHz Indamixx tablet
+</I>&gt;<i> and it's rock solid with a direct callback and 512 buffersize, but breaks
+</I>&gt;<i> down completely with the JavaSound bridge, probably due to different thread
+</I>&gt;<i> priorities. If this little thing can cope, a Mac should be able to! :-)
+</I>&gt;<i>
+</I>&gt;<i> Best, N
+</I>&gt;<i>
+</I>&gt;<i> --
+</I>&gt;<i> Neil C Smith - <A HREF="http://neilcsmith.net">http://neilcsmith.net</A>
+</I>&gt;<i> sent while mobile through GoogleMail - please reply to <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">neil at neilcsmith.net</A>
+</I>&gt;<i>
+</I>&gt;<i> On Jun 26, 2009 2:32 PM, &quot;Oliver Bown&quot; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">ollie at icarus.nu</A>&gt; wrote:
+</I>&gt;<i>
+</I>&gt;<i> Hi Neil,
+</I>&gt;<i>
+</I>&gt;<i> thanks for that. I am using it with Beads, and I have written a direct
+</I>&gt;<i> JJack interface, but I hadn't noticed that it's performance was any
+</I>&gt;<i> different from the JavaSound version, so I was still using that. I'll go
+</I>&gt;<i> back to using JJack directly and see how I get on.
+</I>&gt;<i>
+</I>&gt;<i> Oh, and I realised after my last post that increasing the buffer size of
+</I>&gt;<i> jackdmp (e.g., from 512 to 1024) helped a great deal.
+</I>&gt;<i>
+</I>&gt;<i> Ollie
+</I>&gt;<i>
+</I>&gt;<i> On 26/06/2009, at 5:13 PM, Neil C Smith wrote: &gt; Hi Ollie, &gt; &gt; Good to see
+</I>&gt;<i> you on this list. Java...
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000125.html">[jjack-users] v04-proposal update
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#124">[ date ]</a>
+              <a href="thread.html#124">[ thread ]</a>
+              <a href="subject.html#124">[ subject ]</a>
+              <a href="author.html#124">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Using jjack to grab sound
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2006-December/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3C200612130829.34147.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000013.html">
+   <LINK REL="Next"  HREF="000014.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Using jjack to grab sound</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3C200612130829.34147.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] Using jjack to grab sound">contact at petersalomonsen.com
+       </A><BR>
+    <I>Wed Dec 13 08:29:33 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000013.html">[jjack-users] Using jjack to grab sound
+</A></li>
+        <LI>Next message: <A HREF="000014.html">[jjack-users] Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#11">[ date ]</a>
+              <a href="thread.html#11">[ thread ]</a>
+              <a href="subject.html#11">[ subject ]</a>
+              <a href="author.html#11">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+On Linux you should be able to connect to any device supported by ALSA (see 
+<A HREF="http://www.alsa-project.org/">http://www.alsa-project.org/</A> and browse devices there). Jack supports 
+connecting to e.g. 8 channels if the device supports it.
+
+You can easily downsize the sound of jjack by manipulating the audio data. In 
+your case that would be an interpolation of 4 samples and removing the 8 
+lower bits.
+
+best regards,
+
+Peter
+
+On Tuesday 12 December 2006 22:04, Helge Fredriksen wrote:
+&gt;<i> Hello!
+</I>&gt;<i>
+</I>&gt;<i> I'm looking for an API to grab sound with as minimum of delay as possible
+</I>&gt;<i> (as contrary to JavaSound). I need only telephone quality sound, that is
+</I>&gt;<i> 11kHz sampling rate and 8bit mono. Is it possible to downsize the default
+</I>&gt;<i> CD-quality of sound in jjack? Also, I'm looking for a device reccomandation
+</I>&gt;<i> to fit this API that will be able to grab
+</I>&gt;<i> sound from 8 different channels simultaniously.
+</I>&gt;<i>
+</I>&gt;<i> Best regards,
+</I>&gt;<i> Helge Fredriksen
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000013.html">[jjack-users] Using jjack to grab sound
+</A></li>
+	<LI>Next message: <A HREF="000014.html">[jjack-users] Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#11">[ date ]</a>
+              <a href="thread.html#11">[ thread ]</a>
+              <a href="subject.html#11">[ subject ]</a>
+              <a href="author.html#11">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

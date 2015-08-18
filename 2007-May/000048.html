@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack Javasound provider
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20Javasound%20provider&In-Reply-To=%3C200705061311.52403.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000049.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack Javasound provider</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20Javasound%20provider&In-Reply-To=%3C200705061311.52403.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] JJack Javasound provider">contact at petersalomonsen.com
+       </A><BR>
+    <I>Sun May  6 13:11:51 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000049.html">[jjack-users] JJack Javasound provider
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#48">[ date ]</a>
+              <a href="thread.html#48">[ thread ]</a>
+              <a href="subject.html#48">[ subject ]</a>
+              <a href="author.html#48">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>- Lines supports 8/16/24/32 bit big and little endian audio formats
+- Input and output (Source and targetdataline)
+
+Quick example of use 
+(com.petersalomonsen.jjack.javasound.JJackMixerProviderTest):
+
+// Scan mixers
+		Info jackMixerInfo = null;
+		
+		//for(Info info : AudioSystem.getMixerInfo())
+		Info[] infos = AudioSystem.getMixerInfo();
+		for (int i = 0; i &lt; infos.length; i++)
+		{
+			Info info = infos[i];
+			if(info.getName().equals(&quot;JJack&quot;))
+				jackMixerInfo = info;
+		}
+		AudioFormat format = new 
+AudioFormat(JJackSystem.getSampleRate(),16,2,true,false);
+		
+		Mixer mixer = AudioSystem.getMixer(jackMixerInfo);
+		SourceDataLine lineOut = (SourceDataLine) 
+mixer.getLine(mixer.getSourceLineInfo()[0]);
+		lineOut.open(format,512);
+		lineOut.start();
+		TargetDataLine lineIn = (TargetDataLine) 
+mixer.getLine(mixer.getTargetLineInfo()[0]);
+		lineIn.open(format,512);
+		lineIn.start();
+		
+		byte[] buf = new byte[128];
+		while(true)
+		{
+			lineIn.read(buf,0,buf.length);
+			lineOut.write(buf,0,buf.length);
+		}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000049.html">[jjack-users] JJack Javasound provider
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#48">[ date ]</a>
+              <a href="thread.html#48">[ thread ]</a>
+              <a href="subject.html#48">[ subject ]</a>
+              <a href="author.html#48">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

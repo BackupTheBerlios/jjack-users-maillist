@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack Javasound provider
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20Javasound%20provider&In-Reply-To=%3Ce78383b30705081339g508faf77id2f67de4733e98e5%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000049.html">
+   <LINK REL="Next"  HREF="000051.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack Javasound provider</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20Javasound%20provider&In-Reply-To=%3Ce78383b30705081339g508faf77id2f67de4733e98e5%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JJack Javasound provider">helgeingvart at gmail.com
+       </A><BR>
+    <I>Tue May  8 22:39:18 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000049.html">[jjack-users] JJack Javasound provider
+</A></li>
+        <LI>Next message: <A HREF="000051.html">[jjack-users] DataLine.Info.getFormats() supported
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#50">[ date ]</a>
+              <a href="thread.html#50">[ thread ]</a>
+              <a href="subject.html#50">[ subject ]</a>
+              <a href="author.html#50">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Ah forget the last post. Studying the code once more gave the answer...
+
+On 5/8/07, Helge Fredriksen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">helgeingvart at gmail.com</A>&gt; wrote:
+&gt;<i> Thanks again Peter! Guess it's just as easy to use it for outputting
+</I>&gt;<i> sound? Helge
+</I>&gt;<i>
+</I>&gt;<i> On 5/6/07, Peter Salomonsen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">contact at petersalomonsen.com</A>&gt; wrote:
+</I>&gt;<i> &gt; - Lines supports 8/16/24/32 bit big and little endian audio formats
+</I>&gt;<i> &gt; - Input and output (Source and targetdataline)
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Quick example of use
+</I>&gt;<i> &gt; (com.petersalomonsen.jjack.javasound.JJackMixerProviderTest):
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; // Scan mixers
+</I>&gt;<i> &gt; 		Info jackMixerInfo = null;
+</I>&gt;<i> &gt; 		
+</I>&gt;<i> &gt; 		//for(Info info : AudioSystem.getMixerInfo())
+</I>&gt;<i> &gt; 		Info[] infos = AudioSystem.getMixerInfo();
+</I>&gt;<i> &gt; 		for (int i = 0; i &lt; infos.length; i++)
+</I>&gt;<i> &gt; 		{
+</I>&gt;<i> &gt; 			Info info = infos[i];
+</I>&gt;<i> &gt; 			if(info.getName().equals(&quot;JJack&quot;))
+</I>&gt;<i> &gt; 				jackMixerInfo = info;
+</I>&gt;<i> &gt; 		}
+</I>&gt;<i> &gt; 		AudioFormat format = new
+</I>&gt;<i> &gt; AudioFormat(JJackSystem.getSampleRate(),16,2,true,false);
+</I>&gt;<i> &gt; 		
+</I>&gt;<i> &gt; 		Mixer mixer = AudioSystem.getMixer(jackMixerInfo);
+</I>&gt;<i> &gt; 		SourceDataLine lineOut = (SourceDataLine)
+</I>&gt;<i> &gt; mixer.getLine(mixer.getSourceLineInfo()[0]);
+</I>&gt;<i> &gt; 		lineOut.open(format,512);
+</I>&gt;<i> &gt; 		lineOut.start();
+</I>&gt;<i> &gt; 		TargetDataLine lineIn = (TargetDataLine)
+</I>&gt;<i> &gt; mixer.getLine(mixer.getTargetLineInfo()[0]);
+</I>&gt;<i> &gt; 		lineIn.open(format,512);
+</I>&gt;<i> &gt; 		lineIn.start();
+</I>&gt;<i> &gt; 		
+</I>&gt;<i> &gt; 		byte[] buf = new byte[128];
+</I>&gt;<i> &gt; 		while(true)
+</I>&gt;<i> &gt; 		{
+</I>&gt;<i> &gt; 			lineIn.read(buf,0,buf.length);
+</I>&gt;<i> &gt; 			lineOut.write(buf,0,buf.length);
+</I>&gt;<i> &gt; 		}
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; _______________________________________________
+</I>&gt;<i> &gt; jjack-users mailing list
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> &gt;
+</I>&gt;<i>
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000049.html">[jjack-users] JJack Javasound provider
+</A></li>
+	<LI>Next message: <A HREF="000051.html">[jjack-users] DataLine.Info.getFormats() supported
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#50">[ date ]</a>
+              <a href="thread.html#50">[ thread ]</a>
+              <a href="subject.html#50">[ subject ]</a>
+              <a href="author.html#50">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

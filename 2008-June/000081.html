@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] something similar to jack_connect
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2008-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20something%20similar%20to%20jack_connect&In-Reply-To=%3Ce4451f0c0806110115s79c2ed56g1afee73444f3938%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000080.html">
+   <LINK REL="Next"  HREF="000082.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] something similar to jack_connect</H1>
+    <B>Peter Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20something%20similar%20to%20jack_connect&In-Reply-To=%3Ce4451f0c0806110115s79c2ed56g1afee73444f3938%40mail.gmail.com%3E"
+       TITLE="[jjack-users] something similar to jack_connect">contact at petersalomonsen.com
+       </A><BR>
+    <I>Wed Jun 11 10:15:41 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000080.html">[jjack-users] something similar to jack_connect
+</A></li>
+        <LI>Next message: <A HREF="000082.html">[jjack-users] something similar to jack_connect
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#81">[ date ]</a>
+              <a href="thread.html#81">[ thread ]</a>
+              <a href="subject.html#81">[ subject ]</a>
+              <a href="author.html#81">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+Your attachment wasn't included, can you paste in your code in the mail?
+
+I don't know this part of jjack very well, but I don't know if the java api
+supports routing during runtime (as I understand that is what you try to
+achieve). I know there are posibilities of internal routing, between jjack
+clients, but the jack routing I think you have to control graphically using
+e.g. qjackctl.
+
+It would be good though, if it was possible to do the routing
+programatically, I think this is possible to obtain, but the c library would
+then have to be modified...
+
+regards,
+
+Peter
+
+On Tue, Jun 10, 2008 at 11:18 PM, MOISES ALBERTO ACUNA CHAVES &lt;
+<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">moiso1 at costarricense.cr</A>&gt; wrote:
+
+&gt;<i> Hello JJack Users,
+</I>&gt;<i> I
+</I>&gt;<i> was wondering if it was possible to have something like the jack_connect(jack_client_t
+</I>&gt;<i> *, const char* source_port, const char * destination_port);
+</I>&gt;<i> because I
+</I>&gt;<i> would like to connect in the same code the inputs of my client with the physical ports that are
+</I>&gt;<i> published in the jack server. Because what i
+</I>&gt;<i> was trying with jjack to route from one input to different output.
+</I>&gt;<i> for example..
+</I>&gt;<i>
+</I>&gt;<i> i1   ---- o1
+</I>&gt;<i>       ---- o2
+</I>&gt;<i>       ---- o3
+</I>&gt;<i>
+</I>&gt;<i> i2   ---- o4
+</I>&gt;<i>       ---- o5
+</I>&gt;<i>       ---- o6
+</I>&gt;<i>
+</I>&gt;<i> i3   ---- o7
+</I>&gt;<i>       ---- o8
+</I>&gt;<i>       ---- o9
+</I>&gt;<i>
+</I>&gt;<i> i tried with the process method in the file that is attached, but when i
+</I>&gt;<i> play in i1 and i2 it only routes the signal to o1 and o4, i would like to
+</I>&gt;<i> repeat the i1 to o1, o2, o3.
+</I>&gt;<i> it would be best if these o's are the physical playback ports of a device
+</I>&gt;<i> that the jack server can see(that's why my question about jack_connect).
+</I>&gt;<i> I'll appreciate any help . thanks
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>&gt;<i> -------------------------------------------------------
+</I>&gt;<i> Mois&#233;s A. Acu&#241;a Chaves
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>&gt;<i>
+</I>-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20080611/f7f1c9bf/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20080611/f7f1c9bf/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000080.html">[jjack-users] something similar to jack_connect
+</A></li>
+	<LI>Next message: <A HREF="000082.html">[jjack-users] something similar to jack_connect
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#81">[ date ]</a>
+              <a href="thread.html#81">[ thread ]</a>
+              <a href="subject.html#81">[ subject ]</a>
+              <a href="author.html#81">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

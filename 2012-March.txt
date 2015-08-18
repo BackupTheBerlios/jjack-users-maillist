@@ -1,0 +1,23 @@
+From bogus@does.not.exist.com  Wed Mar 14 15:14:58 2012
+From: bogus@does.not.exist.com ()
+Date: Wed, 14 Mar 2012 14:14:58 -0000
+Subject: No subject
+Message-ID: <mailman.0.1331734498.4223.jjack-users@lists.berlios.de>
+
+nor JJack support JACK or ALSA MIDI.
+
+I read in a comment under 
+http://www.linuxjournal.com/content/java-sound-music-software-linux-part-3
+that a new release of JJack is coming up, though I don't see any recent
+updates to CVS. Has development moved elsewhere?
+
+Would adding JACK MIDI to JJack be considered in-scope for JJack? Would
+it be hard to implement? Just had a quick look, and the JACK MIDI API seems
+pretty similar to the audio stream API.
+
+
+Regards,
+
+Arnout
+
+

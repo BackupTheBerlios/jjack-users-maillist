@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack and Jack compilation and linking on	different OS X systems
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2010-January/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20and%20Jack%20compilation%20and%20linking%20on%0A%09different%20OS%20X%20systems&In-Reply-To=%3CA2F31A61-B70C-4263-9C10-5EC61D55B7C6%40icarus.nu%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000128.html">
+   <LINK REL="Next"  HREF="000130.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack and Jack compilation and linking on	different OS X systems</H1>
+    <B>Oliver Bown</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20and%20Jack%20compilation%20and%20linking%20on%0A%09different%20OS%20X%20systems&In-Reply-To=%3CA2F31A61-B70C-4263-9C10-5EC61D55B7C6%40icarus.nu%3E"
+       TITLE="[jjack-users] JJack and Jack compilation and linking on	different OS X systems">ollie at icarus.nu
+       </A><BR>
+    <I>Wed Jan  6 01:46:31 CET 2010</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000128.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+        <LI>Next message: <A HREF="000130.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#129">[ date ]</a>
+              <a href="thread.html#129">[ thread ]</a>
+              <a href="subject.html#129">[ subject ]</a>
+              <a href="author.html#129">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Peter,
+
+I've had various flavours of the problem with different JJacks. I did try the official v0.3 compiled version too. I've also tried using the -Djava.library.path flag AS WELL AS putting libjjack.jnilib in /Library/Java/Extensions. 
+
+Regarding your suggestion, when you completely remove libjjack.jnilib, the UnsatisfiedLinkError is followed with &quot;no jjack in java.library.path&quot; whereas when libjjack.jnilib exists and is somewhere in the native library path the UnsatisfiedLinkError correctly reports the location of the file, as below, and in this case too...
+
+Could not load jjack native library
+Tried system library path and /Users/anthonyrowe/Desktop/Kinetica tests/squidgrid 040110/installation/lib/x86_64/Mac OS X/libjjack.so
+java.lang.UnsatisfiedLinkError: /Users/anthonyrowe/Desktop/Kinetica tests/squidgrid 040110/installation/lib/libjjack.jnilib: 
+	at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+	at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1822)
+	at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1739)
+	at java.lang.Runtime.loadLibrary0(Runtime.java:823)
+	...
+
+I think I've spotted the problem actually, but still don't get it. In Ant's case he's getting the following...
+
+jackdmp 1.9.4
+Copyright 2001-2005 Paul Davis and others.
+Copyright 2004-2009 Grame.
+jackdmp comes with ABSOLUTELY NO WARRANTY
+This is free software, and you are welcome to redistribute it
+under certain conditions; see the file COPYING for details
+JACK server starting in realtime mode with priority 10
+2010-01-05 22:39:11.896 java[2102:32e03] Error loading /Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter:  dlopen(/Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter, 262): no suitable image found.  Did find:
+	/Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter: no matching architecture in universal wrapper
+2010-01-05 22:39:11.897 java[2102:32e03] Cannot find function pointer New_JackRouterPlugIn for factory 7CB18864-927D-48B5-904C-CCFBCFBC7ADD in CFBundle/CFPlugIn 0x100192410 &lt;/Library/Audio/Plug-Ins/HAL/JackRouter.plugin&gt; (bundle, not loaded)
+
+I thought this was harmless junk coming from jackdmp (I get some messages like this on my machine), but I just noticed it's coming from Java, and referring to JackRouter plugin. Sounds bad. Do you think this could be it? 
+
+I'm not able to test any of this directly because I don't have a machine running Leopard myself, my collaborator is in the diametrically opposite time zone to me, which is making the debugging process rather painful! But I'll get him to try different installs of Jack.
+
+O
+
+On 06/01/2010, at 11:08 AM, Peter Brinkmann wrote:
+
+&gt;<i> 
+</I>&gt;<i> Hi Ollie,
+</I>&gt;<i> Quick question:  Are you using the current official version of JJack or the newish branch, v0.4-proposal?
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> Could not load jjack native library
+</I>&gt;<i> Tried system library path and /Users/anthonyrowe/Desktop/Kineticatests/squidgrid040110/installation/lib/x86_64/Mac OS X/libjjack.so
+</I>&gt;<i> java.lang.UnsatisfiedLinkError: /Library/Java/Extensions/libjjack.jnilib:
+</I>&gt;<i>        at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+</I>&gt;<i>        at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1822)
+</I>&gt;<i>        at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1715)
+</I>&gt;<i>        ...
+</I>&gt;<i> 
+</I>&gt;<i> As you can see, libjjack.jnilib has been successfully spotted in the System library path.
+</I>&gt;<i> 
+</I>&gt;<i> Actually, I don't think libjjack.jnilib has been spotted.  The first two lines are the message that you get when JJack can't find the native binary, and according to your other email, libjjack.jnilib is not in /Library/Java/Extensions.
+</I>&gt;<i> 
+</I>&gt;<i> Here's my first guess as to what's going on:  Since you compiled your code on Snow Leopard, there may be some compatibility issue with Leopard.  Delete or move your file lib/libjjack.jnilib and see whether you get a different error message.  If so, then that's an indication that Java sees your file but doesn't like the binary from Snow Leopard.  Rebuilding JJack under Leopard may solve the problem.
+</I>&gt;<i> 
+</I>&gt;<i> Please let me know how it goes.  This is potentially relevant to a project of mine as well, but so far nobody on our team has made the switch to Snow Leopard.
+</I>&gt;<i> Best,
+</I>&gt;<i>      Peter
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20100106/d7e1898f/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20100106/d7e1898f/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000128.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+	<LI>Next message: <A HREF="000130.html">[jjack-users] JJack and Jack compilation and linking on	different OS X systems
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#129">[ date ]</a>
+              <a href="thread.html#129">[ thread ]</a>
+              <a href="subject.html#129">[ subject ]</a>
+              <a href="author.html#129">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

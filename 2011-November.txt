@@ -1,0 +1,209 @@
+From loganjerry at gmail.com  Thu Nov 10 21:59:55 2011
+From: loganjerry at gmail.com (Jerry James)
+Date: Thu, 10 Nov 2011 13:59:55 -0700
+Subject: [jjack-users] Small v04-proposal patch
+Message-ID: <CAHCOHQnLM2TbVdiZsc5+oAY9vH7HyAFUGy-xgEeTCWFPF-BH9g@mail.gmail.com>
+
+Hello,
+
+I'm looking at what it would take to get jReality into the Fedora
+Linux distribution, and so am chasing down dependencies.  I see that
+jReality is using the v04-proposal branch, rather than the released
+version 0.3.  While building that branch, the C compiler emitted some
+warnings due to missing "const"s.  In jjack-update.patch, attached, I
+fixed this and also threw in some "static"s for good measure.
+
+Also, in "jjack-javadoc.patch", attached, two kinds of javadoc
+problems are fixed.  First, @Override is an annotation, not a javadoc
+tag.  Second, there shouldn't be a colon on a @param line, as javadoc
+thinks the colon is part of the parameter name.
+
+Are there any plans to release the v04-proposal branch as 0.4?
+
+Regards,
+-- 
+Jerry James
+http://www.jamezone.org/
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: jjack-update.patch
+Type: text/x-patch
+Size: 5147 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20111110/446d4995/attachment.bin>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: jjack-javadoc.patch
+Type: text/x-patch
+Size: 2710 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20111110/446d4995/attachment-0001.bin>
+
+From peter.brinkmann at googlemail.com  Fri Nov 11 18:43:47 2011
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Fri, 11 Nov 2011 09:43:47 -0800
+Subject: [jjack-users] Small v04-proposal patch
+In-Reply-To: <CAHCOHQnLM2TbVdiZsc5+oAY9vH7HyAFUGy-xgEeTCWFPF-BH9g@mail.gmail.com>
+References: <CAHCOHQnLM2TbVdiZsc5+oAY9vH7HyAFUGy-xgEeTCWFPF-BH9g@mail.gmail.com>
+Message-ID: <CADMEzewQGkNR=_OrvzCiFgST1ZcrOqJu+2eAdgEBCtuO9VP9ag@mail.gmail.com>
+
+Hi Jerry,
+I haven't seen any activity around JJack in a long time, and so I went
+ahead and extracted the parts that I want for my work, refactored them
+a little, and posted them at Gitorious.  You can find it here:
+https://www.gitorious.org/pdlib
+
+jReality needs to be updated, and I'm hoping to find the time to do that soon.
+Cheers,
+     Peter
+
+
+On Thu, Nov 10, 2011 at 12:59 PM, Jerry James <loganjerry at gmail.com> wrote:
+> Hello,
+>
+> I'm looking at what it would take to get jReality into the Fedora
+> Linux distribution, and so am chasing down dependencies. ?I see that
+> jReality is using the v04-proposal branch, rather than the released
+> version 0.3. ?While building that branch, the C compiler emitted some
+> warnings due to missing "const"s. ?In jjack-update.patch, attached, I
+> fixed this and also threw in some "static"s for good measure.
+>
+> Also, in "jjack-javadoc.patch", attached, two kinds of javadoc
+> problems are fixed. ?First, @Override is an annotation, not a javadoc
+> tag. ?Second, there shouldn't be a colon on a @param line, as javadoc
+> thinks the colon is part of the parameter name.
+>
+> Are there any plans to release the v04-proposal branch as 0.4?
+>
+> Regards,
+> --
+> Jerry James
+> http://www.jamezone.org/
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+
+
+From loganjerry at gmail.com  Sat Nov 12 00:43:32 2011
+From: loganjerry at gmail.com (Jerry James)
+Date: Fri, 11 Nov 2011 16:43:32 -0700
+Subject: [jjack-users] Small v04-proposal patch
+In-Reply-To: <CADMEzewQGkNR=_OrvzCiFgST1ZcrOqJu+2eAdgEBCtuO9VP9ag@mail.gmail.com>
+References: <CAHCOHQnLM2TbVdiZsc5+oAY9vH7HyAFUGy-xgEeTCWFPF-BH9g@mail.gmail.com>
+	<CADMEzewQGkNR=_OrvzCiFgST1ZcrOqJu+2eAdgEBCtuO9VP9ag@mail.gmail.com>
+Message-ID: <CAHCOHQ=kK_5+JQpM_BtBVWML3Lfv0a+do3ABxhwqa_-y2BGNpA@mail.gmail.com>
+
+On Fri, Nov 11, 2011 at 10:43 AM, Peter Brinkmann
+<peter.brinkmann at googlemail.com> wrote:
+> Hi Jerry,
+> I haven't seen any activity around JJack in a long time, and so I went
+> ahead and extracted the parts that I want for my work, refactored them
+> a little, and posted them at Gitorious. ?You can find it here:
+> https://www.gitorious.org/pdlib
+>
+> jReality needs to be updated, and I'm hoping to find the time to do that soon.
+> Cheers,
+> ? ? Peter
+
+Okay, I'll wait for a bit, then.  Would you mind dropping me a line
+when the refactoring has been done?  Thanks,
+-- 
+Jerry James
+http://www.jamezone.org/
+
+
+From neil at neilcsmith.net  Sat Nov 12 13:29:53 2011
+From: neil at neilcsmith.net (Neil C Smith)
+Date: Sat, 12 Nov 2011 12:29:53 +0000
+Subject: [jjack-users] Small v04-proposal patch
+In-Reply-To: <CADMEzewQGkNR=_OrvzCiFgST1ZcrOqJu+2eAdgEBCtuO9VP9ag@mail.gmail.com>
+References: <CAHCOHQnLM2TbVdiZsc5+oAY9vH7HyAFUGy-xgEeTCWFPF-BH9g@mail.gmail.com>
+	<CADMEzewQGkNR=_OrvzCiFgST1ZcrOqJu+2eAdgEBCtuO9VP9ag@mail.gmail.com>
+Message-ID: <CAHvRSof_ShAmFJ455+emsi2KQ4djXmWrh_KwaSC82HB0dg+=dQ@mail.gmail.com>
+
+On 11 November 2011 17:43, Peter Brinkmann
+<peter.brinkmann at googlemail.com> wrote:
+> Hi Jerry,
+> I haven't seen any activity around JJack in a long time, and so I went
+> ahead and extracted the parts that I want for my work, refactored them
+> a little, and posted them at Gitorious. ?You can find it here:
+> https://www.gitorious.org/pdlib
+
+I too got frustrated with the lack of activity around here a while
+back, but actually ended up writing a whole new binding - JNAJack,
+part of JAudioLibs at http://code.google.com/p/java-audio-utils/.
+While it feels a little wrong to be promoting another project on here,
+the reason I bring it up is that it would be possible to write a
+binary compatible version of JJack that used JNAJack under the covers
+- JNAJack is meant as a direct translation of the Jack API to Java.
+Use of JNA also means no additional native libraries are required, and
+it works across Windows, Mac and Linux.  JNA is already in Fedora as
+well I believe.
+
+Just a thought.  Don't know if that's of interest to anyone around
+here?  Otherwise, sorry for intruding on this thread.
+
+Best wishes,
+
+Neil
+
+
+-- 
+Neil C Smith
+Artist : Technologist : Adviser
+http://neilcsmith.net
+
+
+From mail at jensgulden.de  Sun Nov 13 11:49:05 2011
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sun, 13 Nov 2011 11:49:05 +0100
+Subject: [jjack-users] Small v04-proposal patch
+In-Reply-To: <CAHvRSof_ShAmFJ455+emsi2KQ4djXmWrh_KwaSC82HB0dg+=dQ@mail.gmail.com>
+References: <CAHCOHQnLM2TbVdiZsc5+oAY9vH7HyAFUGy-xgEeTCWFPF-BH9g@mail.gmail.com>	<CADMEzewQGkNR=_OrvzCiFgST1ZcrOqJu+2eAdgEBCtuO9VP9ag@mail.gmail.com>
+	<CAHvRSof_ShAmFJ455+emsi2KQ4djXmWrh_KwaSC82HB0dg+=dQ@mail.gmail.com>
+Message-ID: <4EBFA0A1.4050309@jensgulden.de>
+
+Hi Neil,
+
+> JNAJack, part of JAudioLibs at http://code.google.com/p/java-audio-utils/
+
+It is perfectly ok to point to alternative approaches here, or to 
+mention projects, that branched from JJack. If it ends up in better Java 
+support for JACK, it's fine.
+
+Best, Jens
+
+Am 12.11.2011 13:29, schrieb Neil C Smith:
+> On 11 November 2011 17:43, Peter Brinkmann
+> <peter.brinkmann at googlemail.com>  wrote:
+>> Hi Jerry,
+>> I haven't seen any activity around JJack in a long time, and so I went
+>> ahead and extracted the parts that I want for my work, refactored them
+>> a little, and posted them at Gitorious.  You can find it here:
+>> https://www.gitorious.org/pdlib
+>
+> I too got frustrated with the lack of activity around here a while
+> back, but actually ended up writing a whole new binding - JNAJack,
+> part of JAudioLibs at http://code.google.com/p/java-audio-utils/.
+> While it feels a little wrong to be promoting another project on here,
+> the reason I bring it up is that it would be possible to write a
+> binary compatible version of JJack that used JNAJack under the covers
+> - JNAJack is meant as a direct translation of the Jack API to Java.
+> Use of JNA also means no additional native libraries are required, and
+> it works across Windows, Mac and Linux.  JNA is already in Fedora as
+> well I believe.
+>
+> Just a thought.  Don't know if that's of interest to anyone around
+> here?  Otherwise, sorry for intruding on this thread.
+>
+> Best wishes,
+>
+> Neil
+>
+>
+
+

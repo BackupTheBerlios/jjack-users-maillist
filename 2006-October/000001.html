@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Native allocation of Jack jni buffers are now only	done once (instead of each process call)
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Native%20allocation%20of%20Jack%20jni%20buffers%20are%20now%20only%0A%09done%20once%20%28instead%20of%20each%20process%20call%29&In-Reply-To=%3C200610181119.49417.contact%40petersalomonsen.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000002.html">
+   <LINK REL="Next"  HREF="000003.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Native allocation of Jack jni buffers are now only	done once (instead of each process call)</H1>
+    <B>Peter Johan Salomonsen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Native%20allocation%20of%20Jack%20jni%20buffers%20are%20now%20only%0A%09done%20once%20%28instead%20of%20each%20process%20call%29&In-Reply-To=%3C200610181119.49417.contact%40petersalomonsen.com%3E"
+       TITLE="[jjack-users] Native allocation of Jack jni buffers are now only	done once (instead of each process call)">contact at petersalomonsen.com
+       </A><BR>
+    <I>Wed Oct 18 11:19:49 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000002.html">[jjack-users] Jack, Java and Threads under Linux
+</A></li>
+        <LI>Next message: <A HREF="000003.html">[jjack-users] Native allocation of Jack jni buffers are now only done once (instead of each process call)
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#1">[ date ]</a>
+              <a href="thread.html#1">[ thread ]</a>
+              <a href="subject.html#1">[ subject ]</a>
+              <a href="author.html#1">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+We use JJack in Frinika -  I haven't written this integration myself (it was 
+written two years ago) - but I've been revising it recently to handle some 
+new problems that came..
+
+1.
+
+The infPointer of JJackSystem.java was changed to long (64-bit). I had to do 
+this to make it work on my AMD64 cpu.
+
+2.
+
+See the forwarded message below - what happens is that the NewObjectArray and 
+NewDirectByteBuffer calls causes instancing and memory allocation at each and 
+every process call. By reducing this to only once (first process call), I saw 
+a significant performance increase.
+
+The modified c source file is here:
+<A HREF="http://frinika.cvs.sourceforge.net/frinika/frinika/cpp/jjack/libfrinika.c?view=markup">http://frinika.cvs.sourceforge.net/frinika/frinika/cpp/jjack/libfrinika.c?view=markup</A>
+
+The modified JJackSystem.java is here:
+
+<A HREF="http://frinika.cvs.sourceforge.net/frinika/frinika/src/de/gulden/framework/jjack/JJackSystem.java?view=markup">http://frinika.cvs.sourceforge.net/frinika/frinika/src/de/gulden/framework/jjack/JJackSystem.java?view=markup</A>
+
+Also feel free to check out sources from cvs using this cvs string:
+
+:<i>pserver:<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">anonymous at frinika.cvs.sourceforge.net</A>:/cvsroot/frinika 
+</I>
+----------------------------------
+
+We have a custom version of libjack.c in Frinika, but I believe it should not  
+be neccesary, and I don't really know why it was done that way - but I 
+believe it should be quite easy to replace all of it with a jjack.jar - that 
+could be updated on each release (any new releases in line?)
+
+cheers,
+
+Peter Salomonsen
+
+
+----------  Forwarded Message  ----------
+
+Subject: Native allocation of Jack jni buffers are now only done once (instead 
+of each process call)
+Date: Tuesday 17 October 2006 21:27
+From: Peter Johan Salomonsen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">contact at petersalomonsen.com</A>&gt;
+To: <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">frinika-developers at lists.sourceforge.net</A>
+
+I just went to the JJack c code and found that this code:
+
+/* allocate DirectByteBuffer objects */
+	    for (mode=INPUT; mode&lt;=OUTPUT; mode++) {
+	        inf-&gt;byteBufferArray[mode] = (*env)-&gt;NewObjectArray(env,
+inf-&gt;portCount[mode], inf-&gt;cls_ByteBuffer, NULL);
+	        for (i=0; i &lt; inf-&gt;portCount[mode]; i++) {
+	        	jobject byteBuffer = (*env)-&gt;NewDirectByteBuffer(env,
+(jack_default_audio_sample_t *) jack_port_get_buffer(inf-&gt;port[mode][i],
+nframes), nframes*4);
+	            (*env)-&gt;SetObjectArrayElement(env, inf-&gt;byteBufferArray[mode],
+ i, byteBuffer);
+	        }
+	    }
+
+was called for each Jack process request.
+
+The NewObjectArray and NewDirectByteBuffer calls means object instancing
+ which means memory allocation. My experience is new instancing causes more
+ glitches, and should be avoided both in native and java code in the audio
+ rendering process.
+
+I think that's it for the c part, but keep an eye open if there are &quot;newing&quot;
+or other memory allocation during the audio rendering in the java code. (I
+don't know about rasmusdsp here?)
+
+I suffer from far less glitches now :)
+
+NOTE: Paul, I  did only compile this for amd64 - you have the chance to make
+ / test a 32 bit version?
+
+cheers,
+
+Peter
+
+-------------------------------------------------------
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000002.html">[jjack-users] Jack, Java and Threads under Linux
+</A></li>
+	<LI>Next message: <A HREF="000003.html">[jjack-users] Native allocation of Jack jni buffers are now only done once (instead of each process call)
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#1">[ date ]</a>
+              <a href="thread.html#1">[ thread ]</a>
+              <a href="subject.html#1">[ subject ]</a>
+              <a href="author.html#1">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

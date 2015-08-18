@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] comparing JJack and JavaSound, measuring latency
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-February/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20comparing%20JJack%20and%20JavaSound%2C%20measuring%20latency&In-Reply-To=%3Ce78383b30702160011l7223ee6fj23bb38b4c5b418f5%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000036.html">
+   <LINK REL="Next"  HREF="000038.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] comparing JJack and JavaSound, measuring latency</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20comparing%20JJack%20and%20JavaSound%2C%20measuring%20latency&In-Reply-To=%3Ce78383b30702160011l7223ee6fj23bb38b4c5b418f5%40mail.gmail.com%3E"
+       TITLE="[jjack-users] comparing JJack and JavaSound, measuring latency">helgeingvart at gmail.com
+       </A><BR>
+    <I>Fri Feb 16 09:11:53 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000036.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+        <LI>Next message: <A HREF="000038.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#37">[ date ]</a>
+              <a href="thread.html#37">[ thread ]</a>
+              <a href="subject.html#37">[ subject ]</a>
+              <a href="author.html#37">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>&gt;<i> Gnome uses the gstreamer framework. This one provides a complete
+</I>&gt;<i> pipeline for processing/rendering multimedia formats (audio/video...).
+</I>&gt;<i> Mixing is done among gstreamer-based apps. The final data is sent to an
+</I>&gt;<i> output (which can be one of ALSA playback port, esd sound server, ...)
+</I>
+We already thought about that. However, we would like to be cross
+platform compatible on sound, so that one can use the same API for
+programming both on linux and on Windows. Nice if there were a SPI
+implementation using gstreamer, but it seems like there exist no such
+thing.
+
+Also, an alternative if one stick to Linux only that might work would
+be to lauch jackd early in the boot sequence (before gnome) so that
+jackd got the infamous lock on ALSA. Thus I might get the guaranteed
+access as I want. Any opinion on this?
+
+
+&gt;<i> plugins for your app to connect to ALSA and all the existing sound
+</I>&gt;<i> servers (esd, arts, pulse, jack...)
+</I>
+I were hoping that the existing plugins such as dmix and dsnoop would
+help me out here, but I've seen other hints on the net that you cannot
+configure JavaSound to use a soft device (as defined in .asoundrc) to
+use as main source of sound, or how? I've understood it so that
+JavaSound use the hardware &quot;directly&quot; through ALSA.
+
+I came across this <A HREF="http://gentoo-wiki.com/HOWTO_ALSA_sound_mixer_aka_dmix#jack">http://gentoo-wiki.com/HOWTO_ALSA_sound_mixer_aka_dmix#jack</A>
+Any opinion about what is going on here?
+
+Regards,
+Helge F.
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000036.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+	<LI>Next message: <A HREF="000038.html">[jjack-users] comparing JJack and JavaSound, measuring latency
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#37">[ date ]</a>
+              <a href="thread.html#37">[ thread ]</a>
+              <a href="subject.html#37">[ subject ]</a>
+              <a href="author.html#37">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

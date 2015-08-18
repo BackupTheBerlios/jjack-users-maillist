@@ -1,0 +1,1060 @@
+From mail at jensgulden.de  Mon Jun  1 22:38:19 2009
+From: mail at jensgulden.de (Jens Gulden)
+Date: Mon, 01 Jun 2009 22:38:19 +0200
+Subject: [jjack-users] JJack native client redesign proposal for future 0.4
+	release
+Message-ID: <4A243C3B.8040904@jensgulden.de>
+
+Hello JJack users and developers,
+
+Peter Brinkmann has contributed substantial changes to libjjack.c and 
+JJackSystem.java. They are a complete re-implementation of the native 
+client architecture and promise to solve a number of performance issues. 
+I have not done any practical tests yet, but looked into the code and 
+have found several useful improvements (see the list of changes below).
+
+Peter's code is available on an SVN-branch at
+
+https://<developername>@svn.berlios.de/svnroot/repos/jjack/branches/v04-proposal
+
+Changed files:
+src/de/gulden/framework/jjack/JJackAudioEvent.java
+src/de/gulden/framework/jjack/JJackNativeClient.java (new)
+src/de/gulden/framework/jjack/JJackNativeClientEvent.java (new)
+src/de/gulden/framework/jjack/JJackNativeClientListener.java (new)
+src/de/gulden/framework/jjack/JJackSystem.java
+src/de/gulden/framework/jjack/libjjack.c
+make/build_macosx.xml (new)
+make/build.xml
+
+I have called this "version 0.4 proposal". We can discuss including 
+other changes (maybe from the Frinika project?) before merging them into 
+trunk and finally building a 0.4 release.
+
+New features are:
+
+- The native bridge now lives in a new class (JJackNativeClient.java), 
+which is a minimal wrapper for native jack clients. It is now possible 
+to create multiple clients, open, close, etc., without restarting the JVM
+
+- The process callback is significantly smaller than before, which 
+hopefully reduces the amount of zombifications.
+
+- There now is a shutdown call (with listeners), so at least you get 
+notified when you are zombified.
+
+- Init and destroy now implicitly happen automatically, and in addition 
+every client has a finalize-method, so there are no leaks.
+
+- Despite all changes, JJackSystem should behave exactly like before 
+(except the thread-issue mentioned above). Besides JJackSystem.java, 
+libjjack.c and a small addition in JJackAudioEvent.java, no files have 
+been changed.
+
+- Inside the process-callback, as few new object instances as possible 
+are created.
+
+- There now is a build-file for MacOS.
+
+Feedback on this is very helpful for building a version 0.4 release. So 
+everyone is welcome to give comments.
+
+Best,
+Jens
+
+
+From mail at jensgulden.de  Mon Jun  1 22:29:17 2009
+From: mail at jensgulden.de (Jens Gulden)
+Date: Mon, 01 Jun 2009 22:29:17 +0200
+Subject: [jjack-users] JJack sources now available via SVN
+Message-ID: <4A243A1D.6070306@jensgulden.de>
+
+Hello JJack developers,
+
+since today, the JJack sources are available via SVN at
+
+https://<developername>@svn.berlios.de/svnroot/repos/jjack/trunk
+
+or, for anonymous read-only access, at
+
+http://svn.berlios.de/svnroot/repos/jjack/trunk
+
+We shouldn't touch the CVS repository any more and do all commits to SVN 
+from now on. (I think by now, all the world uses SVN instead of CVS, 
+except the people who do the Eclipse distribution packaging...)
+
+Best,
+Jens
+
+
+From ollie at icarus.nu  Tue Jun  2 10:24:40 2009
+From: ollie at icarus.nu (Oliver Bown)
+Date: Tue, 2 Jun 2009 18:24:40 +1000
+Subject: [jjack-users] JJack native client redesign proposal for future
+	0.4 release
+In-Reply-To: <4A243C3B.8040904@jensgulden.de>
+References: <4A243C3B.8040904@jensgulden.de>
+Message-ID: <3F27BD11-89B7-4609-99A7-213E31D313A9@icarus.nu>
+
+Hi, this appears to work well for me (Mac OSX 10.5.7, Java 1.5,  
+Eclipse 3.4.1, Jack 0.8.7), except for following message (which also  
+occurs on my previous version of jjack)...
+
+jack_client_new: deprecated
+
+(generated from the following code)...
+
+JJackSystem.setProcessor(new JJackAudioProcessor() {
+     public void process(JJackAudioEvent e) {
+	for (int i=0; i<e.countChannels(); i++) {
+	    FloatBuffer in = e.getInput(i);
+	    FloatBuffer out = e.getOutput(i);
+	    int cap = in.capacity();
+	    for (int j=0; j<cap; j++) {
+	        out.put(j, in.get());
+	    }
+	}
+     }
+});
+
+Another question: I don't see a way to query JJackSystem (e.g., to  
+find out how many channels or what the buffer size is before you  
+embark on this process callback), or to remote control Jack in any way  
+(e.g., tell it how many channels / buffer size, make connections, or  
+start and stop jackd). Are these things possible? That would be  
+awesome. Apologies if I missed the appropriate bit of documentations.
+
+Cheers,
+
+Ollie Bown
+
+On 02/06/2009, at 6:38 AM, Jens Gulden wrote:
+
+> Hello JJack users and developers,
+>
+> Peter Brinkmann has contributed substantial changes to libjjack.c and
+> JJackSystem.java. They are a complete re-implementation of the native
+> client architecture and promise to solve a number of performance  
+> issues.
+> I have not done any practical tests yet, but looked into the code and
+> have found several useful improvements (see the list of changes  
+> below).
+>
+> Peter's code is available on an SVN-branch at
+>
+> https://<developername>@svn.berlios.de/svnroot/repos/jjack/branches/ 
+> v04-proposal
+>
+> Changed files:
+> src/de/gulden/framework/jjack/JJackAudioEvent.java
+> src/de/gulden/framework/jjack/JJackNativeClient.java (new)
+> src/de/gulden/framework/jjack/JJackNativeClientEvent.java (new)
+> src/de/gulden/framework/jjack/JJackNativeClientListener.java (new)
+> src/de/gulden/framework/jjack/JJackSystem.java
+> src/de/gulden/framework/jjack/libjjack.c
+> make/build_macosx.xml (new)
+> make/build.xml
+>
+> I have called this "version 0.4 proposal". We can discuss including
+> other changes (maybe from the Frinika project?) before merging them  
+> into
+> trunk and finally building a 0.4 release.
+>
+> New features are:
+>
+> - The native bridge now lives in a new class (JJackNativeClient.java),
+> which is a minimal wrapper for native jack clients. It is now possible
+> to create multiple clients, open, close, etc., without restarting  
+> the JVM
+>
+> - The process callback is significantly smaller than before, which
+> hopefully reduces the amount of zombifications.
+>
+> - There now is a shutdown call (with listeners), so at least you get
+> notified when you are zombified.
+>
+> - Init and destroy now implicitly happen automatically, and in  
+> addition
+> every client has a finalize-method, so there are no leaks.
+>
+> - Despite all changes, JJackSystem should behave exactly like before
+> (except the thread-issue mentioned above). Besides JJackSystem.java,
+> libjjack.c and a small addition in JJackAudioEvent.java, no files have
+> been changed.
+>
+> - Inside the process-callback, as few new object instances as possible
+> are created.
+>
+> - There now is a build-file for MacOS.
+>
+> Feedback on this is very helpful for building a version 0.4 release.  
+> So
+> everyone is welcome to give comments.
+>
+> Best,
+> Jens
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090602/8f78f47d/attachment.html>
+
+From peter.brinkmann at googlemail.com  Sat Jun  6 08:38:13 2009
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Sat, 6 Jun 2009 02:38:13 -0400
+Subject: [jjack-users] JJack native client redesign proposal for future 0.4
+	release
+Message-ID: <da05bb0906052338h180d6048v3c9aa8789cef0a15@mail.gmail.com>
+
+Hi Ollie,
+
+> Hi, this appears to work well for me (Mac OSX 10.5.7, Java 1.5,
+> Eclipse 3.4.1, Jack 0.8.7), except for following message (which also
+> occurs on my previous version of jjack)...
+>
+> jack_client_new: deprecated
+>
+> This is weird; one of the first things I did was to get rid of the
+deprecated jack_client_new calls.  It appears that you're still loading the
+old version of the native binaries.  That also seems strange, though,
+because the new Java code (JJackNativeClient.java) doesn't work with the old
+binaries.  Is it possible that your build path in Eclipse still points to
+the old jar file as well as the old native code?  Did you build the new
+version with "ant -f build_macosx.xml" in the make directory?  You may also
+have to delete the old Mac binaries that come with the svn checkout.
+
+Another question: I don't see a way to query JJackSystem (e.g., to
+> find out how many channels or what the buffer size is before you
+> embark on this process callback), or to remote control Jack in any way
+> (e.g., tell it how many channels / buffer size, make connections, or
+> start and stop jackd). Are these things possible?
+>
+> If you're using the original JJack functionality (fully preserved in the
+new version), then you can set the number of channels through system
+properties.  If you're using the new functionality, then you can open and
+close an arbitrary number of Jack clients and specify the number of input
+and output ports for each of them; you can also specify the names of clients
+to connect to.  JJackNativeClient.java also comes with static methods
+that'll report the sample rate and buffer size.
+
+As for starting and stopping Jack, it would be a trivial change to
+automatically start Jack when opening a client (just pass an additional flag
+to jack_client_open), but for the time being I decided against that because
+it would be a bit of a departure from the original functionality of JJack.
+Hope this helps,
+     Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090606/963c7b3a/attachment.html>
+
+From peter.brinkmann at googlemail.com  Sat Jun  6 09:43:31 2009
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Sat, 6 Jun 2009 03:43:31 -0400
+Subject: [jjack-users] JJack native client redesign proposal for future 0.4
+	release
+Message-ID: <da05bb0906060043w243f9890l45ac3a52163d84ff@mail.gmail.com>
+
+Hello everybody,
+Just a few words to set up some context for my take on JJack:
+
+  - I'm using JJack in the audio components of jReality (www.jreality.de).
+In particular, the idea is to render an Ambisonics B-signal and use JACK to
+pipe the B-signal into an Ambisonics decoder such as Fons Adriaensen's
+ambdec, so that I needed the ability to autoconnect to all kinds of JACK
+ports, not just physical ports.
+
+- A jReality application may need to connect to several JACK clients at once
+(e.g., it might connect to ambdec for Ambisonics output as well as various
+soft synths for input), and so it made sense to have several clients, each
+of which autoconnects to a different list of ports.  Moreover, the
+collection of JACK clients may depend on user interaction, so that I needed
+a way of adding or removing clients on the fly.
+
+  - I encountered a lot of zombifications on an underpowered (albeit not
+quite obsolete) Linux box, and so I needed a way to restart my JACK
+components without restarting the entire application.
+
+  - If you're only interested in the original functionality of JJack, then
+the new version should look the same to you, with one minor difference:  The
+new version attaches JACK threads as daemon threads, so that a Java
+application will terminate if the only remaining threads are JACK threads.
+If you have any applications that expect to stay alive as long as their JACK
+threads are alive, please let me know.  Restoring the original functionality
+would be trivial, but for my purposes (lots of JACK threads that are
+subordinate to graphics and user interaction threads) it makes more sense to
+attach JACK threads as daemons.
+
+Any thoughts would be appreciated.
+All the best,
+     Peter
+
+
+
+
+<https://lists.berlios.de/pipermail/jjack-users/2009-June/000112.html>
+>
+> Hello JJack users and developers,
+>
+> Peter Brinkmann has contributed substantial changes to libjjack.c and
+> JJackSystem.java. They are a complete re-implementation of the native
+> client architecture and promise to solve a number of performance issues.
+> I have not done any practical tests yet, but looked into the code and
+> have found several useful improvements (see the list of changes below).
+>
+> Peter's code is available on an SVN-branch at
+>
+> https://<developername <https://%3cdevelopername/>>@svn.berlios.de/svnroot/repos/jjack/branches/v04-proposal
+>
+> Changed files:
+> src/de/gulden/framework/jjack/JJackAudioEvent.java
+> src/de/gulden/framework/jjack/JJackNativeClient.java (new)
+> src/de/gulden/framework/jjack/JJackNativeClientEvent.java (new)
+> src/de/gulden/framework/jjack/JJackNativeClientListener.java (new)
+> src/de/gulden/framework/jjack/JJackSystem.java
+> src/de/gulden/framework/jjack/libjjack.c
+> make/build_macosx.xml (new)
+> make/build.xml
+>
+> I have called this "version 0.4 proposal". We can discuss including
+> other changes (maybe from the Frinika project?) before merging them into
+> trunk and finally building a 0.4 release.
+>
+> New features are:
+>
+> - The native bridge now lives in a new class (JJackNativeClient.java),
+> which is a minimal wrapper for native jack clients. It is now possible
+> to create multiple clients, open, close, etc., without restarting the JVM
+>
+> - The process callback is significantly smaller than before, which
+> hopefully reduces the amount of zombifications.
+>
+> - There now is a shutdown call (with listeners), so at least you get
+> notified when you are zombified.
+>
+> - Init and destroy now implicitly happen automatically, and in addition
+> every client has a finalize-method, so there are no leaks.
+>
+> - Despite all changes, JJackSystem should behave exactly like before
+> (except the thread-issue mentioned above). Besides JJackSystem.java,
+> libjjack.c and a small addition in JJackAudioEvent.java, no files have
+> been changed.
+>
+> - Inside the process-callback, as few new object instances as possible
+> are created.
+>
+> - There now is a build-file for MacOS.
+>
+> Feedback on this is very helpful for building a version 0.4 release. So
+> everyone is welcome to give comments.
+>
+> Best,
+> Jens
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090606/476678a1/attachment.html>
+
+From neilcsmith.net at googlemail.com  Sat Jun 20 16:04:39 2009
+From: neilcsmith.net at googlemail.com (Neil C Smith)
+Date: Sat, 20 Jun 2009 15:04:39 +0100
+Subject: [jjack-users] JNA binding
+Message-ID: <f4ca5a5a0906200704u67b27003s608d013f34dc1508@mail.gmail.com>
+
+Hi All,
+
+Firstly, a big thank you to those who've put time into developing JJack -
+I've been using JJack happily for a few projects until now.  However on a
+current project I'm working on I was coming across some issues to do with
+the single client limitation, lack of access to the full Jack API and
+deployment problems.  Having been an occasional reader, rather than a
+subscriber, to this list I'd missed some of the recent development
+discussions addressing some of these concerns.  Hopefully this message will
+still be of some interest.
+
+I had decided a while back to experiment with a JNA binding to Jack, and
+finally got around to looking at this yesterday.  I used JNAerator to create
+the majority of the Java interface from the Jack header files, though they
+needed some tweaking by hand and are not feature complete yet - will add
+MIDI and Transport code ASAP - as I concentrated on getting the audio stuff
+working.  Anyway, after a couple of hours of tweaking, I've got some working
+code to access Jack and a simple audio client interface to test this.  I was
+a bit wary that the extra overhead of JNA vs custom JNI might make this
+unfeasible, but am pleasantly surprised by the results.  Have tried it on
+two different Linux setups, one running with a realtime kernel, and it all
+seems to run nicely.  JNA should pick up the Mac and Windows libs
+automatically but it's not something I can test.  I haven't done any real
+benchmarking, but on the realtime kernel machine there appears to be about a
+3-5% CPU difference above JJack, however this is only an 800MHz tablet
+(Indamixx) so on something with a bit more grunt it should be less
+noticeable.  It also happily runs with RT privileges, without any XRuns.
+
+I've put the test code as is up at
+http://code.google.com/p/java-audio-utils/  - bear in mind it's a bit untidy
+and undocumented though! :-)  I have no intention of trying to compete with
+the scope of JJack for this, but will probably look to improve it as a bare
+bones wrapper for my own needs.  However, I wonder if this approach might be
+of interest for future development of JJack - even if not for the process
+callback if the overhead is thought to be too much, it might be an easier
+way of adding full access to the rest of the Jack API.
+
+Best wishes,
+
+Neil
+
+-- 
+Neil C Smith
+Sound & InterMedia Artist / Arts & Technology Adviser
+http://neilcsmith.net
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090620/acfde133/attachment.html>
+
+From peter.brinkmann at googlemail.com  Sat Jun 20 17:20:44 2009
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Sat, 20 Jun 2009 11:20:44 -0400
+Subject: [jjack-users] JNA binding
+In-Reply-To: <f4ca5a5a0906200704u67b27003s608d013f34dc1508@mail.gmail.com>
+References: <f4ca5a5a0906200704u67b27003s608d013f34dc1508@mail.gmail.com>
+Message-ID: <da05bb0906200820rd28950v994f21307b86234c@mail.gmail.com>
+
+Hi Neil,
+I also came up against the singe client limitation, and I reworked JJack so
+that it now supports multiple clients.  I also slimmed down the jack process
+callback so that you may see a small performance increase.  You can find the
+new version at
+http://svn.berlios.de/svnroot/repos/jjack/branches/v04-proposal.
+
+The original functionality of JJack remains unchanged, but the native bridge
+moved into a new class called JJackNativeClient that is a minimal wrapper
+for the native code.
+Best,
+    Peter
+
+PS:  I made a number of changes since I last wrote to this list.  In
+particular, I removed the small difference in thread attachment that I
+mentioned earlier, so that the original functionality of JJack is now fully
+preserved, and I updated the ant buildfile to work for both Mac and Linux.
+
+
+On Sat, Jun 20, 2009 at 10:04 AM, Neil C Smith <neilcsmith.net@
+googlemail.com> wrote:
+
+> Hi All,
+>
+> Firstly, a big thank you to those who've put time into developing JJack -
+> I've been using JJack happily for a few projects until now.  However on a
+> current project I'm working on I was coming across some issues to do with
+> the single client limitation, lack of access to the full Jack API and
+> deployment problems.  Having been an occasional reader, rather than a
+> subscriber, to this list I'd missed some of the recent development
+> discussions addressing some of these concerns.  Hopefully this message will
+> still be of some interest.
+>
+> I had decided a while back to experiment with a JNA binding to Jack, and
+> finally got around to looking at this yesterday.  I used JNAerator to create
+> the majority of the Java interface from the Jack header files, though they
+> needed some tweaking by hand and are not feature complete yet - will add
+> MIDI and Transport code ASAP - as I concentrated on getting the audio stuff
+> working.  Anyway, after a couple of hours of tweaking, I've got some working
+> code to access Jack and a simple audio client interface to test this.  I was
+> a bit wary that the extra overhead of JNA vs custom JNI might make this
+> unfeasible, but am pleasantly surprised by the results.  Have tried it on
+> two different Linux setups, one running with a realtime kernel, and it all
+> seems to run nicely.  JNA should pick up the Mac and Windows libs
+> automatically but it's not something I can test.  I haven't done any real
+> benchmarking, but on the realtime kernel machine there appears to be about a
+> 3-5% CPU difference above JJack, however this is only an 800MHz tablet
+> (Indamixx) so on something with a bit more grunt it should be less
+> noticeable.  It also happily runs with RT privileges, without any XRuns.
+>
+> I've put the test code as is up at
+> http://code.google.com/p/java-audio-utils/  - bear in mind it's a bit
+> untidy and undocumented though! :-)  I have no intention of trying to
+> compete with the scope of JJack for this, but will probably look to improve
+> it as a bare bones wrapper for my own needs.  However, I wonder if this
+> approach might be of interest for future development of JJack - even if not
+> for the process callback if the overhead is thought to be too much, it might
+> be an easier way of adding full access to the rest of the Jack API.
+>
+> Best wishes,
+>
+> Neil
+>
+> --
+> Neil C Smith
+> Sound & InterMedia Artist / Arts & Technology Adviser
+> http://neilcsmith.net
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090620/df4ab63f/attachment.html>
+
+From neil at neilcsmith.net  Tue Jun 23 12:42:38 2009
+From: neil at neilcsmith.net (Neil C Smith)
+Date: Tue, 23 Jun 2009 11:42:38 +0100
+Subject: [jjack-users] JNA binding
+Message-ID: <f4ca5a5a0906230342t3ed7d9bv202c5708675447ee@mail.gmail.com>
+
+Hi Peter,
+
+Thank for the swift response.  I was aware when I wrote of some of the
+work you'd done on adding support for multiple clients, which meets
+parts of my needs. However, I also want access to other aspects of the
+Jack API (MIDI, transport, connections, etc). I'm under the impression
+that this isn't being worked on at the moment, which is why I started
+looking at binding the full Jack API with JNA.
+
+I should have most of the audio API done this week, and will have a
+look at the other aspects as soon as I get the time. As I'm using JNA
+the performance of the audio callback is always going to be a bit
+behind the custom JNI code in JJack (though it should improve when the
+new SVN version of JNA is released), but the two layers should be able
+to operate side by side.  If there was a way of getting JJack's client
+pointer across to JNA, it would even be possible to get access to the
+many client functions that JJack currently doesn't give access to,
+while retaining the current performance on the RT thread.
+
+As I said in my previous email, I'm not trying to compete with what
+JJack provides, but offer a simple access layer to other aspects of
+the Jack API that I need, and I know other people on this list have
+asked about.
+
+Best wishes,
+
+Neil
+
+--
+Neil C Smith
+Sound & InterMedia Artist / Arts & Technology Adviser
+http://neilcsmith.net
+
+
+> Hi Neil,
+> I also came up against the singe client limitation, and I reworked JJack so
+> that it now supports multiple clients. ?I also slimmed down the jack process
+> callback so that you may see a small performance increase. ?You can find the
+> new version at
+> http://svn.berlios.de/svnroot/repos/jjack/branches/v04-proposal.
+>
+> The original functionality of JJack remains unchanged, but the native bridge
+> moved into a new class called JJackNativeClient that is a minimal wrapper
+> for the native code.
+> Best,
+> ? ?Peter
+>
+> PS: ?I made a number of changes since I last wrote to this list. ?In
+> particular, I removed the small difference in thread attachment that I
+> mentioned earlier, so that the original functionality of JJack is now fully
+> preserved, and I updated the ant buildfile to work for both Mac and Linux.
+
+
+From ersin.basaran at primeart.net  Wed Jun 24 17:52:30 2009
+From: ersin.basaran at primeart.net (Ersin Basaran)
+Date: Wed, 24 Jun 2009 18:52:30 +0300
+Subject: [jjack-users] JJack in server environment
+Message-ID: <014201c9f4e3$c81b36b0$5851a410$@basaran@primeart.net>
+
+Hi,
+
+As I understand from the messages in this list, it will be possible to start
+multiple jack clients within a single application in the version 0.4 by the
+use of JJackNativeClient class. Am I correct?
+
+I want to use JJack in a media server (red5 - to be specific - with xuggler)
+to connect audio channels to other softwares like pd (pure-data). There will
+be multiple concurrent audio channels to process. Jack and JJack seem to be
+perfect match for this. 
+
+Ersin Basaran
+
+
+
+From peter.brinkmann at googlemail.com  Wed Jun 24 19:11:30 2009
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Wed, 24 Jun 2009 13:11:30 -0400
+Subject: [jjack-users] JJack in server environment
+In-Reply-To: <-1947614013843300105@unknownmsgid>
+References: <-1947614013843300105@unknownmsgid>
+Message-ID: <da05bb0906241011t3d3cd550s2a1041ffa81800df@mail.gmail.com>
+
+Hi Ersin,
+That's right, the new JJackNativeClient class will let you create any number
+of clients.  An instance of JJackNativeClient is basically just a thin
+wrapper and a collection of convenience methods for a jack client instance.
+Best,
+     Peter
+
+
+On Wed, Jun 24, 2009 at 11:52 AM, Ersin Basaran
+<ersin.basaran at primeart.net>wrote:
+
+> Hi,
+>
+> As I understand from the messages in this list, it will be possible to
+> start
+> multiple jack clients within a single application in the version 0.4 by the
+> use of JJackNativeClient class. Am I correct?
+>
+> I want to use JJack in a media server (red5 - to be specific - with
+> xuggler)
+> to connect audio channels to other softwares like pd (pure-data). There
+> will
+> be multiple concurrent audio channels to process. Jack and JJack seem to be
+> perfect match for this.
+>
+> Ersin Basaran
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090624/bd82ad13/attachment.html>
+
+From ollie at icarus.nu  Fri Jun 26 02:38:25 2009
+From: ollie at icarus.nu (Oliver Bown)
+Date: Fri, 26 Jun 2009 10:38:25 +1000
+Subject: [jjack-users] JJack native client redesign proposal for future
+	0.4 release
+In-Reply-To: <da05bb0906052338h180d6048v3c9aa8789cef0a15@mail.gmail.com>
+References: <da05bb0906052338h180d6048v3c9aa8789cef0a15@mail.gmail.com>
+Message-ID: <D410EF31-04CB-4AB8-961D-7CAC22BC4F5B@icarus.nu>
+
+Hi Peter and jjack-users,
+
+apologies for not replying earlier. I guess you were right. I was  
+probably still linking to an earlier jjack! Sorry for that.
+
+Also, I'd like to say a big congratulations for jjack. It's a great  
+solution for Java audio, especially on OSX which seems to have pretty  
+rubbish support for JavaSound. I'm sure I'll be making lots of use of  
+it in the future, especially for multichannel work.
+
+I'm still a bit new to the jack commandline tools and the basic  
+principles of setting up a jack client. At the moment I'm running a  
+multichannel installation (one input and four outputs). A script  
+starts jackdmp with the correct configuration, then I run my Java  
+program, using the Jjack JavaSound wrapper and the autoconnect flag.  
+This works nicely. One thing though is that I'm getting occasional  
+crackles and correspondingly, seeing messages in the commandline,  
+mostly....
+
+JackActivationCount::Signal value = 0 ref =3
+
+It's quite cryptic to me. Would I be right in assuming that this is  
+the result of audio frames not being calculated quickly enough in my  
+Java program, causing dropouts for Jack? I have tried setting a nice  
+large system buffer size when creating my SourceDataLine to remove the  
+glitches. But I suspect given the goal of low-latency realtime  
+performance, JJack doesn't actually use this buffering cue -- i.e.,  
+you can't make up for lost time, frames need to be calculated right  
+away. Is that correct?
+
+Cheers,
+
+Ollie
+
+On 06/06/2009, at 4:38 PM, Peter Brinkmann wrote:
+
+>
+> Hi Ollie,
+> Hi, this appears to work well for me (Mac OSX 10.5.7, Java 1.5,
+> Eclipse 3.4.1, Jack 0.8.7), except for following message (which also
+>
+> occurs on my previous version of jjack)...
+>
+> jack_client_new: deprecated
+> This is weird; one of the first things I did was to get rid of the  
+> deprecated jack_client_new calls.  It appears that you're still  
+> loading the old version of the native binaries.  That also seems  
+> strange, though, because the new Java code (JJackNativeClient.java)  
+> doesn't work with the old binaries.  Is it possible that your build  
+> path in Eclipse still points to the old jar file as well as the old  
+> native code?  Did you build the new version with "ant -f  
+> build_macosx.xml" in the make directory?  You may also have to  
+> delete the old Mac binaries that come with the svn checkout.
+>
+> Another question: I don't see a way to query JJackSystem (e.g., to
+> find out how many channels or what the buffer size is before you
+>
+> embark on this process callback), or to remote control Jack in any way
+> (e.g., tell it how many channels / buffer size, make connections, or
+> start and stop jackd). Are these things possible?
+> If you're using the original JJack functionality (fully preserved in  
+> the new version), then you can set the number of channels through  
+> system properties.  If you're using the new functionality, then you  
+> can open and close an arbitrary number of Jack clients and specify  
+> the number of input and output ports for each of them; you can also  
+> specify the names of clients to connect to.  JJackNativeClient.java  
+> also comes with static methods that'll report the sample rate and  
+> buffer size.
+>
+> As for starting and stopping Jack, it would be a trivial change to  
+> automatically start Jack when opening a client (just pass an  
+> additional flag to jack_client_open), but for the time being I  
+> decided against that because it would be a bit of a departure from  
+> the original functionality of JJack.
+> Hope this helps,
+>      Peter
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From neil at neilcsmith.net  Fri Jun 26 09:13:48 2009
+From: neil at neilcsmith.net (Neil C Smith)
+Date: Fri, 26 Jun 2009 08:13:48 +0100
+Subject: [jjack-users] JJack native client redesign proposal for future
+	0.4 release
+In-Reply-To: <f4ca5a5a0906260000r1340adaaw73527a482ef38566@mail.gmail.com>
+References: <da05bb0906052338h180d6048v3c9aa8789cef0a15@mail.gmail.com>
+	<D410EF31-04CB-4AB8-961D-7CAC22BC4F5B@icarus.nu>
+	<f4ca5a5a0906252352v132f49d3x2edd88131a6145ef@mail.gmail.com>
+	<f4ca5a5a0906260000r1340adaaw73527a482ef38566@mail.gmail.com>
+Message-ID: <f4ca5a5a0906260013r29527e6am8e14b7ae31ab8505@mail.gmail.com>
+
+Hi Ollie,
+
+Good to see you on this list. Java audio's a small world! :-)
+
+In my experience of using JJack, I'd suggest you ignore the JavaSound
+wrapper entirely and directly implement JJackProcessor. I've found this much
+more stable for low latency with no XRuns. (btw, look for XRun in messages -
+I've had the activation count message appear without problems).
+
+In my opinion, the JavaSound bridge, while convenient is a bit questionable
+- try googling mixing blocking and callback APIs and you'll see what I mean.
+Jack is meant to have some native functions to make this work better, but I
+don't think JJack uses them.
+
+If you're using this with Beads(?) and you're processing floats anyway, by
+using the JavaSound bridge you're also unnecessarily converting to and from
+16 bit audio at the beginning and end of processing.
+
+Hope that helps.
+
+Neil
+
+--
+Neil C Smith - http://neilcsmith.net
+sent while mobile through GoogleMail - please reply to neil at neilcsmith.net
+
+On Jun 26, 2009 2:15 AM, "Oliver Bown" <ollie at icarus.nu> wrote:
+
+Hi Peter and jjack-users,
+
+apologies for not replying earlier. I guess you were right. I was
+probably still linking to an earlier jjack! Sorry for that.
+
+Also, I'd like to say a big congratulations for jjack. It's a great
+solution for Java audio, especially on OSX which seems to have pretty
+rubbish support for JavaSound. I'm sure I'll be making lots of use of
+it in the future, especially for multichannel work.
+
+I'm still a bit new to the jack commandline tools and the basic
+principles of setting up a jack client. At the moment I'm running a
+multichannel installation (one input and four outputs). A script
+starts jackdmp with the correct configuration, then I run my Java
+program, using the Jjack JavaSound wrapper and the autoconnect flag.
+This works nicely. One thing though is that I'm getting occasional
+crackles and correspondingly, seeing messages in the commandline,
+mostly....
+
+JackActivationCount::Signal value = 0 ref =3
+
+It's quite cryptic to me. Would I be right in assuming that this is
+the result of audio frames not being calculated quickly enough in my
+Java program, causing dropouts for Jack? I have tried setting a nice
+large system buffer size when creating my SourceDataLine to remove the
+glitches. But I suspect given the goal of low-latency realtime
+performance, JJack doesn't actually use this buffering cue -- i.e.,
+you can't make up for lost time, frames need to be calculated right
+away. Is that correct?
+
+Cheers,
+
+Ollie
+
+On 06/06/2009, at 4:38 PM, Peter Brinkmann wrote:
+
+>
+> Hi Ollie,
+> Hi, this appears to work well for me (Mac OSX 10.5.7, Java 1.5,
+> Eclipse 3.4.1, Jack 0.8.7), except for following message (which also
+>
+> occurs on my previous version of jjack)...
+>
+> jack_client_new: deprecated
+> This is weird; one of the first things I did was to get rid of the
+> deprecated jack_client_new calls.  It appears that you're still
+> loading the old version of the native binaries.  That also seems
+> strange, though, because the new Java code (JJackNativeClient.java)
+> doesn't work with the old binaries.  Is it possible that your build
+> path in Eclipse still points to the old jar file as well as the old
+> native code?  Did you build the new version with "ant -f
+> build_macosx.xml" in the make directory?  You may also have to
+> delete the old Mac binaries that come with the svn checkout.
+>
+> Another question: I don't see a way to query JJackSystem (e.g., to
+> find out how many channels or what the buffer size is before you
+>
+> embark on this process callback), or to remote control Jack in any way
+> (e.g., tell it how many channels / buffer size, make connections, or
+> start and stop jackd). Are these things possible?
+> If you're using the original JJack functionality (fully preserved in
+> the new version), then you can set the number of channels through
+> system properties.  If you're using the new functionality, then you
+> can open and close an arbitrary number of Jack clients and specify
+> the number of input and output ports for each of them; you can also
+> specify the names of clients to connect to.  JJackNativeClient.java
+> also comes with static methods that'll report the sample rate and
+> buffer size.
+>
+> As for starting and stopping Jack, it would be a trivial change to
+> automatically start Jack when opening a client (just pass an
+> additional flag to jack_client_open), but for the time being I
+> decided against that because it would be a bit of a departure from
+> the original functionality of JJack.
+> Hope this helps,
+>      Peter
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+_______________________________________________
+jjack-users mailing list
+jjack-users at lists.berlios.de
+https://lists.berlios.de/mailman/listinfo/jjack-users
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090626/bfa2b40d/attachment.html>
+
+From ollie at icarus.nu  Fri Jun 26 14:32:16 2009
+From: ollie at icarus.nu (Oliver Bown)
+Date: Fri, 26 Jun 2009 22:32:16 +1000
+Subject: [jjack-users] JJack native client redesign proposal for future
+ 0.4 release
+In-Reply-To: <f4ca5a5a0906260013r29527e6am8e14b7ae31ab8505@mail.gmail.com>
+References: <da05bb0906052338h180d6048v3c9aa8789cef0a15@mail.gmail.com>
+	<D410EF31-04CB-4AB8-961D-7CAC22BC4F5B@icarus.nu>
+	<f4ca5a5a0906252352v132f49d3x2edd88131a6145ef@mail.gmail.com>
+	<f4ca5a5a0906260000r1340adaaw73527a482ef38566@mail.gmail.com>
+	<f4ca5a5a0906260013r29527e6am8e14b7ae31ab8505@mail.gmail.com>
+Message-ID: <D5078BEA-FEC5-432A-9D4A-0340DC3716ED@icarus.nu>
+
+Hi Neil,
+
+thanks for that. I am using it with Beads, and I have written a direct  
+JJack interface, but I hadn't noticed that it's performance was any  
+different from the JavaSound version, so I was still using that. I'll  
+go back to using JJack directly and see how I get on.
+
+Oh, and I realised after my last post that increasing the buffer size  
+of jackdmp (e.g., from 512 to 1024) helped a great deal.
+
+Ollie
+
+On 26/06/2009, at 5:13 PM, Neil C Smith wrote:
+
+> Hi Ollie,
+>
+> Good to see you on this list. Java audio's a small world! :-)
+>
+> In my experience of using JJack, I'd suggest you ignore the  
+> JavaSound wrapper entirely and directly implement JJackProcessor.  
+> I've found this much more stable for low latency with no XRuns.  
+> (btw, look for XRun in messages - I've had the activation count  
+> message appear without problems).
+>
+> In my opinion, the JavaSound bridge, while convenient is a bit  
+> questionable - try googling mixing blocking and callback APIs and  
+> you'll see what I mean. Jack is meant to have some native functions  
+> to make this work better, but I don't think JJack uses them.
+>
+> If you're using this with Beads(?) and you're processing floats  
+> anyway, by using the JavaSound bridge you're also unnecessarily  
+> converting to and from 16 bit audio at the beginning and end of  
+> processing.
+>
+> Hope that helps.
+>
+> Neil
+>
+> --
+> Neil C Smith - http://neilcsmith.net
+> sent while mobile through GoogleMail - please reply to neil at neilcsmith.net
+>
+>
+>> On Jun 26, 2009 2:15 AM, "Oliver Bown" <ollie at icarus.nu> wrote:
+>>
+>> Hi Peter and jjack-users,
+>>
+>> apologies for not replying earlier. I guess you were right. I was
+>> probably still linking to an earlier jjack! Sorry for that.
+>>
+>> Also, I'd like to say a big congratulations for jjack. It's a great
+>> solution for Java audio, especially on OSX which seems to have pretty
+>> rubbish support for JavaSound. I'm sure I'll be making lots of use of
+>> it in the future, especially for multichannel work.
+>>
+>> I'm still a bit new to the jack commandline tools and the basic
+>> principles of setting up a jack client. At the moment I'm running a
+>> multichannel installation (one input and four outputs). A script
+>> starts jackdmp with the correct configuration, then I run my Java
+>> program, using the Jjack JavaSound wrapper and the autoconnect flag.
+>> This works nicely. One thing though is that I'm getting occasional
+>> crackles and correspondingly, seeing messages in the commandline,
+>> mostly....
+>>
+>> JackActivationCount::Signal value = 0 ref =3
+>>
+>> It's quite cryptic to me. Would I be right in assuming that this is
+>> the result of audio frames not being calculated quickly enough in my
+>> Java program, causing dropouts for Jack? I have tried setting a nice
+>> large system buffer size when creating my SourceDataLine to remove  
+>> the
+>> glitches. But I suspect given the goal of low-latency realtime
+>> performance, JJack doesn't actually use this buffering cue -- i.e.,
+>> you can't make up for lost time, frames need to be calculated right
+>> away. Is that correct?
+>>
+>> Cheers,
+>>
+>> Ollie
+>>
+>> On 06/06/2009, at 4:38 PM, Peter Brinkmann wrote:
+>>
+>> >
+>> > Hi Ollie,
+>> > Hi, this appears to work well for me (Mac OSX 10.5.7, Java 1.5,
+>> > Eclipse 3.4.1, Jack 0.8.7), except for following message (which  
+>> also
+>> >
+>> > occurs on my previous version of jjack)...
+>> >
+>> > jack_client_new: deprecated
+>> > This is weird; one of the first things I did was to get rid of the
+>> > deprecated jack_client_new calls.  It appears that you're still
+>> > loading the old version of the native binaries.  That also seems
+>> > strange, though, because the new Java code (JJackNativeClient.java)
+>> > doesn't work with the old binaries.  Is it possible that your build
+>> > path in Eclipse still points to the old jar file as well as the old
+>> > native code?  Did you build the new version with "ant -f
+>> > build_macosx.xml" in the make directory?  You may also have to
+>> > delete the old Mac binaries that come with the svn checkout.
+>> >
+>> > Another question: I don't see a way to query JJackSystem (e.g., to
+>> > find out how many channels or what the buffer size is before you
+>> >
+>> > embark on this process callback), or to remote control Jack in  
+>> any way
+>> > (e.g., tell it how many channels / buffer size, make connections,  
+>> or
+>> > start and stop jackd). Are these things possible?
+>> > If you're using the original JJack functionality (fully preserved  
+>> in
+>> > the new version), then you can set the number of channels through
+>> > system properties.  If you're using the new functionality, then you
+>> > can open and close an arbitrary number of Jack clients and specify
+>> > the number of input and output ports for each of them; you can also
+>> > specify the names of clients to connect to.  JJackNativeClient.java
+>> > also comes with static methods that'll report the sample rate and
+>> > buffer size.
+>> >
+>> > As for starting and stopping Jack, it would be a trivial change to
+>> > automatically start Jack when opening a client (just pass an
+>> > additional flag to jack_client_open), but for the time being I
+>> > decided against that because it would be a bit of a departure from
+>> > the original functionality of JJack.
+>> > Hope this helps,
+>> >      Peter
+>> >
+>> > _______________________________________________
+>> > jjack-users mailing list
+>> > jjack-users at lists.berlios.de
+>> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>>
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090626/0c0cc039/attachment.html>
+
+From neil at neilcsmith.net  Fri Jun 26 15:56:30 2009
+From: neil at neilcsmith.net (Neil C Smith)
+Date: Fri, 26 Jun 2009 14:56:30 +0100
+Subject: [jjack-users] JJack native client redesign proposal for future
+	0.4 release
+In-Reply-To: <D5078BEA-FEC5-432A-9D4A-0340DC3716ED@icarus.nu>
+References: <da05bb0906052338h180d6048v3c9aa8789cef0a15@mail.gmail.com>
+	<D410EF31-04CB-4AB8-961D-7CAC22BC4F5B@icarus.nu>
+	<f4ca5a5a0906252352v132f49d3x2edd88131a6145ef@mail.gmail.com>
+	<f4ca5a5a0906260000r1340adaaw73527a482ef38566@mail.gmail.com>
+	<f4ca5a5a0906260013r29527e6am8e14b7ae31ab8505@mail.gmail.com>
+	<D5078BEA-FEC5-432A-9D4A-0340DC3716ED@icarus.nu>
+Message-ID: <f4ca5a5a0906260656w5e74987cieb81b6309698c088@mail.gmail.com>
+
+Ollie,
+
+Are you using Jack with realtime priority? Not sure what the deal is with RT
+on the Mac. I've got JJack running with RT on an 800MHz Indamixx tablet and
+it's rock solid with a direct callback and 512 buffersize, but breaks down
+completely with the JavaSound bridge, probably due to different thread
+priorities. If this little thing can cope, a Mac should be able to! :-)
+
+Best, N
+
+--
+Neil C Smith - http://neilcsmith.net
+sent while mobile through GoogleMail - please reply to neil at neilcsmith.net
+
+On Jun 26, 2009 2:32 PM, "Oliver Bown" <ollie at icarus.nu> wrote:
+
+Hi Neil,
+
+thanks for that. I am using it with Beads, and I have written a direct JJack
+interface, but I hadn't noticed that it's performance was any different from
+the JavaSound version, so I was still using that. I'll go back to using
+JJack directly and see how I get on.
+
+Oh, and I realised after my last post that increasing the buffer size of
+jackdmp (e.g., from 512 to 1024) helped a great deal.
+
+Ollie
+
+On 26/06/2009, at 5:13 PM, Neil C Smith wrote: > Hi Ollie, > > Good to see
+you on this list. Java...
+
+_______________________________________________
+jjack-users mailing list
+jjack-users at lists.berlios.de
+https://lists.berlios.de/mailman/listinfo/jjack-users
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20090626/6f644abc/attachment.html>
+

@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack native client redesign proposal for future	0.4 release
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%0A%090.4%20release&In-Reply-To=%3Cf4ca5a5a0906260013r29527e6am8e14b7ae31ab8505%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000119.html">
+   <LINK REL="Next"  HREF="000122.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack native client redesign proposal for future	0.4 release</H1>
+    <B>Neil C Smith</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%0A%090.4%20release&In-Reply-To=%3Cf4ca5a5a0906260013r29527e6am8e14b7ae31ab8505%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JJack native client redesign proposal for future	0.4 release">neil at neilcsmith.net
+       </A><BR>
+    <I>Fri Jun 26 09:13:48 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000119.html">[jjack-users] JJack in server environment
+</A></li>
+        <LI>Next message: <A HREF="000122.html">[jjack-users] JJack native client redesign proposal for future 0.4 release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#121">[ date ]</a>
+              <a href="thread.html#121">[ thread ]</a>
+              <a href="subject.html#121">[ subject ]</a>
+              <a href="author.html#121">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Ollie,
+
+Good to see you on this list. Java audio's a small world! :-)
+
+In my experience of using JJack, I'd suggest you ignore the JavaSound
+wrapper entirely and directly implement JJackProcessor. I've found this much
+more stable for low latency with no XRuns. (btw, look for XRun in messages -
+I've had the activation count message appear without problems).
+
+In my opinion, the JavaSound bridge, while convenient is a bit questionable
+- try googling mixing blocking and callback APIs and you'll see what I mean.
+Jack is meant to have some native functions to make this work better, but I
+don't think JJack uses them.
+
+If you're using this with Beads(?) and you're processing floats anyway, by
+using the JavaSound bridge you're also unnecessarily converting to and from
+16 bit audio at the beginning and end of processing.
+
+Hope that helps.
+
+Neil
+
+--
+Neil C Smith - <A HREF="http://neilcsmith.net">http://neilcsmith.net</A>
+sent while mobile through GoogleMail - please reply to <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">neil at neilcsmith.net</A>
+
+On Jun 26, 2009 2:15 AM, &quot;Oliver Bown&quot; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">ollie at icarus.nu</A>&gt; wrote:
+
+Hi Peter and jjack-users,
+
+apologies for not replying earlier. I guess you were right. I was
+probably still linking to an earlier jjack! Sorry for that.
+
+Also, I'd like to say a big congratulations for jjack. It's a great
+solution for Java audio, especially on OSX which seems to have pretty
+rubbish support for JavaSound. I'm sure I'll be making lots of use of
+it in the future, especially for multichannel work.
+
+I'm still a bit new to the jack commandline tools and the basic
+principles of setting up a jack client. At the moment I'm running a
+multichannel installation (one input and four outputs). A script
+starts jackdmp with the correct configuration, then I run my Java
+program, using the Jjack JavaSound wrapper and the autoconnect flag.
+This works nicely. One thing though is that I'm getting occasional
+crackles and correspondingly, seeing messages in the commandline,
+mostly....
+
+JackActivationCount::Signal value = 0 ref =3
+
+It's quite cryptic to me. Would I be right in assuming that this is
+the result of audio frames not being calculated quickly enough in my
+Java program, causing dropouts for Jack? I have tried setting a nice
+large system buffer size when creating my SourceDataLine to remove the
+glitches. But I suspect given the goal of low-latency realtime
+performance, JJack doesn't actually use this buffering cue -- i.e.,
+you can't make up for lost time, frames need to be calculated right
+away. Is that correct?
+
+Cheers,
+
+Ollie
+
+On 06/06/2009, at 4:38 PM, Peter Brinkmann wrote:
+
+&gt;<i>
+</I>&gt;<i> Hi Ollie,
+</I>&gt;<i> Hi, this appears to work well for me (Mac OSX 10.5.7, Java 1.5,
+</I>&gt;<i> Eclipse 3.4.1, Jack 0.8.7), except for following message (which also
+</I>&gt;<i>
+</I>&gt;<i> occurs on my previous version of jjack)...
+</I>&gt;<i>
+</I>&gt;<i> jack_client_new: deprecated
+</I>&gt;<i> This is weird; one of the first things I did was to get rid of the
+</I>&gt;<i> deprecated jack_client_new calls.  It appears that you're still
+</I>&gt;<i> loading the old version of the native binaries.  That also seems
+</I>&gt;<i> strange, though, because the new Java code (JJackNativeClient.java)
+</I>&gt;<i> doesn't work with the old binaries.  Is it possible that your build
+</I>&gt;<i> path in Eclipse still points to the old jar file as well as the old
+</I>&gt;<i> native code?  Did you build the new version with &quot;ant -f
+</I>&gt;<i> build_macosx.xml&quot; in the make directory?  You may also have to
+</I>&gt;<i> delete the old Mac binaries that come with the svn checkout.
+</I>&gt;<i>
+</I>&gt;<i> Another question: I don't see a way to query JJackSystem (e.g., to
+</I>&gt;<i> find out how many channels or what the buffer size is before you
+</I>&gt;<i>
+</I>&gt;<i> embark on this process callback), or to remote control Jack in any way
+</I>&gt;<i> (e.g., tell it how many channels / buffer size, make connections, or
+</I>&gt;<i> start and stop jackd). Are these things possible?
+</I>&gt;<i> If you're using the original JJack functionality (fully preserved in
+</I>&gt;<i> the new version), then you can set the number of channels through
+</I>&gt;<i> system properties.  If you're using the new functionality, then you
+</I>&gt;<i> can open and close an arbitrary number of Jack clients and specify
+</I>&gt;<i> the number of input and output ports for each of them; you can also
+</I>&gt;<i> specify the names of clients to connect to.  JJackNativeClient.java
+</I>&gt;<i> also comes with static methods that'll report the sample rate and
+</I>&gt;<i> buffer size.
+</I>&gt;<i>
+</I>&gt;<i> As for starting and stopping Jack, it would be a trivial change to
+</I>&gt;<i> automatically start Jack when opening a client (just pass an
+</I>&gt;<i> additional flag to jack_client_open), but for the time being I
+</I>&gt;<i> decided against that because it would be a bit of a departure from
+</I>&gt;<i> the original functionality of JJack.
+</I>&gt;<i> Hope this helps,
+</I>&gt;<i>      Peter
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+_______________________________________________
+jjack-users mailing list
+<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20090626/bfa2b40d/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20090626/bfa2b40d/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000119.html">[jjack-users] JJack in server environment
+</A></li>
+	<LI>Next message: <A HREF="000122.html">[jjack-users] JJack native client redesign proposal for future 0.4 release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#121">[ date ]</a>
+              <a href="thread.html#121">[ thread ]</a>
+              <a href="subject.html#121">[ subject ]</a>
+              <a href="author.html#121">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,658 @@
+From kskowran at gmail.com  Wed Sep 22 05:12:59 2010
+From: kskowran at gmail.com (Kieth Skowran)
+Date: Tue, 21 Sep 2010 23:12:59 -0400
+Subject: [jjack-users] need a little help... making sound using JJack
+Message-ID: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+
+So, I want to make a .wav player using Java.  The program I'm updating is in
+Java and currently plays the .wav file using javax.sound api.  Another
+program in the system plays audio using Jack C calls.  The Jack C program
+seems to "lock" something, such that when it is running, the Java program
+cannot play audio. The thought is that if I change the Java program to play
+audio using JJack, it will go thru Jackd, and the two programs will be able
+to run, and play, audio simultaneously. Am I on the right track?
+
+Well, how to do this in JJack is unclear to me. Do I need to simply create a
+JJackClient with a process() method? If so, that didn't work for me.  Tried
+using JJackPlayer too, just to make some noise. While it compiled and ran, I
+didn't get any sound.
+
+Below are two classes that I was trying to use as a toy to understand JJack.
+They compile, but don't produce any sound.  I'm hoping someone can tell me
+how to write to jackd using jjack. At first, I'm hoping just to get to noise
+(that's why I made the random data). Once I get some noise, then I will read
+the wav file and push the data to jjackd in the same manner.  Well,
+hopefully the same. The wav data is 16 bit data at a sample rate of 8k. Not
+sure how to convert that to the float data that jjack uses.
+
+Thanks, Kieth
+
+
+import de.gulden.framework.jjack.util.*;
+import de.gulden.framework.jjack.*;
+import de.gulden.framework.jjack.JJackSystem;
+import java.lang.*;
+import java.io.*;
+import java.nio.FloatBuffer;
+
+public class Play {
+    public static void main(String args[]) {
+    int max = 500000;
+
+    float[] data = new float [max];
+    for (int i = 0; i < max; i++) {
+        data[i] = (float) Math.random();
+    }
+
+    MyJackClient myJackClient = new MyJackClient();
+    JJackSystem.setProcessor(myJackClient);
+    try {
+        Thread.sleep(5000);
+    } catch (InterruptedException iex) {}
+
+    JJackPlayer player = new JJackPlayer(data);
+    JJackSystem.setProcessor( (JJackAudioProcessor) player);
+    try {
+        Thread.sleep(5000);
+    } catch (InterruptedException iex) {}
+
+    JJackSystem.shutdown();
+    System.exit(0);
+    }
+
+}
+
+
+
+import de.gulden.framework.jjack.util.*;
+import de.gulden.framework.jjack.*;
+import de.gulden.framework.jjack.JJackAudioProcessor;
+import java.lang.*;
+import java.io.*;
+import java.nio.FloatBuffer;
+import java.util.Vector;
+
+public class MyJackClient implements JJackAudioProcessor {
+    public MyJackClient() {
+    super("MyJackClient", true);
+    }
+
+    public void process(JJackAudioEvent evt) {
+    System.out.println("Called MyJackClient.process()");
+
+    FloatBuffer in  = evt.getInput();
+    FloatBuffer out = evt.getOutput();
+    out.put(in);
+    }
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100921/1229e944/attachment.html>
+
+From jjack at bzzt.net  Wed Sep 22 15:42:57 2010
+From: jjack at bzzt.net (Arnout Engelen)
+Date: Wed, 22 Sep 2010 15:42:57 +0200
+Subject: [jjack-users] need a little help... making sound using JJack
+In-Reply-To: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+References: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+Message-ID: <20100922134257.GK9348@bzzt.net>
+
+On Tue, Sep 21, 2010 at 11:12:59PM -0400, Kieth Skowran wrote:
+> So, I want to make a .wav player using Java.  The program I'm updating is in
+> Java and currently plays the .wav file using javax.sound api.  Another
+> program in the system plays audio using Jack C calls.  
+
+OK
+
+> The Jack C program
+> seems to "lock" something, such that when it is running, the Java program
+> cannot play audio. 
+
+When running, JACK tends to take full control over the ALSA sound card, 
+preventing other applications from accessing it.
+
+> The thought is that if I change the Java program to play
+> audio using JJack, it will go thru Jackd, and the two programs will be able
+> to run, and play, audio simultaneously. Am I on the right track?
+
+Yes. There are a couple of other ways to route audio through JACK, but using
+JJack could be a suitable way to do it.
+
+> Well, how to do this in JJack is unclear to me. Do I need to simply create a
+> JJackClient with a process() method? If so, that didn't work for me.  Tried
+> using JJackPlayer too, just to make some noise. While it compiled and ran, I
+> didn't get any sound.
+> 
+> Below are two classes that I was trying to use as a toy to understand JJack.
+> They compile, but don't produce any sound.  I'm hoping someone can tell me
+> how to write to jackd using jjack. At first, I'm hoping just to get to noise
+> (that's why I made the random data). Once I get some noise, then I will read
+> the wav file and push the data to jjackd in the same manner.  Well,
+> hopefully the same. The wav data is 16 bit data at a sample rate of 8k. Not
+> sure how to convert that to the float data that jjack uses.
+
+My JJack is rather rusty. Does your application, when run, show up in the
+'connections' window of qjackctl? Is it connected to your soundcard?
+
+
+Regards,
+
+Arnout
+
+> import de.gulden.framework.jjack.util.*;
+> import de.gulden.framework.jjack.*;
+> import de.gulden.framework.jjack.JJackSystem;
+> import java.lang.*;
+> import java.io.*;
+> import java.nio.FloatBuffer;
+> 
+> public class Play {
+>     public static void main(String args[]) {
+>     int max = 500000;
+> 
+>     float[] data = new float [max];
+>     for (int i = 0; i < max; i++) {
+>         data[i] = (float) Math.random();
+>     }
+> 
+>     MyJackClient myJackClient = new MyJackClient();
+>     JJackSystem.setProcessor(myJackClient);
+>     try {
+>         Thread.sleep(5000);
+>     } catch (InterruptedException iex) {}
+> 
+>     JJackPlayer player = new JJackPlayer(data);
+>     JJackSystem.setProcessor( (JJackAudioProcessor) player);
+>     try {
+>         Thread.sleep(5000);
+>     } catch (InterruptedException iex) {}
+> 
+>     JJackSystem.shutdown();
+>     System.exit(0);
+>     }
+> 
+> }
+> 
+> 
+> 
+> import de.gulden.framework.jjack.util.*;
+> import de.gulden.framework.jjack.*;
+> import de.gulden.framework.jjack.JJackAudioProcessor;
+> import java.lang.*;
+> import java.io.*;
+> import java.nio.FloatBuffer;
+> import java.util.Vector;
+> 
+> public class MyJackClient implements JJackAudioProcessor {
+>     public MyJackClient() {
+>     super("MyJackClient", true);
+>     }
+> 
+>     public void process(JJackAudioEvent evt) {
+>     System.out.println("Called MyJackClient.process()");
+> 
+>     FloatBuffer in  = evt.getInput();
+>     FloatBuffer out = evt.getOutput();
+>     out.put(in);
+>     }
+
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From kskowran at gmail.com  Wed Sep 22 20:24:13 2010
+From: kskowran at gmail.com (Kieth Skowran)
+Date: Wed, 22 Sep 2010 14:24:13 -0400
+Subject: [jjack-users] need a little help... making sound using JJack
+In-Reply-To: <20100922134257.GK9348@bzzt.net>
+References: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+	<20100922134257.GK9348@bzzt.net>
+Message-ID: <AANLkTikyLp3jO_GgCCgznMqu7OSCRJ17Hz9UwmqCUzeJ@mail.gmail.com>
+
+I just installed qjackctl, but it has a problem when it runs. Due to C++
+name mangling i can't tell which library it's missing. I think it's
+drawPixmap?
+Kieth
+
+On Sep 22, 2010 9:58 AM, "Arnout Engelen" <jjack at bzzt.net> wrote:
+
+On Tue, Sep 21, 2010 at 11:12:59PM -0400, Kieth Skowran wrote:
+> So, I want to make a .wav player us...
+OK
+
+
+> The Jack C program
+> seems to "lock" something, such that when it is running, the Java program
+> ...
+When running, JACK tends to take full control over the ALSA sound card,
+preventing other applications from accessing it.
+
+
+> The thought is that if I change the Java program to play
+> audio using JJack, it will go thru Jac...
+Yes. There are a couple of other ways to route audio through JACK, but using
+JJack could be a suitable way to do it.
+
+
+> Well, how to do this in JJack is unclear to me. Do I need to simply create
+a
+> JJackClient with a...
+My JJack is rather rusty. Does your application, when run, show up in the
+'connections' window of qjackctl? Is it connected to your soundcard?
+
+
+Regards,
+
+Arnout
+
+
+> import de.gulden.framework.jjack.util.*;
+> import de.gulden.framework.jjack.*;
+> import de.gulden...
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+_______________________________________________
+jjack-users mailing list
+jjack-users at lists.berlios.de
+https://lists.berlios.de/mailman/listinfo/jjack-users
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100922/14618414/attachment.html>
+
+From jjack at bzzt.net  Wed Sep 22 20:51:08 2010
+From: jjack at bzzt.net (Arnout Engelen)
+Date: Wed, 22 Sep 2010 20:51:08 +0200
+Subject: [jjack-users] need a little help... making sound using JJack
+In-Reply-To: <AANLkTikyLp3jO_GgCCgznMqu7OSCRJ17Hz9UwmqCUzeJ@mail.gmail.com>
+References: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+	<20100922134257.GK9348@bzzt.net>
+	<AANLkTikyLp3jO_GgCCgznMqu7OSCRJ17Hz9UwmqCUzeJ@mail.gmail.com>
+Message-ID: <20100922185108.GL9348@bzzt.net>
+
+On Wed, Sep 22, 2010 at 02:24:13PM -0400, Kieth Skowran wrote:
+> I just installed qjackctl, but it has a problem when it runs. Due to C++
+> name mangling i can't tell which library it's missing. I think it's
+> drawPixmap?
+
+Which distro are you using?
+
+Could you paste the error message you're getting?
+
+
+Groeten,
+
+Arnout
+
+> On Sep 22, 2010 9:58 AM, "Arnout Engelen" <jjack at bzzt.net> wrote:
+> 
+> On Tue, Sep 21, 2010 at 11:12:59PM -0400, Kieth Skowran wrote:
+> > So, I want to make a .wav player us...
+> OK
+> 
+> 
+> > The Jack C program
+> > seems to "lock" something, such that when it is running, the Java program
+> > ...
+> When running, JACK tends to take full control over the ALSA sound card,
+> preventing other applications from accessing it.
+> 
+> 
+> > The thought is that if I change the Java program to play
+> > audio using JJack, it will go thru Jac...
+> Yes. There are a couple of other ways to route audio through JACK, but using
+> JJack could be a suitable way to do it.
+> 
+> 
+> > Well, how to do this in JJack is unclear to me. Do I need to simply create
+> a
+> > JJackClient with a...
+> My JJack is rather rusty. Does your application, when run, show up in the
+> 'connections' window of qjackctl? Is it connected to your soundcard?
+> 
+> 
+> Regards,
+> 
+> Arnout
+> 
+> 
+> > import de.gulden.framework.jjack.util.*;
+> > import de.gulden.framework.jjack.*;
+> > import de.gulden...
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From kskowran at gmail.com  Thu Sep 23 03:46:01 2010
+From: kskowran at gmail.com (Kieth Skowran)
+Date: Wed, 22 Sep 2010 21:46:01 -0400
+Subject: [jjack-users] need a little help... making sound using JJack
+In-Reply-To: <20100922185108.GL9348@bzzt.net>
+References: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+	<20100922134257.GK9348@bzzt.net>
+	<AANLkTikyLp3jO_GgCCgznMqu7OSCRJ17Hz9UwmqCUzeJ@mail.gmail.com>
+	<20100922185108.GL9348@bzzt.net>
+Message-ID: <AANLkTimgVJLoLvcnVNgO4_DEzDRrcMfHEOV+pXVFYbg0@mail.gmail.com>
+
+On Wed, Sep 22, 2010 at 2:51 PM, Arnout Engelen <jjack at bzzt.net> wrote:
+
+> On Wed, Sep 22, 2010 at 02:24:13PM -0400, Kieth Skowran wrote:
+> > I just installed qjackctl, but it has a problem when it runs. Due to C++
+> > name mangling i can't tell which library it's missing. I think it's
+> > drawPixmap?
+>
+> Which distro are you using?
+>
+
+At work, we are using Fedora 10 32 bit.
+
+
+>
+> Could you paste the error message you're getting?
+>
+
+Yes, will do this tomorrow.
+
+At home, I'm using Fedora 13, 64 bit. I am able to run qjackctl.  When i run
+the Java app, the connections window does show 2 input ports for JJack and 2
+output ports for JJack. But am unsure what calls to make to send data to
+JJack input port. and how to connect JJack output to sound card.
+
+Kieth
+
+
+>
+> Groeten,
+>
+> Arnout
+>
+> > On Sep 22, 2010 9:58 AM, "Arnout Engelen" <jjack at bzzt.net> wrote:
+> >
+> > On Tue, Sep 21, 2010 at 11:12:59PM -0400, Kieth Skowran wrote:
+> > > So, I want to make a .wav player us...
+> > OK
+> >
+> >
+> > > The Jack C program
+> > > seems to "lock" something, such that when it is running, the Java
+> program
+> > > ...
+> > When running, JACK tends to take full control over the ALSA sound card,
+> > preventing other applications from accessing it.
+> >
+> >
+> > > The thought is that if I change the Java program to play
+> > > audio using JJack, it will go thru Jac...
+> > Yes. There are a couple of other ways to route audio through JACK, but
+> using
+> > JJack could be a suitable way to do it.
+> >
+> >
+> > > Well, how to do this in JJack is unclear to me. Do I need to simply
+> create
+> > a
+> > > JJackClient with a...
+> > My JJack is rather rusty. Does your application, when run, show up in the
+> > 'connections' window of qjackctl? Is it connected to your soundcard?
+> >
+> >
+> > Regards,
+> >
+> > Arnout
+> >
+> >
+> > > import de.gulden.framework.jjack.util.*;
+> > > import de.gulden.framework.jjack.*;
+> > > import de.gulden...
+> > > _______________________________________________
+> > > jjack-users mailing list
+> > > jjack-users at lists.berlios.de
+> > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100922/67345c06/attachment.html>
+
+From jjack at bzzt.net  Thu Sep 23 09:31:42 2010
+From: jjack at bzzt.net (Arnout Engelen)
+Date: Thu, 23 Sep 2010 09:31:42 +0200
+Subject: [jjack-users] need a little help... making sound using JJack
+In-Reply-To: <AANLkTimgVJLoLvcnVNgO4_DEzDRrcMfHEOV+pXVFYbg0@mail.gmail.com>
+References: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+	<20100922134257.GK9348@bzzt.net>
+	<AANLkTikyLp3jO_GgCCgznMqu7OSCRJ17Hz9UwmqCUzeJ@mail.gmail.com>
+	<20100922185108.GL9348@bzzt.net>
+	<AANLkTimgVJLoLvcnVNgO4_DEzDRrcMfHEOV+pXVFYbg0@mail.gmail.com>
+Message-ID: <20100923073141.GM9348@bzzt.net>
+
+On Wed, Sep 22, 2010 at 09:46:01PM -0400, Kieth Skowran wrote:
+> On Wed, Sep 22, 2010 at 2:51 PM, Arnout Engelen <jjack at bzzt.net> wrote:
+> > On Wed, Sep 22, 2010 at 02:24:13PM -0400, Kieth Skowran wrote:
+> > > I just installed qjackctl, but it has a problem when it runs. Due to C++
+> > > name mangling i can't tell which library it's missing. I think it's
+> > > drawPixmap?
+> >
+> > Which distro are you using?
+> 
+> At work, we are using Fedora 10 32 bit.
+> At home, I'm using Fedora 13, 64 bit. 
+
+Are you installing qjackctl through the package manager or 'manually'? 
+Normally the package manager should take care of installing all neccessary
+libraries.
+
+> I am able to run qjackctl.  When i run
+> the Java app, the connections window does show 2 input ports for JJack and 2
+> output ports for JJack. But am unsure what calls to make to send data to
+> JJack input port. and how to connect JJack output to sound card.
+
+You don't need to use the JJack input ports if your application doesn't 
+require sound input.
+
+You can connect JJack output to the sound card in the 'connections' window:
+just select JJack on the left and your soundcard (usually called 'alsa_pcm' 
+or something like that iirc) on the right, and hit 'connect' (or use 
+drag-and-drop).
+
+
+Regards,
+
+Arnout
+
+> > > On Sep 22, 2010 9:58 AM, "Arnout Engelen" <jjack at bzzt.net> wrote:
+> > >
+> > > On Tue, Sep 21, 2010 at 11:12:59PM -0400, Kieth Skowran wrote:
+> > > > So, I want to make a .wav player us...
+> > > OK
+> > >
+> > >
+> > > > The Jack C program
+> > > > seems to "lock" something, such that when it is running, the Java
+> > program
+> > > > ...
+> > > When running, JACK tends to take full control over the ALSA sound card,
+> > > preventing other applications from accessing it.
+> > >
+> > >
+> > > > The thought is that if I change the Java program to play
+> > > > audio using JJack, it will go thru Jac...
+> > > Yes. There are a couple of other ways to route audio through JACK, but
+> > using
+> > > JJack could be a suitable way to do it.
+> > >
+> > >
+> > > > Well, how to do this in JJack is unclear to me. Do I need to simply
+> > create
+> > > a
+> > > > JJackClient with a...
+> > > My JJack is rather rusty. Does your application, when run, show up in the
+> > > 'connections' window of qjackctl? Is it connected to your soundcard?
+> > >
+> > >
+> > > Regards,
+> > >
+> > > Arnout
+> > >
+> > >
+> > > > import de.gulden.framework.jjack.util.*;
+> > > > import de.gulden.framework.jjack.*;
+> > > > import de.gulden...
+> > > > _______________________________________________
+> > > > jjack-users mailing list
+> > > > jjack-users at lists.berlios.de
+> > > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> > >
+> > > _______________________________________________
+> > > jjack-users mailing list
+> > > jjack-users at lists.berlios.de
+> > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> > > _______________________________________________
+> > > jjack-users mailing list
+> > > jjack-users at lists.berlios.de
+> > > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+> >
+
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From kskowran at gmail.com  Thu Sep 23 13:36:01 2010
+From: kskowran at gmail.com (Kieth Skowran)
+Date: Thu, 23 Sep 2010 07:36:01 -0400
+Subject: [jjack-users] need a little help... making sound using JJack
+In-Reply-To: <20100923073141.GM9348@bzzt.net>
+References: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+	<20100922134257.GK9348@bzzt.net>
+	<AANLkTikyLp3jO_GgCCgznMqu7OSCRJ17Hz9UwmqCUzeJ@mail.gmail.com>
+	<20100922185108.GL9348@bzzt.net>
+	<AANLkTimgVJLoLvcnVNgO4_DEzDRrcMfHEOV+pXVFYbg0@mail.gmail.com>
+	<20100923073141.GM9348@bzzt.net>
+Message-ID: <AANLkTinbeY8n2t-zqKiX_LcU-n16L0e-PJuEHB0dngOs@mail.gmail.com>
+
+On Thu, Sep 23, 2010 at 3:31 AM, Arnout Engelen <jjack at bzzt.net> wrote:
+
+> On Wed, Sep 22, 2010 at 09:46:01PM -0400, Kieth Skowran wrote:
+> > On Wed, Sep 22, 2010 at 2:51 PM, Arnout Engelen <jjack at bzzt.net> wrote:
+> > > On Wed, Sep 22, 2010 at 02:24:13PM -0400, Kieth Skowran wrote:
+> > > > I just installed qjackctl, but it has a problem when it runs. Due to
+> C++
+> > > > name mangling i can't tell which library it's missing. I think it's
+> > > > drawPixmap?
+> > >
+> > > Which distro are you using?
+> >
+> > At work, we are using Fedora 10 32 bit.
+> > At home, I'm using Fedora 13, 64 bit.
+>
+> Are you installing qjackctl through the package manager or 'manually'?
+> Normally the package manager should take care of installing all neccessary
+> libraries.
+>
+
+Agreed. I did use rpm to install qjackctl, with no dependency complaints.
+Which confused me when I couldn't run it at work.
+
+
+>
+> > I am able to run qjackctl.  When i run
+> > the Java app, the connections window does show 2 input ports for JJack
+> and 2
+> > output ports for JJack. But am unsure what calls to make to send data to
+> > JJack input port. and how to connect JJack output to sound card.
+>
+> You don't need to use the JJack input ports if your application doesn't
+> require sound input.
+>
+> You can connect JJack output to the sound card in the 'connections' window:
+> just select JJack on the left and your soundcard (usually called 'alsa_pcm'
+> or something like that iirc) on the right, and hit 'connect' (or use
+> drag-and-drop).
+>
+
+Well, I guess that's good if I can connect using qjackctl. But that's not a
+good solution. I need to connect programatically. And push data to something
+in JJack (the output ports?) which isn't obvious to me.
+
+Kieth
+
+
+>
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100923/1697a16a/attachment.html>
+
+From kskowran at gmail.com  Thu Sep 23 14:44:29 2010
+From: kskowran at gmail.com (Kieth Skowran)
+Date: Thu, 23 Sep 2010 08:44:29 -0400
+Subject: [jjack-users] need a little help... making sound using JJack
+In-Reply-To: <AANLkTinbeY8n2t-zqKiX_LcU-n16L0e-PJuEHB0dngOs@mail.gmail.com>
+References: <AANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw@mail.gmail.com>
+	<20100922134257.GK9348@bzzt.net>
+	<AANLkTikyLp3jO_GgCCgznMqu7OSCRJ17Hz9UwmqCUzeJ@mail.gmail.com>
+	<20100922185108.GL9348@bzzt.net>
+	<AANLkTimgVJLoLvcnVNgO4_DEzDRrcMfHEOV+pXVFYbg0@mail.gmail.com>
+	<20100923073141.GM9348@bzzt.net>
+	<AANLkTinbeY8n2t-zqKiX_LcU-n16L0e-PJuEHB0dngOs@mail.gmail.com>
+Message-ID: <AANLkTincgkX7zYTCbcH0PnhRigDF74CkGWJ8M053Fz1Y@mail.gmail.com>
+
+So, it was staring me in the face all along. I simply need to implement the
+process() method in JJackClient. And ignore the input port.
+
+It's still unclear how to take my wav data (16 bit, 8000 samples) and put it
+into the relevant float values. Ideas?
+
+Kieth
+
+>
+>
+>>
+>>
+>>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100923/6414f092/attachment.html>
+

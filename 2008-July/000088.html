@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Creating ports during runtime?
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2008-July/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Creating%20ports%20during%20runtime%3F&In-Reply-To=%3C4886341A.4000708%40jensgulden.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000087.html">
+   <LINK REL="Next"  HREF="000089.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Creating ports during runtime?</H1>
+    <B>Jens Gulden</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Creating%20ports%20during%20runtime%3F&In-Reply-To=%3C4886341A.4000708%40jensgulden.de%3E"
+       TITLE="[jjack-users] Creating ports during runtime?">mail at jensgulden.de
+       </A><BR>
+    <I>Tue Jul 22 21:25:14 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000087.html">[jjack-users] Creating ports during runtime?
+</A></li>
+        <LI>Next message: <A HREF="000089.html">[jjack-users] Creating ports during runtime?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#88">[ date ]</a>
+              <a href="thread.html#88">[ thread ]</a>
+              <a href="subject.html#88">[ subject ]</a>
+              <a href="author.html#88">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello Chris,
+
+&gt;&gt;<i> create and remove jack ports while the program is running. 
+</I>
+This might not be easily possible. In the native code, the number of 
+ports is set right after allocating a new JACK client with 
+jack_client_new() by repeatedly calling jack_port_register() as often as 
+ports are requested. After this is done, jack_set_process_callback() is 
+called to finally tell the JACK system that processing starts. I am not 
+sure, but I guess the reason why jack_port_register() is called so early 
+is that it wouldn't be possible to allocate any new ports after 
+jack_set_process_callback() has been called once. If you have the time 
+to do experiments you could of course comment-out the 
+jack_port_register() in the native implementation of 
+JJackSystem.nativeInit() in file libjjack.c, and add a Java method that 
+wraps around a native call to jack_port_register(). Then you can try to 
+call jack_port_register() via that method after the client has already 
+been registered. It would be interesting to know if that works.
+
+&gt;<i> change JJackSystem from a static  
+</I>&gt;&gt;<i> class to a regular class and make multiple JJackSystem 
+</I>
+Hmm, also quite a big change to JJack's architecture, but not a too bad 
+idea. I think the reason why it originally was implemented the static 
+way was that by the time the first version was written, any other 
+attempt of loading the native library kept crashing the whole virtual 
+machine. (But there might have been 1000 non-JACK-related reasons for 
+that...) Again, if you like to, you are of course welcome to modify 
+JJackSystem.class and libjjack.c to allow multiple instantiations of 
+JJackSystem, resulting in multiple native JACK clients registered by the 
+JACK subsystem.
+
+Best,
+Jens
+
+
+Chris Kairalla schrieb:
+&gt;<i> Hello,
+</I>&gt;<i> 
+</I>&gt;<i> I am thinking about using jjack in a program where I would like to  
+</I>&gt;<i> create and remove jack ports while the program is running.  I can see  
+</I>&gt;<i> by the preferences that I can set the name and number of ports at  
+</I>&gt;<i> startup, but is it possible to change the name and number of ports  
+</I>&gt;<i> while the program is running?
+</I>&gt;<i> 
+</I>&gt;<i> Another acceptable possibility is to change JJackSystem from a static  
+</I>&gt;<i> class to a regular class and make multiple JJackSystem objects when  
+</I>&gt;<i> needed that each act like their own Jack client.  Could this cause me  
+</I>&gt;<i> problems?
+</I>&gt;<i> 
+</I>&gt;<i> Thanks for any advice you may have,
+</I>&gt;<i> Chris
+</I>&gt;<i> 
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000087.html">[jjack-users] Creating ports during runtime?
+</A></li>
+	<LI>Next message: <A HREF="000089.html">[jjack-users] Creating ports during runtime?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#88">[ date ]</a>
+              <a href="thread.html#88">[ thread ]</a>
+              <a href="subject.html#88">[ subject ]</a>
+              <a href="author.html#88">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,40 @@
+From mail at jensgulden.de  Mon Aug 18 19:17:17 2008
+From: mail at jensgulden.de (Jens Gulden)
+Date: Mon, 18 Aug 2008 19:17:17 +0200
+Subject: [jjack-users] JJack- Connecting to pre-existing ports on
+	startup?
+In-Reply-To: <764AB38F-4134-4B8E-A52A-6303920BBA79@mailtochris.com>
+References: <764AB38F-4134-4B8E-A52A-6303920BBA79@mailtochris.com>
+Message-ID: <48A9AE9D.8090103@jensgulden.de>
+
+Hello Chris,
+
+you wrote:
+> automatically connect to another pre-existing output port on startup
+
+This is something still missing in the JJack API. The current version 
+focuses on the functionality required to provide audio i/o, however, any 
+'management' functionality such as port-connecting etc. is not provided. 
+Maybe it is not too hard for you to add some wrapper code in 
+JJackSystem.java and libjjack.c yourself, if you find operations in the 
+native JACK API that do what you want. (If you do so, it would be great 
+if you shared the results to jjack-users at lists.berlios.de.)
+
+Have you been successful in calling jack_connect as a shell-process? 
+It's quite a heavyweight solution, though...
+
+Best,
+Jens
+
+Chris Kairalla schrieb:
+> I'm sure there must be a way to do this, but I am stumped.
+> 
+> When I load up my JJack client, I want its input to automatically 
+> connect to another pre-existing output port on startup.  How do I do 
+> this?   could I run jack_connect to connect the two ports?  I could run 
+> a Runtime.exec() command on ack_connect if JJack can't connect natively.
+> 
+> Thanks,
+> Chris
+
+

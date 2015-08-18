@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Problems with arrays when no output data
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20arrays%20when%20no%20output%20data&In-Reply-To=%3C27337.127.0.0.1.1183699723.squirrel%40localhost%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000063.html">
+   <LINK REL="Next"  HREF="000065.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Problems with arrays when no output data</H1>
+    <B>andrew cooke</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Problems%20with%20arrays%20when%20no%20output%20data&In-Reply-To=%3C27337.127.0.0.1.1183699723.squirrel%40localhost%3E"
+       TITLE="[jjack-users] Problems with arrays when no output data">andrew at acooke.org
+       </A><BR>
+    <I>Fri Jul  6 07:28:43 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000063.html">[jjack-users] Lifetime Management (jack_shutdown)
+</A></li>
+        <LI>Next message: <A HREF="000065.html">[jjack-users] Diff for libjjack.c
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#64">[ date ]</a>
+              <a href="thread.html#64">[ thread ]</a>
+              <a href="subject.html#64">[ subject ]</a>
+              <a href="author.html#64">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>
+Hi,
+
+I am seeing (with the CVS code) null pointer errors (actually, I don't see
+them - the code silently fails - but they are occurring in
+JJackSystem.processBytes()) when I register a client with no output
+channels.
+
+It seems that in this case the array of input ByteBuffers is full of null
+values.  In other words, on the Java side, in[0] is null.
+
+I have no idea why - the JNI code seems OK.  However, while trying to work
+out what is happening I have stumbled across some odd behaviour that may
+be related.
+
+The C code in process, where the buffers are built, includes
+
+   (*env)-&gt;SetObjectArrayElement(env, inf-&gt;byteBufferArray[mode], i,
+byteBuffer);
+
+if this is followed by
+
+   (*env)-&gt;GetObjectArrayElement(env, inf-&gt;byteBufferArray[mode], i)
+
+the value returned is 8 larger than the value set (the address of
+byteBuffer).  Furthermore, repeated calls to GetObjectArrayElement return
+progressively larger values.  This is very odd - seems like there's some
+kind of memory mix-up.
+
+I need to sleep.  Thought writing this might make things clearer (doesn't
+seem to have helped) or ring a bell with someone else.  Any comments
+welcome.
+
+Cheers,
+Andrew
+
+PS AMD64.  The two things I have changed, neither of which have helped are:
+
+1 - move
+  inf-&gt;byteBufferArray[mode] = (*env)-&gt;NewObjectArray(env,
+inf-&gt;portCount[mode], inf-&gt;cls_ByteBuffer, NULL);
+to before the loop over ports, so that it is called even if there are zero
+ports.
+
+2 - change a hardcoded &quot;4&quot; to sizeof (jack_default_audio_sample_t)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000063.html">[jjack-users] Lifetime Management (jack_shutdown)
+</A></li>
+	<LI>Next message: <A HREF="000065.html">[jjack-users] Diff for libjjack.c
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#64">[ date ]</a>
+              <a href="thread.html#64">[ thread ]</a>
+              <a href="subject.html#64">[ subject ]</a>
+              <a href="author.html#64">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

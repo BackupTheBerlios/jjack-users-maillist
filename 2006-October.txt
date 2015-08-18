@@ -1,0 +1,844 @@
+From contact at petersalomonsen.com  Wed Oct 18 11:19:49 2006
+From: contact at petersalomonsen.com (Peter Johan Salomonsen)
+Date: Wed, 18 Oct 2006 11:19:49 +0200
+Subject: [jjack-users] Native allocation of Jack jni buffers are now only
+	done once (instead of each process call)
+Message-ID: <200610181119.49417.contact@petersalomonsen.com>
+
+Hi,
+
+We use JJack in Frinika -  I haven't written this integration myself (it was 
+written two years ago) - but I've been revising it recently to handle some 
+new problems that came..
+
+1.
+
+The infPointer of JJackSystem.java was changed to long (64-bit). I had to do 
+this to make it work on my AMD64 cpu.
+
+2.
+
+See the forwarded message below - what happens is that the NewObjectArray and 
+NewDirectByteBuffer calls causes instancing and memory allocation at each and 
+every process call. By reducing this to only once (first process call), I saw 
+a significant performance increase.
+
+The modified c source file is here:
+http://frinika.cvs.sourceforge.net/frinika/frinika/cpp/jjack/libfrinika.c?view=markup
+
+The modified JJackSystem.java is here:
+
+http://frinika.cvs.sourceforge.net/frinika/frinika/src/de/gulden/framework/jjack/JJackSystem.java?view=markup
+
+Also feel free to check out sources from cvs using this cvs string:
+
+:pserver:anonymous at frinika.cvs.sourceforge.net:/cvsroot/frinika 
+
+----------------------------------
+
+We have a custom version of libjack.c in Frinika, but I believe it should not  
+be neccesary, and I don't really know why it was done that way - but I 
+believe it should be quite easy to replace all of it with a jjack.jar - that 
+could be updated on each release (any new releases in line?)
+
+cheers,
+
+Peter Salomonsen
+
+
+----------  Forwarded Message  ----------
+
+Subject: Native allocation of Jack jni buffers are now only done once (instead 
+of each process call)
+Date: Tuesday 17 October 2006 21:27
+From: Peter Johan Salomonsen <contact at petersalomonsen.com>
+To: frinika-developers at lists.sourceforge.net
+
+I just went to the JJack c code and found that this code:
+
+/* allocate DirectByteBuffer objects */
+	    for (mode=INPUT; mode<=OUTPUT; mode++) {
+	        inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+	        for (i=0; i < inf->portCount[mode]; i++) {
+	        	jobject byteBuffer = (*env)->NewDirectByteBuffer(env,
+(jack_default_audio_sample_t *) jack_port_get_buffer(inf->port[mode][i],
+nframes), nframes*4);
+	            (*env)->SetObjectArrayElement(env, inf->byteBufferArray[mode],
+ i, byteBuffer);
+	        }
+	    }
+
+was called for each Jack process request.
+
+The NewObjectArray and NewDirectByteBuffer calls means object instancing
+ which means memory allocation. My experience is new instancing causes more
+ glitches, and should be avoided both in native and java code in the audio
+ rendering process.
+
+I think that's it for the c part, but keep an eye open if there are "newing"
+or other memory allocation during the audio rendering in the java code. (I
+don't know about rasmusdsp here?)
+
+I suffer from far less glitches now :)
+
+NOTE: Paul, I  did only compile this for amd64 - you have the chance to make
+ / test a 32 bit version?
+
+cheers,
+
+Peter
+
+-------------------------------------------------------
+
+
+From ptitjes at gmail.com  Fri Oct 13 06:33:35 2006
+From: ptitjes at gmail.com (Ptitjes)
+Date: Fri, 13 Oct 2006 04:33:35 +0000
+Subject: [jjack-users] Jack, Java and Threads under Linux
+Message-ID: <452F171F.8090201@beuz.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hello,
+
+I'm having problems using Jack with Java. It seems to be related to a
+threading problem however i can't figure out what is going on.
+
+In fact, i programmed my own Jack library for Java (in order to be able
+to create clients with a litlle bit more flexibility). But i'm having
+the same problem using JJack when i activate the client (your start()
+method). This is called from the main Thread (which runs the gui event
+loop).
+
+The symptoms are:
+	- memory is growing, growing
+	- swap starts to be use
+	- system hangs
+
+I have to make it run inside an OSGi container (Eclipse) so i don't have
+access to the main method...
+
+When i run it in a main() this works well!
+
+Do you have any ideas or readings ? How could i overcome this problem ?
+
+Thanks. Didier.
+
+Here is what my code looks like, just so that you can figure out the
+call order!
+
+IJackClient client = factory.newClient("Test Client");
+
+final IJackOwnedPort outPort = client.registerPort("testOut",
+		IJackPort.DefaultAudioType,
+		JackPortFlags.create().setOutput().setTerminal(), 0);
+
+client.setProcessCallback(new IProcessCallback() {
+	public void process(int frameCount) throws JackException {
+		FloatBuffer out = outPort.getBuffer(frameCount);
+		for (int i = 0; i < frameCount; i++) {
+			float y = (float) Math.sin(Math.PI * 2.0 *
+				((double) step / 100)) * 0.7f;
+			out.put(i, y);
+			step++;
+		}
+	}
+});
+
+client.activate();
+Thread.sleep(30000);
+client.deactivate();
+
+client.unregisterPort(outPort);
+client.close();
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFFLxcfHvGdGwuWobERAmsnAKCVRBSfrQ5rqR2UMuCCJZEVfzD/cgCfX5lM
+Z4tPs+Qg79MdI/weYX/CGrA=
+=vKlv
+-----END PGP SIGNATURE-----
+
+
+From ptitjes at gmail.com  Wed Oct 18 13:59:11 2006
+From: ptitjes at gmail.com (Ptitjes)
+Date: Wed, 18 Oct 2006 11:59:11 +0000
+Subject: [jjack-users] Native allocation of Jack jni buffers are now
+ only done once (instead of each process call)
+In-Reply-To: <200610181119.49417.contact@petersalomonsen.com>
+References: <200610181119.49417.contact@petersalomonsen.com>
+Message-ID: <4536170F.4040604@beuz.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hi Peter,
+
+Thanks for your answer. (Added a third point ;))
+
+1. I just reprogrammed my own bridge to jack taking inspiration on
+JJack. And i also set all my pointers to jack as longs. I also enabled
+the dynamical addition/removal of new jack clients and ports. And also
+the registration of others jack callback (port registration, block size,
+sample rate, shutdown, xrun but no transport yet) I will publish the
+code soon!
+
+2. I've also made such an optimisation. However, the
+jack_port_get_buffer() documentation says :
+
+"This returns a pointer to the memory area associated with the specified
+port. For an output port, it will be a memory area that can be written
+to; for an input port, it will be an area containing the data from the
+port's connection(s), or zero-filled. if there are multiple inbound
+connections, the data will be mixed appropriately.
+
+FOR OUTPUT PORTS ONLY --------------------- You may cache the value
+returned, but only between calls to your "blocksize" callback. For this
+reason alone, you should either never cache the return value or ensure
+you have a "blocksize" callback and be sure to invalidate the cached
+address from there."
+
+So i implemented the blocksize callback to invalidate my port buffer
+caching. Maybe you should do it also. In fact, block size may be changed
+dynamically by any client that wants to. (For example, one that finds
+too many xruns occur in a process cycle may double the block size!)
+
+As for the input buffers caching, this doesn't seem to be safe... but i
+don't know how to do it differently! I did not yet find a way to set a
+reassign byte buffers offset address... Do you have an idea ?
+
+3. An other important point, i found that lauching JJack in an other
+thread than the main one does work when you run jack with no realtime
+support enabled. So i'm just looking for using jack_thread_* primitives
+to change jvm's threads realtime priority. If you have bits on this
+could you share it with me ?
+
+Thanks! Didier.
+
+Peter Johan Salomonsen wrote:
+> Hi,
+> 
+> We use JJack in Frinika -  I haven't written this integration myself (it was 
+> written two years ago) - but I've been revising it recently to handle some 
+> new problems that came..
+> 
+> 1.
+> 
+> The infPointer of JJackSystem.java was changed to long (64-bit). I had to do 
+> this to make it work on my AMD64 cpu.
+> 
+> 2.
+> 
+> See the forwarded message below - what happens is that the NewObjectArray and 
+> NewDirectByteBuffer calls causes instancing and memory allocation at each and 
+> every process call. By reducing this to only once (first process call), I saw 
+> a significant performance increase.
+> 
+> The modified c source file is here:
+> http://frinika.cvs.sourceforge.net/frinika/frinika/cpp/jjack/libfrinika.c?view=markup
+> 
+> The modified JJackSystem.java is here:
+> 
+> http://frinika.cvs.sourceforge.net/frinika/frinika/src/de/gulden/framework/jjack/JJackSystem.java?view=markup
+> 
+> Also feel free to check out sources from cvs using this cvs string:
+> 
+> :pserver:anonymous at frinika.cvs.sourceforge.net:/cvsroot/frinika 
+> 
+> ----------------------------------
+> 
+> We have a custom version of libjack.c in Frinika, but I believe it should not  
+> be neccesary, and I don't really know why it was done that way - but I 
+> believe it should be quite easy to replace all of it with a jjack.jar - that 
+> could be updated on each release (any new releases in line?)
+> 
+> cheers,
+> 
+> Peter Salomonsen
+> 
+> 
+> ----------  Forwarded Message  ----------
+> 
+> Subject: Native allocation of Jack jni buffers are now only done once (instead 
+> of each process call)
+> Date: Tuesday 17 October 2006 21:27
+> From: Peter Johan Salomonsen <contact at petersalomonsen.com>
+> To: frinika-developers at lists.sourceforge.net
+> 
+> I just went to the JJack c code and found that this code:
+> 
+> /* allocate DirectByteBuffer objects */
+> 	    for (mode=INPUT; mode<=OUTPUT; mode++) {
+> 	        inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+> inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+> 	        for (i=0; i < inf->portCount[mode]; i++) {
+> 	        	jobject byteBuffer = (*env)->NewDirectByteBuffer(env,
+> (jack_default_audio_sample_t *) jack_port_get_buffer(inf->port[mode][i],
+> nframes), nframes*4);
+> 	            (*env)->SetObjectArrayElement(env, inf->byteBufferArray[mode],
+>  i, byteBuffer);
+> 	        }
+> 	    }
+> 
+> was called for each Jack process request.
+> 
+> The NewObjectArray and NewDirectByteBuffer calls means object instancing
+>  which means memory allocation. My experience is new instancing causes more
+>  glitches, and should be avoided both in native and java code in the audio
+>  rendering process.
+> 
+> I think that's it for the c part, but keep an eye open if there are "newing"
+> or other memory allocation during the audio rendering in the java code. (I
+> don't know about rasmusdsp here?)
+> 
+> I suffer from far less glitches now :)
+> 
+> NOTE: Paul, I  did only compile this for amd64 - you have the chance to make
+>  / test a 32 bit version?
+> 
+> cheers,
+> 
+> Peter
+> 
+> -------------------------------------------------------
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFFNhcPHvGdGwuWobERAr/YAKCS1Soev6VCFdCVntpFM9D5suswsQCeKMc5
+OGQsiVa6xdWYsR5i7mPivnA=
+=shjv
+-----END PGP SIGNATURE-----
+
+
+From mail at jensgulden.de  Thu Oct 19 21:33:54 2006
+From: mail at jensgulden.de (Jens Gulden)
+Date: Thu, 19 Oct 2006 21:33:54 +0200
+Subject: [jjack-users] Native allocation of Jack jni buffers are now
+ only done once (instead of each process call)
+In-Reply-To: <200610181119.49417.contact@petersalomonsen.com>
+References: <200610181119.49417.contact@petersalomonsen.com>
+Message-ID: <4537D322.60004@jensgulden.de>
+
+Hello,
+
+Peter Johan Salomonsen wrote:
+> I've been revising it recently to handle some new problems that came..
+
+Ptitjes wrote:
+> I just reprogrammed my own bridge to jack taking inspiration on JJack.
+
+Cool. Do you both want to become (co-)developers on the JJack development site 
+(http://developer.berlios.de/projects/jjack/)? So you can check in your code to JJack's CVS, and the 
+changes can be incorporated into a possible next version of JJack.
+
+best
+Jens
+
+
+Peter Johan Salomonsen schrieb:
+> Hi,
+> 
+> We use JJack in Frinika -  I haven't written this integration myself (it was 
+> written two years ago) - but I've been revising it recently to handle some 
+> new problems that came..
+> 
+> 1.
+> 
+> The infPointer of JJackSystem.java was changed to long (64-bit). I had to do 
+> this to make it work on my AMD64 cpu.
+> 
+> 2.
+> 
+> See the forwarded message below - what happens is that the NewObjectArray and 
+> NewDirectByteBuffer calls causes instancing and memory allocation at each and 
+> every process call. By reducing this to only once (first process call), I saw 
+> a significant performance increase.
+> 
+> The modified c source file is here:
+> http://frinika.cvs.sourceforge.net/frinika/frinika/cpp/jjack/libfrinika.c?view=markup
+> 
+> The modified JJackSystem.java is here:
+> 
+> http://frinika.cvs.sourceforge.net/frinika/frinika/src/de/gulden/framework/jjack/JJackSystem.java?view=markup
+> 
+> Also feel free to check out sources from cvs using this cvs string:
+> 
+> :pserver:anonymous at frinika.cvs.sourceforge.net:/cvsroot/frinika 
+> 
+> ----------------------------------
+> 
+> We have a custom version of libjack.c in Frinika, but I believe it should not  
+> be neccesary, and I don't really know why it was done that way - but I 
+> believe it should be quite easy to replace all of it with a jjack.jar - that 
+> could be updated on each release (any new releases in line?)
+> 
+> cheers,
+> 
+> Peter Salomonsen
+> 
+> 
+> ----------  Forwarded Message  ----------
+> 
+> Subject: Native allocation of Jack jni buffers are now only done once (instead 
+> of each process call)
+> Date: Tuesday 17 October 2006 21:27
+> From: Peter Johan Salomonsen <contact at petersalomonsen.com>
+> To: frinika-developers at lists.sourceforge.net
+> 
+> I just went to the JJack c code and found that this code:
+> 
+> /* allocate DirectByteBuffer objects */
+> 	    for (mode=INPUT; mode<=OUTPUT; mode++) {
+> 	        inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+> inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+> 	        for (i=0; i < inf->portCount[mode]; i++) {
+> 	        	jobject byteBuffer = (*env)->NewDirectByteBuffer(env,
+> (jack_default_audio_sample_t *) jack_port_get_buffer(inf->port[mode][i],
+> nframes), nframes*4);
+> 	            (*env)->SetObjectArrayElement(env, inf->byteBufferArray[mode],
+>  i, byteBuffer);
+> 	        }
+> 	    }
+> 
+> was called for each Jack process request.
+> 
+> The NewObjectArray and NewDirectByteBuffer calls means object instancing
+>  which means memory allocation. My experience is new instancing causes more
+>  glitches, and should be avoided both in native and java code in the audio
+>  rendering process.
+> 
+> I think that's it for the c part, but keep an eye open if there are "newing"
+> or other memory allocation during the audio rendering in the java code. (I
+> don't know about rasmusdsp here?)
+> 
+> I suffer from far less glitches now :)
+> 
+> NOTE: Paul, I  did only compile this for amd64 - you have the chance to make
+>  / test a 32 bit version?
+> 
+> cheers,
+> 
+> Peter
+> 
+> -------------------------------------------------------
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From contact at petersalomonsen.com  Thu Oct 19 22:21:55 2006
+From: contact at petersalomonsen.com (Peter Johan Salomonsen)
+Date: Thu, 19 Oct 2006 22:21:55 +0200
+Subject: [jjack-users] Native allocation of Jack jni buffers are now
+	only done once (instead of each process call)
+In-Reply-To: <4537D322.60004@jensgulden.de>
+References: <200610181119.49417.contact@petersalomonsen.com>
+	<4537D322.60004@jensgulden.de>
+Message-ID: <200610192221.56636.contact@petersalomonsen.com>
+
+That would be great, I think it is an advantage to maintain this code at one 
+single location - so I'd also like to use a jjack.jar instead of a copy of 
+the source, so committing the changes would be great.
+
+My participation will be limited to what's related to the Frinika project 
+though - but still Jjack is quite essential afterall.
+
+cheers,
+
+Peter
+
+On Thursday 19 October 2006 21:33, Jens Gulden wrote:
+> Hello,
+>
+> Peter Johan Salomonsen wrote:
+> > I've been revising it recently to handle some new problems that came..
+>
+> Ptitjes wrote:
+> > I just reprogrammed my own bridge to jack taking inspiration on JJack.
+>
+> Cool. Do you both want to become (co-)developers on the JJack development
+> site (http://developer.berlios.de/projects/jjack/)? So you can check in
+> your code to JJack's CVS, and the changes can be incorporated into a
+> possible next version of JJack.
+>
+> best
+> Jens
+>
+> Peter Johan Salomonsen schrieb:
+> > Hi,
+> >
+> > We use JJack in Frinika -  I haven't written this integration myself (it
+> > was written two years ago) - but I've been revising it recently to handle
+> > some new problems that came..
+> >
+> > 1.
+> >
+> > The infPointer of JJackSystem.java was changed to long (64-bit). I had to
+> > do this to make it work on my AMD64 cpu.
+> >
+> > 2.
+> >
+> > See the forwarded message below - what happens is that the NewObjectArray
+> > and NewDirectByteBuffer calls causes instancing and memory allocation at
+> > each and every process call. By reducing this to only once (first process
+> > call), I saw a significant performance increase.
+> >
+> > The modified c source file is here:
+> > http://frinika.cvs.sourceforge.net/frinika/frinika/cpp/jjack/libfrinika.c
+> >?view=markup
+> >
+> > The modified JJackSystem.java is here:
+> >
+> > http://frinika.cvs.sourceforge.net/frinika/frinika/src/de/gulden/framewor
+> >k/jjack/JJackSystem.java?view=markup
+> >
+> > Also feel free to check out sources from cvs using this cvs string:
+> > :pserver:anonymous at frinika.cvs.sourceforge.net:/cvsroot/frinika
+> >
+> > ----------------------------------
+> >
+> > We have a custom version of libjack.c in Frinika, but I believe it should
+> > not be neccesary, and I don't really know why it was done that way - but
+> > I believe it should be quite easy to replace all of it with a jjack.jar -
+> > that could be updated on each release (any new releases in line?)
+> >
+> > cheers,
+> >
+> > Peter Salomonsen
+> >
+> >
+> > ----------  Forwarded Message  ----------
+> >
+> > Subject: Native allocation of Jack jni buffers are now only done once
+> > (instead of each process call)
+> > Date: Tuesday 17 October 2006 21:27
+> > From: Peter Johan Salomonsen <contact at petersalomonsen.com>
+> > To: frinika-developers at lists.sourceforge.net
+> >
+> > I just went to the JJack c code and found that this code:
+> >
+> > /* allocate DirectByteBuffer objects */
+> > 	    for (mode=INPUT; mode<=OUTPUT; mode++) {
+> > 	        inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+> > inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+> > 	        for (i=0; i < inf->portCount[mode]; i++) {
+> > 	        	jobject byteBuffer = (*env)->NewDirectByteBuffer(env,
+> > (jack_default_audio_sample_t *) jack_port_get_buffer(inf->port[mode][i],
+> > nframes), nframes*4);
+> > 	            (*env)->SetObjectArrayElement(env,
+> > inf->byteBufferArray[mode], i, byteBuffer);
+> > 	        }
+> > 	    }
+> >
+> > was called for each Jack process request.
+> >
+> > The NewObjectArray and NewDirectByteBuffer calls means object instancing
+> >  which means memory allocation. My experience is new instancing causes
+> > more glitches, and should be avoided both in native and java code in the
+> > audio rendering process.
+> >
+> > I think that's it for the c part, but keep an eye open if there are
+> > "newing" or other memory allocation during the audio rendering in the
+> > java code. (I don't know about rasmusdsp here?)
+> >
+> > I suffer from far less glitches now :)
+> >
+> > NOTE: Paul, I  did only compile this for amd64 - you have the chance to
+> > make / test a 32 bit version?
+> >
+> > cheers,
+> >
+> > Peter
+> >
+> > -------------------------------------------------------
+> > _______________________________________________
+> > jjack-users mailing list
+> > jjack-users at lists.berlios.de
+> > https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+From ptitjes at gmail.com  Fri Oct 20 02:51:53 2006
+From: ptitjes at gmail.com (Ptitjes)
+Date: Fri, 20 Oct 2006 00:51:53 +0000
+Subject: [jjack-users] Native allocation of Jack jni buffers are now
+ only done once (instead of each process call)
+In-Reply-To: <4537D322.60004@jensgulden.de>
+References: <200610181119.49417.contact@petersalomonsen.com>
+	<4537D322.60004@jensgulden.de>
+Message-ID: <45381DA9.6020209@beuz.org>
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Hi Jens!
+
+Why not... but my design is somewhat a lot different! Here it is:
+
+Public part of the framework:
+
+interface IJackClientFactory
+	Client creation
+
+interface IJackClient
+	Activation/Deactivation
+	Port registration/deregistration
+	Buffer size control
+	Callback registration
+		(shutdown, process, buffer size, sample rate, xrun)
+
+interface IJackPort
+	Name, short name, type and flags retrieval
+
+interface IJackOwnedPort extends IJackPort
+	Short name control
+	Lock/unlock
+	Unregistration
+	Buffer retrieval
+
+interfaces IProcessCallback, IBufferSizeCallback, ISampleRateCallback,
+IXRunCallback
+	Callback interfaces (shutdown callback is simply a Runnable)
+
+Private part of the framework:
+
+1. A Jack java class contains all the native methods of Jack. This is a
+very very close mapping to the c methods. Pointers to jack_client_t and
+jack_port_t structures are represented with longs.
+
+2. A JackCallback java class and callback_t c struct that refers to each
+other (the java class has a long pointer to the c struct and the c
+struct has a jobject member). The java class also has a member that is
+the real java callback (an implementation of one of the interfaces).
+
+3. c callback implementation methods use the provided argument (which is
+the callback_t structure) to retrieve the JavaCallback java object and
+invoke one of its methods. Those java methods in turn call the method of
+the real java callback object.
+
+This could be possible to merge our APIs however as you may notice i do
+not support gui nor javabeans.
+
+A first would be to split your framework code in three packages:
+
+- - Core:
+	JJackSystem, JJackAudioProcessor and JJackAudioEvent
+- - Beans:
+	ProcessorMonitorable, Producer, Consumer, BeanInfo
+- - Gui:
+	JJackMonitor, JJackClient
+
+Then threre is two options:
+- - Reimplemented the core part using my API
+- - Reimplement the beans part using my API directly and removing the core
+part.
+
+By the way, i think you do not need any bootstrap. Just try to run jack
+without realtime support and you'll see that your system won't hang even
+when jjack is started in a gui thread. So i think there a little
+research work to do to understand how java threads are implemented (i
+think 1.5 implementation is now completely posix using Native Posix
+Thread Library) And then to use the jack_thread_* stuff to acquire
+realtime priority in the process java thread.
+
+Something important to say is that my IJackClientFactory is an OSGI
+service and i don't want to loose this... Because all my system is
+cleanly integrated thanks to OSGI. So i don't want implementation
+classes to be visible to users to enhance loose coupling.
+
+You may browse my code here:
+http://svn.sourceforge.net/viewvc/mute-vs/
+Go in beuz-jack/ for the c library and org.beuz.lib.jack/ for the java part.
+
+Best regards. Didier.
+
+Jens Gulden wrote:
+> Hello,
+> 
+> Peter Johan Salomonsen wrote:
+>> I've been revising it recently to handle some new problems that came..
+> 
+> Ptitjes wrote:
+>> I just reprogrammed my own bridge to jack taking inspiration on JJack.
+> 
+> Cool. Do you both want to become (co-)developers on the JJack development site 
+> (http://developer.berlios.de/projects/jjack/)? So you can check in your code to JJack's CVS, and the 
+> changes can be incorporated into a possible next version of JJack.
+> 
+> best
+> Jens
+> 
+> 
+> Peter Johan Salomonsen schrieb:
+>> Hi,
+>>
+>> We use JJack in Frinika -  I haven't written this integration myself (it was 
+>> written two years ago) - but I've been revising it recently to handle some 
+>> new problems that came..
+>>
+>> 1.
+>>
+>> The infPointer of JJackSystem.java was changed to long (64-bit). I had to do 
+>> this to make it work on my AMD64 cpu.
+>>
+>> 2.
+>>
+>> See the forwarded message below - what happens is that the NewObjectArray and 
+>> NewDirectByteBuffer calls causes instancing and memory allocation at each and 
+>> every process call. By reducing this to only once (first process call), I saw 
+>> a significant performance increase.
+>>
+>> The modified c source file is here:
+>> http://frinika.cvs.sourceforge.net/frinika/frinika/cpp/jjack/libfrinika.c?view=markup
+>>
+>> The modified JJackSystem.java is here:
+>>
+>> http://frinika.cvs.sourceforge.net/frinika/frinika/src/de/gulden/framework/jjack/JJackSystem.java?view=markup
+>>
+>> Also feel free to check out sources from cvs using this cvs string:
+>>
+>> :pserver:anonymous at frinika.cvs.sourceforge.net:/cvsroot/frinika 
+>>
+>> ----------------------------------
+>>
+>> We have a custom version of libjack.c in Frinika, but I believe it should not  
+>> be neccesary, and I don't really know why it was done that way - but I 
+>> believe it should be quite easy to replace all of it with a jjack.jar - that 
+>> could be updated on each release (any new releases in line?)
+>>
+>> cheers,
+>>
+>> Peter Salomonsen
+>>
+>>
+>> ----------  Forwarded Message  ----------
+>>
+>> Subject: Native allocation of Jack jni buffers are now only done once (instead 
+>> of each process call)
+>> Date: Tuesday 17 October 2006 21:27
+>> From: Peter Johan Salomonsen <contact at petersalomonsen.com>
+>> To: frinika-developers at lists.sourceforge.net
+>>
+>> I just went to the JJack c code and found that this code:
+>>
+>> /* allocate DirectByteBuffer objects */
+>> 	    for (mode=INPUT; mode<=OUTPUT; mode++) {
+>> 	        inf->byteBufferArray[mode] = (*env)->NewObjectArray(env,
+>> inf->portCount[mode], inf->cls_ByteBuffer, NULL);
+>> 	        for (i=0; i < inf->portCount[mode]; i++) {
+>> 	        	jobject byteBuffer = (*env)->NewDirectByteBuffer(env,
+>> (jack_default_audio_sample_t *) jack_port_get_buffer(inf->port[mode][i],
+>> nframes), nframes*4);
+>> 	            (*env)->SetObjectArrayElement(env, inf->byteBufferArray[mode],
+>>  i, byteBuffer);
+>> 	        }
+>> 	    }
+>>
+>> was called for each Jack process request.
+>>
+>> The NewObjectArray and NewDirectByteBuffer calls means object instancing
+>>  which means memory allocation. My experience is new instancing causes more
+>>  glitches, and should be avoided both in native and java code in the audio
+>>  rendering process.
+>>
+>> I think that's it for the c part, but keep an eye open if there are "newing"
+>> or other memory allocation during the audio rendering in the java code. (I
+>> don't know about rasmusdsp here?)
+>>
+>> I suffer from far less glitches now :)
+>>
+>> NOTE: Paul, I  did only compile this for amd64 - you have the chance to make
+>>  / test a 32 bit version?
+>>
+>> cheers,
+>>
+>> Peter
+>>
+>> -------------------------------------------------------
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.5 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org
+
+iD8DBQFFOB2oHvGdGwuWobERAh2FAJ4rZF9cV93sd8KJcHLzuR5yysemUACggsoH
+Rs7l+PtAUeZvR/7PXjoYoI0=
+=ijw7
+-----END PGP SIGNATURE-----
+
+
+From mail at jensgulden.de  Sat Oct 21 02:20:20 2006
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sat, 21 Oct 2006 02:20:20 +0200
+Subject: [jjack-users] Native allocation of Jack jni buffers are
+ now	only done once (instead of each process call)
+In-Reply-To: <200610192221.56636.contact@petersalomonsen.com>
+References: <200610181119.49417.contact@petersalomonsen.com>	<4537D322.60004@jensgulden.de>
+	<200610192221.56636.contact@petersalomonsen.com>
+Message-ID: <453967C4.4070705@jensgulden.de>
+
+Hello,
+
+I wrote:
+> do you both want to become (co-)developers on the JJack development site 
+
+Peter Johan Salomonsen wrote:
+>> That would be great, I think it is an advantage to maintain this code at one 
+>> single location - 
+
+Wonderful.
+
+Ptitjes wrote:
+> Why not
+
+Good.
+
+So please get an account at developer.berlios.de, and then I'll add you to the list of the JJack 
+developers. I haven't done that before, but I guess it should work.
+
+Thanks for your support,
+
+best
+Jens
+
+
+
+From mail at jensgulden.de  Sat Oct 28 21:40:27 2006
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sat, 28 Oct 2006 21:40:27 +0200
+Subject: [jjack-users] new developer has joined the JJack project
+Message-ID: <4543B22B.3050008@jensgulden.de>
+
+Hello,
+
+I'm happy to announce that Peter Salomonsen has joined the JJack project as a developer. He has 
+experience with JJack since some time from using it in the Frinika project 
+(http://www.frinika.com/), and he can contribute some significant improvements to JJack. Thanks 
+Peter, and welcome!
+
+Jens
+
+

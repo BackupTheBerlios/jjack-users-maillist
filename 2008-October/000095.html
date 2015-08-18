@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] MIDI
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2008-October/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20MIDI&In-Reply-To=%3C48F1EA8B.9090009%40jensgulden.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000093.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] MIDI</H1>
+    <B>Jens Gulden</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20MIDI&In-Reply-To=%3C48F1EA8B.9090009%40jensgulden.de%3E"
+       TITLE="[jjack-users] MIDI">mail at jensgulden.de
+       </A><BR>
+    <I>Sun Oct 12 14:16:11 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000093.html">[jjack-users] MIDI
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#95">[ date ]</a>
+              <a href="thread.html#95">[ thread ]</a>
+              <a href="subject.html#95">[ subject ]</a>
+              <a href="author.html#95">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello Arnout,
+
+you wrote:
+&gt;<i> Would adding JACK MIDI to JJack be considered in-scope for JJack? Would
+</I>&gt;<i> it be hard to implement? Just had a quick look, and the JACK MIDI API seems
+</I>&gt;<i> pretty similar to the audio stream API.
+</I>
+Absolutely right, adding MIDI support to JJack will be the next 
+consequential step for a following release. I also don't think it is too 
+hard, but still will be some days of work to do it thoroughly.
+
+Besides that, the audio part of JJack needs further work because it 
+doesn't yet run stable in all environments. And, if possible, JJack 
+should provide some additional management functionality for 
+connecting/disconnecting ports. So there is quite a wishlist for a next 
+release...
+
+&gt;<i> I don't see any recent updates to CVS. Has development moved elsewhere?
+</I>
+...please be patient. Development will carry on, but most likely not 
+before 2009. I've recently had some communication with Dave Phillips 
+(author of &quot;Java Sound &amp; Music Software for Linux&quot;) who pointed me to 
+the Jacklab Audio Distribution, and I have set up a development 
+environment on that system. This is very inspiring, I hope there'll be 
+some time during the next months to work with it.
+
+&gt;<i> From what I've seen neither the current Java Sound API implementations
+</I>&gt;<i> nor JJack support JACK or ALSA MIDI.
+</I>
+I think the stock Java Sound implementation can do ALSA Midi, at least 
+in the sense that it provides access to physical MIDI devices. This 
+might be something you can use until JJack MIDI is available.
+
+Best,
+Jens
+
+Arnout Engelen schrieb:
+&gt;<i> Hi,
+</I>&gt;<i> 
+</I>&gt;<i> I'd like to do JACK-connectable MIDI i/o from an application.
+</I>&gt;<i> 
+</I>&gt;&gt;<i>From what I've seen neither the current Java Sound API implementations
+</I>&gt;<i> nor JJack support JACK or ALSA MIDI.
+</I>&gt;<i> 
+</I>&gt;<i> I read in a comment under 
+</I>&gt;<i> <A HREF="http://www.linuxjournal.com/content/java-sound-music-software-linux-part-3">http://www.linuxjournal.com/content/java-sound-music-software-linux-part-3</A>
+</I>&gt;<i> that a new release of JJack is coming up, though I don't see any recent
+</I>&gt;<i> updates to CVS. Has development moved elsewhere?
+</I>&gt;<i> 
+</I>&gt;<i> Would adding JACK MIDI to JJack be considered in-scope for JJack? Would
+</I>&gt;<i> it be hard to implement? Just had a quick look, and the JACK MIDI API seems
+</I>&gt;<i> pretty similar to the audio stream API.
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> Regards,
+</I>&gt;<i> 
+</I>&gt;<i> Arnout
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000093.html">[jjack-users] MIDI
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#95">[ date ]</a>
+              <a href="thread.html#95">[ thread ]</a>
+              <a href="subject.html#95">[ subject ]</a>
+              <a href="author.html#95">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

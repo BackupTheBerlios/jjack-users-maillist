@@ -1,0 +1,63 @@
+From Oliver.Rettig at orat.de  Fri Sep 19 11:51:52 2008
+From: Oliver.Rettig at orat.de (Oliver Rettig)
+Date: Fri, 19 Sep 2008 11:51:52 +0200
+Subject: [jjack-users] JJack --> Window Jackdmp?
+Message-ID: <200809191151.52690.Oliver.Rettig@orat.de>
+
+Hallo, 
+
+I am thinking about useing JJack to implement an audio application which 
+should run also with jackdmp and windows. 
+
+Is this possible. Has anybody done this?
+
+best regards
+Oliver
+
+
+From contact at petersalomonsen.com  Fri Sep 19 18:12:47 2008
+From: contact at petersalomonsen.com (Peter Salomonsen)
+Date: Fri, 19 Sep 2008 18:12:47 +0200
+Subject: [jjack-users] JJack --> Window Jackdmp?
+In-Reply-To: <200809191151.52690.Oliver.Rettig@orat.de>
+References: <200809191151.52690.Oliver.Rettig@orat.de>
+Message-ID: <e4451f0c0809190912x3e5a8f4bweb39803752f9fd56@mail.gmail.com>
+
+Hi,
+
+This is not been done as far as I know, but using jjack on windows has also
+been requested for the Frinika project. JJack connects to jack using JNI,
+and the native library (libjjack) has only been tested on Linux as far as I
+know. But libjjack is very simple and it shouldn't be a big job to port it
+to a windows dll.
+
+Check out the source of libjjack here:
+
+http://cvs.berlios.de/cgi-bin/viewcvs.cgi/jjack/jjack/src/de/gulden/framework/jjack/libjjack.c?rev=HEAD&content-type=text/vnd.viewcvs-markup
+
+best regards,
+
+Peter
+
+
+
+On Fri, Sep 19, 2008 at 11:51 AM, Oliver Rettig <Oliver.Rettig at orat.de>wrote:
+
+> Hallo,
+>
+> I am thinking about useing JJack to implement an audio application which
+> should run also with jackdmp and windows.
+>
+> Is this possible. Has anybody done this?
+>
+> best regards
+> Oliver
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20080919/ed1f49a9/attachment.html>
+

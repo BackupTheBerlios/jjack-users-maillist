@@ -1,0 +1,660 @@
+From ollie at icarus.nu  Tue Jan  5 14:29:34 2010
+From: ollie at icarus.nu (Oliver Bown)
+Date: Wed, 6 Jan 2010 00:29:34 +1100
+Subject: [jjack-users] v04-proposal update
+In-Reply-To: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+References: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+Message-ID: <319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+
+Dear Mac OS X JJackers,
+
+I've been using JJack in a long-distance collaboration. My  
+collaborator is running my Java audio app on his MacBook Pro (Core 2  
+Duo running Leopard and Java 6). He has the latest Jack installed. The  
+app will also have to run on a couple of other Macs which might have  
+slightly different specs.
+
+I keep running into the same old problem. I send him a Java 6 compiled  
+version of jjack.jar with a universal binary compiled version of  
+libjjack.jnilib. I built these myself by modifying the jjack build  
+file so that the target Java is 1.6 and the gcc command for the OS X  
+native library includes both i386 and x86_64 architectures. I am  
+putting jjack.jar and libjjack.jnilib into a single directory called  
+lib which I make sure is in my Java classpath and also the Java native  
+library path.
+
+For example, I have...
+
+myProject.jar
+lib/jjack.jar
+lib/libjjack.jnilib
+
+Then I run the program with...
+
+java -jar -cp lib/jjack.jar -Djava.library.path=lib myProject.jar
+
+This works fine on my machine (Core 2 Duo running SnowLeopard and Java  
+6), but not on his.
+
+Can anybody tell me what I can be doing to GUARANTEE that when I send  
+him a zip file with a script in it it will run on his machine? The  
+JJack library seems to adopt a perfectly sensible rule for finding the  
+native library. The jnilib appears to be universal binary, and on my  
+system this is sufficient to ensure that the library is found. Is  
+there a difference in the way different Java versions do the loading?  
+Is System.loadLibrary("jjack"), combined with -Djava.library.path=lib  
+enough to ensure I find libjjack.jnilib?
+
+Could the 64-bit-ness of Snow Leopard versus the 32-bit-ness of  
+Leopard be the problem?
+
+On a related note, typing "arch" on my machine gives me i386, but  
+System.getProperty("os.arch") in Java returns x86_64.
+
+Apologies if this goes beyond the realm of a JJack question into  
+general JNI problems. Any help would be much appreciated though. It  
+might be that the build file could be modified to get a more  
+idiotproof library.
+
+Cheers,
+
+Ollie Bown
+
+On 27/07/2009, at 3:28 AM, Peter Brinkmann wrote:
+
+>
+> Hello everybody,
+> I made a few more changes to the native client API.  In particular,  
+> connection management is now more flexible than before; you can  
+> connect or disconnect entire ranges of ports at any time.  The  
+> original functionality of JJACK remains unchanged, but a few methods  
+> in JJackNativeClient.java have changed.  I believe that the new API  
+> factors things more cleanly than the previous version; if you prefer  
+> the previous version, please let me know.
+> Best,
+>      Peter
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From ollie at icarus.nu  Wed Jan  6 00:36:21 2010
+From: ollie at icarus.nu (Oliver Bown)
+Date: Wed, 6 Jan 2010 10:36:21 +1100
+Subject: [jjack-users] JJack and Jack compilation and linking on different
+	OS X systems
+In-Reply-To: <319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+References: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+	<319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+Message-ID: <E8FF1890-2705-48C3-B2E9-980E051BF467@icarus.nu>
+
+Hello again,
+
+I thought I should simplify my last post, give it a proper title and actually explain what the error is (it was a late night)...
+
+I am consistently getting the error:
+
+Could not load jjack native library
+Tried system library path and /Users/anthonyrowe/Desktop/Kineticatests/squidgrid040110/installation/lib/x86_64/Mac OS X/libjjack.so
+java.lang.UnsatisfiedLinkError: /Library/Java/Extensions/libjjack.jnilib: 
+	at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+	at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1822)
+	at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1715)
+	...
+
+As you can see, libjjack.jnilib has been successfully spotted in the System library path. Otherwise, there would be a slightly different error saying "no jjack in java.library.path". Also, I note that if the jnilib is compiled for the wrong architecture you get another slightly different error with the message "no matching architecture in universal wrapper". 
+
+I'm getting neither of these problems, and I'm 110% sure that libjjack is being found (as evidenced above). 
+
+I think this means that the UnsatisfiedLinkError must be to do with how libjjack connects to libjack. I'm not that keen on fixing errors in native code. Can anyone tell me what parameters I need to consider to work out what's wrong? Is this something that JJack could report more clearly?
+
+Was that any clearer?
+
+Many thanks!
+
+Ollie
+
+From peter.brinkmann at googlemail.com  Wed Jan  6 01:08:28 2010
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Tue, 5 Jan 2010 19:08:28 -0500
+Subject: [jjack-users] JJack and Jack compilation and linking on
+	different OS X systems
+In-Reply-To: <E8FF1890-2705-48C3-B2E9-980E051BF467@icarus.nu>
+References: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+	<319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+	<E8FF1890-2705-48C3-B2E9-980E051BF467@icarus.nu>
+Message-ID: <da05bb1001051608k54f57bdbg96594996a6b69322@mail.gmail.com>
+
+Hi Ollie,
+Quick question:  Are you using the current official version of JJack or the
+newish branch, v0.4-proposal?
+
+
+Could not load jjack native library
+> Tried system library path and
+> /Users/anthonyrowe/Desktop/Kineticatests/squidgrid040110/installation/lib/x86_64/Mac
+> OS X/libjjack.so
+> java.lang.UnsatisfiedLinkError: /Library/Java/Extensions/libjjack.jnilib:
+>        at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+>        at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1822)
+>        at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1715)
+>        ...
+>
+> As you can see, libjjack.jnilib has been successfully spotted in the System
+> library path.
+
+
+Actually, I don't think libjjack.jnilib has been spotted.  The first two
+lines are the message that you get when JJack can't find the native binary,
+and according to your other email, libjjack.jnilib is not in
+/Library/Java/Extensions.
+
+Here's my first guess as to what's going on:  Since you compiled your code
+on Snow Leopard, there may be some compatibility issue with Leopard.  Delete
+or move your file lib/libjjack.jnilib and see whether you get a different
+error message.  If so, then that's an indication that Java sees your file
+but doesn't like the binary from Snow Leopard.  Rebuilding JJack under
+Leopard may solve the problem.
+
+Please let me know how it goes.  This is potentially relevant to a project
+of mine as well, but so far nobody on our team has made the switch to Snow
+Leopard.
+Best,
+     Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100105/5855863d/attachment.html>
+
+From ollie at icarus.nu  Wed Jan  6 01:46:31 2010
+From: ollie at icarus.nu (Oliver Bown)
+Date: Wed, 6 Jan 2010 11:46:31 +1100
+Subject: [jjack-users] JJack and Jack compilation and linking on
+	different OS X systems
+In-Reply-To: <da05bb1001051608k54f57bdbg96594996a6b69322@mail.gmail.com>
+References: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+	<319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+	<E8FF1890-2705-48C3-B2E9-980E051BF467@icarus.nu>
+	<da05bb1001051608k54f57bdbg96594996a6b69322@mail.gmail.com>
+Message-ID: <A2F31A61-B70C-4263-9C10-5EC61D55B7C6@icarus.nu>
+
+Hi Peter,
+
+I've had various flavours of the problem with different JJacks. I did try the official v0.3 compiled version too. I've also tried using the -Djava.library.path flag AS WELL AS putting libjjack.jnilib in /Library/Java/Extensions. 
+
+Regarding your suggestion, when you completely remove libjjack.jnilib, the UnsatisfiedLinkError is followed with "no jjack in java.library.path" whereas when libjjack.jnilib exists and is somewhere in the native library path the UnsatisfiedLinkError correctly reports the location of the file, as below, and in this case too...
+
+Could not load jjack native library
+Tried system library path and /Users/anthonyrowe/Desktop/Kinetica tests/squidgrid 040110/installation/lib/x86_64/Mac OS X/libjjack.so
+java.lang.UnsatisfiedLinkError: /Users/anthonyrowe/Desktop/Kinetica tests/squidgrid 040110/installation/lib/libjjack.jnilib: 
+	at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+	at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1822)
+	at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1739)
+	at java.lang.Runtime.loadLibrary0(Runtime.java:823)
+	...
+
+I think I've spotted the problem actually, but still don't get it. In Ant's case he's getting the following...
+
+jackdmp 1.9.4
+Copyright 2001-2005 Paul Davis and others.
+Copyright 2004-2009 Grame.
+jackdmp comes with ABSOLUTELY NO WARRANTY
+This is free software, and you are welcome to redistribute it
+under certain conditions; see the file COPYING for details
+JACK server starting in realtime mode with priority 10
+2010-01-05 22:39:11.896 java[2102:32e03] Error loading /Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter:  dlopen(/Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter, 262): no suitable image found.  Did find:
+	/Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter: no matching architecture in universal wrapper
+2010-01-05 22:39:11.897 java[2102:32e03] Cannot find function pointer New_JackRouterPlugIn for factory 7CB18864-927D-48B5-904C-CCFBCFBC7ADD in CFBundle/CFPlugIn 0x100192410 </Library/Audio/Plug-Ins/HAL/JackRouter.plugin> (bundle, not loaded)
+
+I thought this was harmless junk coming from jackdmp (I get some messages like this on my machine), but I just noticed it's coming from Java, and referring to JackRouter plugin. Sounds bad. Do you think this could be it? 
+
+I'm not able to test any of this directly because I don't have a machine running Leopard myself, my collaborator is in the diametrically opposite time zone to me, which is making the debugging process rather painful! But I'll get him to try different installs of Jack.
+
+O
+
+On 06/01/2010, at 11:08 AM, Peter Brinkmann wrote:
+
+> 
+> Hi Ollie,
+> Quick question:  Are you using the current official version of JJack or the newish branch, v0.4-proposal?
+> 
+> 
+> Could not load jjack native library
+> Tried system library path and /Users/anthonyrowe/Desktop/Kineticatests/squidgrid040110/installation/lib/x86_64/Mac OS X/libjjack.so
+> java.lang.UnsatisfiedLinkError: /Library/Java/Extensions/libjjack.jnilib:
+>        at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+>        at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1822)
+>        at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1715)
+>        ...
+> 
+> As you can see, libjjack.jnilib has been successfully spotted in the System library path.
+> 
+> Actually, I don't think libjjack.jnilib has been spotted.  The first two lines are the message that you get when JJack can't find the native binary, and according to your other email, libjjack.jnilib is not in /Library/Java/Extensions.
+> 
+> Here's my first guess as to what's going on:  Since you compiled your code on Snow Leopard, there may be some compatibility issue with Leopard.  Delete or move your file lib/libjjack.jnilib and see whether you get a different error message.  If so, then that's an indication that Java sees your file but doesn't like the binary from Snow Leopard.  Rebuilding JJack under Leopard may solve the problem.
+> 
+> Please let me know how it goes.  This is potentially relevant to a project of mine as well, but so far nobody on our team has made the switch to Snow Leopard.
+> Best,
+>      Peter
+> 
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100106/d7e1898f/attachment.html>
+
+From peter.brinkmann at googlemail.com  Wed Jan  6 03:56:13 2010
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Tue, 5 Jan 2010 21:56:13 -0500
+Subject: [jjack-users] JJack and Jack compilation and linking on
+	different OS X systems
+In-Reply-To: <A2F31A61-B70C-4263-9C10-5EC61D55B7C6@icarus.nu>
+References: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+	<319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+	<E8FF1890-2705-48C3-B2E9-980E051BF467@icarus.nu>
+	<da05bb1001051608k54f57bdbg96594996a6b69322@mail.gmail.com>
+	<A2F31A61-B70C-4263-9C10-5EC61D55B7C6@icarus.nu>
+Message-ID: <da05bb1001051856n75121d81h759753d65320a7f5@mail.gmail.com>
+
+Hi Ollie,
+
+
+> /Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter: no
+> matching architecture in universal wrapper
+>
+
+That part looks like trouble.  I just looked at the Jack OS X download page,
+and I noticed that they have 32-bit binaries for Leopard, and 64-bit
+binaries for Snow Leopard only.  If JJack was compiled for 64-bit under Snow
+Leopard, then that may cause trouble for Leopard.  I would just rebuild
+everything (both Jack and JJack) under Leopard and hope that that'll solve
+the problem.
+Good luck,
+     Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100105/d2976362/attachment.html>
+
+From ollie at icarus.nu  Wed Jan  6 04:12:45 2010
+From: ollie at icarus.nu (Oliver Bown)
+Date: Wed, 6 Jan 2010 14:12:45 +1100
+Subject: [jjack-users] JJack and Jack compilation and linking on
+	different OS X systems
+In-Reply-To: <da05bb1001051856n75121d81h759753d65320a7f5@mail.gmail.com>
+References: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+	<319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+	<E8FF1890-2705-48C3-B2E9-980E051BF467@icarus.nu>
+	<da05bb1001051608k54f57bdbg96594996a6b69322@mail.gmail.com>
+	<A2F31A61-B70C-4263-9C10-5EC61D55B7C6@icarus.nu>
+	<da05bb1001051856n75121d81h759753d65320a7f5@mail.gmail.com>
+Message-ID: <75F36A38-9F2A-4228-8E23-663C805494A4@icarus.nu>
+
+Cheers Peter,
+
+I'm going on a short holiday. I'll let you know how this works when I'm back. 
+
+Hopefully it will be possible to get JJack building standard UBs and reporting these linking errors with more accurate detail on OS X as I've become REALLY dependent on it recently, but I'm always finding it behaving differently on different systems and confusing the hell out of me. I'd be glad to help on this front. 
+
+I'm not saying it's not my stupidity that's to blame! But there's nothing wrong with a bit more idiot-proofing.
+
+Anyway, hooray for JJack. Without it, JavaSound would be very boring on OS X.
+
+Ollie
+
+On 06/01/2010, at 1:56 PM, Peter Brinkmann wrote:
+
+> 
+> Hi Ollie,
+>  
+> 	/Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter: no matching architecture in universal wrapper
+> 
+> That part looks like trouble.  I just looked at the Jack OS X download page, and I noticed that they have 32-bit binaries for Leopard, and 64-bit binaries for Snow Leopard only.  If JJack was compiled for 64-bit under Snow Leopard, then that may cause trouble for Leopard.  I would just rebuild everything (both Jack and JJack) under Leopard and hope that that'll solve the problem.
+> Good luck,
+>      Peter
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100106/ed1c4014/attachment.html>
+
+From ollie at icarus.nu  Tue Jan 12 04:16:22 2010
+From: ollie at icarus.nu (Oliver Bown)
+Date: Tue, 12 Jan 2010 14:16:22 +1100
+Subject: [jjack-users] JJack and Jack compilation and linking on
+	different OS X systems
+In-Reply-To: <75F36A38-9F2A-4228-8E23-663C805494A4@icarus.nu>
+References: <da05bb0907261028h7b84cf05wa1840a3f8c3669f9@mail.gmail.com>
+	<319073BB-0244-4306-84F8-856B4B74B64F@icarus.nu>
+	<E8FF1890-2705-48C3-B2E9-980E051BF467@icarus.nu>
+	<da05bb1001051608k54f57bdbg96594996a6b69322@mail.gmail.com>
+	<A2F31A61-B70C-4263-9C10-5EC61D55B7C6@icarus.nu>
+	<da05bb1001051856n75121d81h759753d65320a7f5@mail.gmail.com>
+	<75F36A38-9F2A-4228-8E23-663C805494A4@icarus.nu>
+Message-ID: <943A32EE-978A-4342-A318-7B93DDABB6D2@icarus.nu>
+
+Hello again.
+
+problem solved. Apologies if the following is obvious, but it will probably be helpful to someone.
+
+Modern Macs are 64 bit machines, but Mac OS has continued to be 32 bit up to and including Leopard. Snow Leopard is 64 bit. This is all well known. 
+
+What is less obvious is that 64-bit Java 6 causes the system to search for 64 bit native libraries, even when running on Leopard, and you need 64-bit libraries all the way down. i.e., you need 64-bit libjjack.jnilib, and you need 64-bit jack installed. Therefore, the advice given on the Jack download page to Mac users is slightly problematic as far as JJack is concerned. Leopard users who download the 32-bit only version and then try to run JJack in Java 6 will encounter the problem I have been having. They need to make sure they instead download and install the version identified as being for Snow Leopard. This should immediately resolve the problem. I'm not sure if there are additional reasons why using the Snow Leopard version would be a problem, except for users of older 32 bit Macs (who obviously won't have the 64-bit Java 6 installed anyway). The Universal Binary mechanism seems to work perfectly well in resolving which library to load, so you might as well have all the architectures in there (x84_64, i386, ppc, ppc64).
+
+In general I think this would be preferable for the JJack makefile too. To get the Universal Binary libjjack I modified the gcc_mac target in the build.xml file (in v04-proposal) as follows (there's probably a neater way to do this)...
+
+<target name="gcc_mac" if="isMacOSX">
+    <exec executable="gcc" dir="src/de/gulden/framework/jjack" failonerror="yes">
+      <arg value="-I/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Headers"/>
+      <arg value="-I/usr/local/include/jack"/>
+      <arg value="-arch"/>
+      <arg value="x86_64"/>
+      <arg value="-arch"/>
+      <arg value="i386"/>
+      <arg value="-arch"/>
+      <arg value="ppc"/>
+      <arg value="-arch"/>
+      <arg value="ppc64"/>
+      <arg value="-c"/>
+      <arg value="libjjack.c"/>
+    </exec>
+    <exec executable="gcc" dir="src/de/gulden/framework/jjack" failonerror="yes">
+      <arg value="-dynamiclib"/>
+      <arg value="-ljack"/>
+      <arg value="-L/usr/local/lib"/>
+      <arg value="-arch"/>
+      <arg value="x86_64"/>
+      <arg value="-arch"/>
+      <arg value="i386"/>
+      <arg value="-arch"/>
+      <arg value="ppc"/>
+      <arg value="-arch"/>
+      <arg value="ppc64"/>
+      <arg value="-o"/>
+      <arg value="../../../../../lib/${os.arch}/${os.name}/libjjack.dylib"/>
+      <arg value="libjjack.o"/>
+    </exec>
+  </target>
+
+Cheers,
+
+Ollie
+
+On 06/01/2010, at 2:12 PM, Oliver Bown wrote:
+
+> Cheers Peter,
+> 
+> I'm going on a short holiday. I'll let you know how this works when I'm back. 
+> 
+> Hopefully it will be possible to get JJack building standard UBs and reporting these linking errors with more accurate detail on OS X as I've become REALLY dependent on it recently, but I'm always finding it behaving differently on different systems and confusing the hell out of me. I'd be glad to help on this front. 
+> 
+> I'm not saying it's not my stupidity that's to blame! But there's nothing wrong with a bit more idiot-proofing.
+> 
+> Anyway, hooray for JJack. Without it, JavaSound would be very boring on OS X.
+> 
+> Ollie
+> 
+> On 06/01/2010, at 1:56 PM, Peter Brinkmann wrote:
+> 
+>> 
+>> Hi Ollie,
+>>  
+>> 	/Library/Audio/Plug-Ins/HAL/JackRouter.plugin/Contents/MacOS/JackRouter: no matching architecture in universal wrapper
+>> 
+>> That part looks like trouble.  I just looked at the Jack OS X download page, and I noticed that they have 32-bit binaries for Leopard, and 64-bit binaries for Snow Leopard only.  If JJack was compiled for 64-bit under Snow Leopard, then that may cause trouble for Leopard.  I would just rebuild everything (both Jack and JJack) under Leopard and hope that that'll solve the problem.
+>> Good luck,
+>>      Peter
+>> 
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+> 
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+
+
+
+From robermann at gmail.com  Sat Jan 16 12:49:43 2010
+From: robermann at gmail.com (Roberto Mannai)
+Date: Sat, 16 Jan 2010 12:49:43 +0100
+Subject: [jjack-users] undefined symbol: jack_client_new
+Message-ID: <414e44f71001160349q547b19a0t41e495f8dca0b452@mail.gmail.com>
+
+Hello list
+
+When I run for example the command:
+/usr/bin/jjack.sh de.gulfden.application.jjack.clients.VU
+
+I get the following error message:
+/usr/lib/jvm/java/bin/java: symbol lookup error: /usr/lib/libjjack.so:
+undefined symbol: jack_client_new
+
+What I'm missing? Do I have a broken dependencies chain?
+
+Packages:
+jjack-0.3-0.pm.1.1.i586
+jack-0.116.2-5.1.i586
+java-1_6_0-sun-1.6.0.u17-1.1.1.i586
+
+OS: Opensuse 11.2
+
+Ciao
+Roberto
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100116/735feaaf/attachment.html>
+
+From peter.brinkmann at googlemail.com  Sun Jan 17 20:26:39 2010
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Sun, 17 Jan 2010 14:26:39 -0500
+Subject: [jjack-users] undefined symbol: jack_client_new
+In-Reply-To: <414e44f71001160349q547b19a0t41e495f8dca0b452@mail.gmail.com>
+References: <414e44f71001160349q547b19a0t41e495f8dca0b452@mail.gmail.com>
+Message-ID: <da05bb1001171126w59570c4bma504620538cd8368@mail.gmail.com>
+
+Roberto,
+jack_client_new has been deprecated for a while, but it should still be
+there.  Just in case, though, I would try compiling the new version,
+v04-proposal, of JJack and see whether that makes a difference.  The new
+version uses jack_client_open instead of the jack_client_new.
+Good luck,
+     Peter
+
+
+On Sat, Jan 16, 2010 at 6:49 AM, Roberto Mannai <robermann at gmail.com> wrote:
+
+> Hello list
+>
+> When I run for example the command:
+> /usr/bin/jjack.sh de.gulfden.application.jjack.clients.VU
+>
+> I get the following error message:
+> /usr/lib/jvm/java/bin/java: symbol lookup error: /usr/lib/libjjack.so:
+> undefined symbol: jack_client_new
+>
+> What I'm missing? Do I have a broken dependencies chain?
+>
+> Packages:
+> jjack-0.3-0.pm.1.1.i586
+> jack-0.116.2-5.1.i586
+> java-1_6_0-sun-1.6.0.u17-1.1.1.i586
+>
+> OS: Opensuse 11.2
+>
+> Ciao
+> Roberto
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100117/4420dd0e/attachment.html>
+
+From robermann at gmail.com  Sun Jan 17 21:21:05 2010
+From: robermann at gmail.com (Roberto Mannai)
+Date: Sun, 17 Jan 2010 21:21:05 +0100
+Subject: [jjack-users] undefined symbol: jack_client_new
+In-Reply-To: <da05bb1001171126w59570c4bma504620538cd8368@mail.gmail.com>
+References: <414e44f71001160349q547b19a0t41e495f8dca0b452@mail.gmail.com>
+	<da05bb1001171126w59570c4bma504620538cd8368@mail.gmail.com>
+Message-ID: <414e44f71001171221o2613fc02q249f1cd462fa36f2@mail.gmail.com>
+
+I don't know all this stuff, I just installed your package and run the
+client examples (VU class). So should I downgrade jack or upgrade jjack?
+
+On Sun, Jan 17, 2010 at 8:26 PM, Peter Brinkmann <
+peter.brinkmann at googlemail.com> wrote:
+
+>
+> Roberto,
+> jack_client_new has been deprecated for a while, but it should still be
+> there.  Just in case, though, I would try compiling the new version,
+> v04-proposal, of JJack and see whether that makes a difference.  The new
+> version uses jack_client_open instead of the jack_client_new.
+> Good luck,
+>      Peter
+>
+>
+> On Sat, Jan 16, 2010 at 6:49 AM, Roberto Mannai <robermann at gmail.com>wrote:
+>
+>> Hello list
+>>
+>> When I run for example the command:
+>> /usr/bin/jjack.sh de.gulfden.application.jjack.clients.VU
+>>
+>> I get the following error message:
+>> /usr/lib/jvm/java/bin/java: symbol lookup error: /usr/lib/libjjack.so:
+>> undefined symbol: jack_client_new
+>>
+>> What I'm missing? Do I have a broken dependencies chain?
+>>
+>> Packages:
+>> jjack-0.3-0.pm.1.1.i586
+>> jack-0.116.2-5.1.i586
+>> java-1_6_0-sun-1.6.0.u17-1.1.1.i586
+>>
+>> OS: Opensuse 11.2
+>>
+>> Ciao
+>> Roberto
+>>
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+>>
+>>
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100117/8c209d0b/attachment.html>
+
+From peter.brinkmann at googlemail.com  Sun Jan 17 22:52:12 2010
+From: peter.brinkmann at googlemail.com (Peter Brinkmann)
+Date: Sun, 17 Jan 2010 16:52:12 -0500
+Subject: [jjack-users] undefined symbol: jack_client_new
+In-Reply-To: <414e44f71001171221o2613fc02q249f1cd462fa36f2@mail.gmail.com>
+References: <414e44f71001160349q547b19a0t41e495f8dca0b452@mail.gmail.com>
+	<da05bb1001171126w59570c4bma504620538cd8368@mail.gmail.com>
+	<414e44f71001171221o2613fc02q249f1cd462fa36f2@mail.gmail.com>
+Message-ID: <da05bb1001171352q94b037dw908d46fa110a847b@mail.gmail.com>
+
+Roberto,
+JJack is not my package, I just refactored the low-level code for my
+purposes in v04-proposal.  I'm afraid I can't really comment on the official
+version, v03, and its packaging for openSUSE.
+
+Generally speaking, are we ready to make v04-proposal the official version?
+That move might eventually resolve the problem that Roberto is experiencing.
+Best,
+     Peter
+
+
+On Sun, Jan 17, 2010 at 3:21 PM, Roberto Mannai <robermann at gmail.com> wrote:
+
+> I don't know all this stuff, I just installed your package and run the
+> client examples (VU class). So should I downgrade jack or upgrade jjack?
+>
+>
+> On Sun, Jan 17, 2010 at 8:26 PM, Peter Brinkmann <
+> peter.brinkmann at googlemail.com> wrote:
+>
+>>
+>> Roberto,
+>> jack_client_new has been deprecated for a while, but it should still be
+>> there.  Just in case, though, I would try compiling the new version,
+>> v04-proposal, of JJack and see whether that makes a difference.  The new
+>> version uses jack_client_open instead of the jack_client_new.
+>> Good luck,
+>>      Peter
+>>
+>>
+>> On Sat, Jan 16, 2010 at 6:49 AM, Roberto Mannai <robermann at gmail.com>wrote:
+>>
+>>> Hello list
+>>>
+>>> When I run for example the command:
+>>> /usr/bin/jjack.sh de.gulfden.application.jjack.clients.VU
+>>>
+>>> I get the following error message:
+>>> /usr/lib/jvm/java/bin/java: symbol lookup error: /usr/lib/libjjack.so:
+>>> undefined symbol: jack_client_new
+>>>
+>>> What I'm missing? Do I have a broken dependencies chain?
+>>>
+>>> Packages:
+>>> jjack-0.3-0.pm.1.1.i586
+>>> jack-0.116.2-5.1.i586
+>>> java-1_6_0-sun-1.6.0.u17-1.1.1.i586
+>>>
+>>> OS: Opensuse 11.2
+>>>
+>>> Ciao
+>>> Roberto
+>>>
+>>> _______________________________________________
+>>> jjack-users mailing list
+>>> jjack-users at lists.berlios.de
+>>> https://lists.berlios.de/mailman/listinfo/jjack-users
+>>>
+>>>
+>>
+>> _______________________________________________
+>> jjack-users mailing list
+>> jjack-users at lists.berlios.de
+>> https://lists.berlios.de/mailman/listinfo/jjack-users
+>>
+>>
+>
+> _______________________________________________
+> jjack-users mailing list
+> jjack-users at lists.berlios.de
+> https://lists.berlios.de/mailman/listinfo/jjack-users
+>
+>
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/jjack-users/attachments/20100117/a2a6037c/attachment.html>
+

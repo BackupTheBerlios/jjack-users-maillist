@@ -1,0 +1,78 @@
+From mail at jensgulden.de  Sun Sep 10 01:24:45 2006
+From: mail at jensgulden.de (Jens Gulden)
+Date: Sun, 10 Sep 2006 01:24:45 +0200
+Subject: [jjack-users] JJack and Soundcards with multiple outputs
+In-Reply-To: <C1270C01.6550%evdb@x-idra.de>
+References: <C1270C01.6550%evdb@x-idra.de>
+Message-ID: <45034D3D.206@jensgulden.de>
+
+Eduard van den Bongard wrote: (English translation for the mailing list)
+ > Using -Djjack.ports=4, can I independently address multiple stereo-pairs, e.g. play different 
+music on port 1+2 and 3+4?
+
+Yes. Setting -Djjack.ports=4 makes the JJackSystem of the Java virtual machine appear as 1 JACK 
+client with 4 inputs and 4 outputs. (Using e.g. qjackctl, the 4 ports should be visible after 
+unfolding JJack's client node in the connection view).
+
+So, if your multi-channel soundcard also appears in JACK with e.g. 4 inputs, you can connect the 4 
+JJack outputs to them.
+
+ > Can I start 2 JJack clients?
+
+Yes. There can be as many instances of subclasses of JJackClient connected to each other as desired 
+inside one Java virtual machine's JJackSystem.
+
+You could e.g. write a class "AudioPlayer extends JJackClient" which can be configured to play music 
+either on channels 1+2, 3+4, ..., and which copies-through all audio data on the other channels. You 
+can then create multiple instances of this class (configured to play on different channels), and 
+connect them to each other in the internal JJackSystem client loop via the setChained(..) method.
+
+ > How is the routing done?
+
+Think of the overall routing as consisting of one big main JACK loop of clients routing the signal 
+from input to output, and another small internal JJackSystem loop. The JJackSystem appears as 1 JACK 
+client in the big JACK loop, but inside this one, there can again be as many JJackClients connected 
+to each other as desired. (The schematic diagram on http://jjack.berlios.de/ tries to show these 2 
+loops: the main JACK loop in the lower part, and the internal JJackSystem routing in the upper area, 
+inside the Java virtual machine.)
+
+However, what's not possible is to process the signal with one JJackClient, then route it to any 
+arbitrary native JACK client (effect or something), and have another JJackClient connected 
+afterwards. In order to achieve this, you would have to start 2 Java virtual machines, each one with 
+its own JJackSystem, and do the routing as usual with JACK. But I think that's anyway not what you 
+intend to do.
+
+It would be great if you post your experiences to the mailing list if you're successful with 
+addressing the 8-channel card from JJack.
+
+Hope this helps,
+Jens
+
+
+Eduard van den Bongard schrieb:
+> Hallo Herr Gulden,
+> 
+> Ich hatte Sie schon mal angemailt wegen einer Versionsinkompatibilit?t......
+> 
+> Ich m?chte ein wenig mit Jjack experimentieren und wollte nur kurz fragen
+> wie ich es schaffe mehrer Ports meiner Soundkarte zu benutzen. Ich habe eine
+> Maudio delta 1010 (hat 8 Ein und Ausg?nge) und wollte unabh?ngig voneinander
+> jeweils ein Stereopaar ansprechen. Ich denke mit -Djjack.ports=4 z.B. Kann
+> ich 4 ports gleichzeitig ansprechen, aber wie schaffe ich es 1+2 und 3+4
+> anzusprechen und da. Z.B unterschiedliche Musikst?cke abzuspielen? Kann ich
+> einfach zwei Jjack Clients starten? Aber wie kann ich dann das Routing
+> beeinflussen?
+> 
+> Jjack Client 1 -> SoundkartenAusgang 1+2
+> Jjack Client 2 -> SoundkartenAusgang 3+4
+> .
+> .
+> .
+> 
+> Danke  und mit freundlichen Gr??en,
+> Eduard van den Bongard
+> 
+> 
+
+
+

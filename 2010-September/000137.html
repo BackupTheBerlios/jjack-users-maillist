@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] need a little help... making sound using JJack
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2010-September/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20need%20a%20little%20help...%20making%20sound%20using%20JJack&In-Reply-To=%3CAANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000138.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] need a little help... making sound using JJack</H1>
+    <B>Kieth Skowran</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20need%20a%20little%20help...%20making%20sound%20using%20JJack&In-Reply-To=%3CAANLkTimTH2hT9shCe3uN-O_GDQphEmZzhcmDx1DK9rxw%40mail.gmail.com%3E"
+       TITLE="[jjack-users] need a little help... making sound using JJack">kskowran at gmail.com
+       </A><BR>
+    <I>Wed Sep 22 05:12:59 CEST 2010</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000138.html">[jjack-users] need a little help... making sound using JJack
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#137">[ date ]</a>
+              <a href="thread.html#137">[ thread ]</a>
+              <a href="subject.html#137">[ subject ]</a>
+              <a href="author.html#137">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>So, I want to make a .wav player using Java.  The program I'm updating is in
+Java and currently plays the .wav file using javax.sound api.  Another
+program in the system plays audio using Jack C calls.  The Jack C program
+seems to &quot;lock&quot; something, such that when it is running, the Java program
+cannot play audio. The thought is that if I change the Java program to play
+audio using JJack, it will go thru Jackd, and the two programs will be able
+to run, and play, audio simultaneously. Am I on the right track?
+
+Well, how to do this in JJack is unclear to me. Do I need to simply create a
+JJackClient with a process() method? If so, that didn't work for me.  Tried
+using JJackPlayer too, just to make some noise. While it compiled and ran, I
+didn't get any sound.
+
+Below are two classes that I was trying to use as a toy to understand JJack.
+They compile, but don't produce any sound.  I'm hoping someone can tell me
+how to write to jackd using jjack. At first, I'm hoping just to get to noise
+(that's why I made the random data). Once I get some noise, then I will read
+the wav file and push the data to jjackd in the same manner.  Well,
+hopefully the same. The wav data is 16 bit data at a sample rate of 8k. Not
+sure how to convert that to the float data that jjack uses.
+
+Thanks, Kieth
+
+
+import de.gulden.framework.jjack.util.*;
+import de.gulden.framework.jjack.*;
+import de.gulden.framework.jjack.JJackSystem;
+import java.lang.*;
+import java.io.*;
+import java.nio.FloatBuffer;
+
+public class Play {
+    public static void main(String args[]) {
+    int max = 500000;
+
+    float[] data = new float [max];
+    for (int i = 0; i &lt; max; i++) {
+        data[i] = (float) Math.random();
+    }
+
+    MyJackClient myJackClient = new MyJackClient();
+    JJackSystem.setProcessor(myJackClient);
+    try {
+        Thread.sleep(5000);
+    } catch (InterruptedException iex) {}
+
+    JJackPlayer player = new JJackPlayer(data);
+    JJackSystem.setProcessor( (JJackAudioProcessor) player);
+    try {
+        Thread.sleep(5000);
+    } catch (InterruptedException iex) {}
+
+    JJackSystem.shutdown();
+    System.exit(0);
+    }
+
+}
+
+
+
+import de.gulden.framework.jjack.util.*;
+import de.gulden.framework.jjack.*;
+import de.gulden.framework.jjack.JJackAudioProcessor;
+import java.lang.*;
+import java.io.*;
+import java.nio.FloatBuffer;
+import java.util.Vector;
+
+public class MyJackClient implements JJackAudioProcessor {
+    public MyJackClient() {
+    super(&quot;MyJackClient&quot;, true);
+    }
+
+    public void process(JJackAudioEvent evt) {
+    System.out.println(&quot;Called MyJackClient.process()&quot;);
+
+    FloatBuffer in  = evt.getInput();
+    FloatBuffer out = evt.getOutput();
+    out.put(in);
+    }
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20100921/1229e944/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20100921/1229e944/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000138.html">[jjack-users] need a little help... making sound using JJack
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#137">[ date ]</a>
+              <a href="thread.html#137">[ thread ]</a>
+              <a href="subject.html#137">[ subject ]</a>
+              <a href="author.html#137">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

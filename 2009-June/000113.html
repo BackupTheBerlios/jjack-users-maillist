@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack native client redesign proposal for future 0.4	release
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%200.4%0A%09release&In-Reply-To=%3Cda05bb0906052338h180d6048v3c9aa8789cef0a15%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000112.html">
+   <LINK REL="Next"  HREF="000120.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack native client redesign proposal for future 0.4	release</H1>
+    <B>Peter Brinkmann</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%200.4%0A%09release&In-Reply-To=%3Cda05bb0906052338h180d6048v3c9aa8789cef0a15%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JJack native client redesign proposal for future 0.4	release">peter.brinkmann at googlemail.com
+       </A><BR>
+    <I>Sat Jun  6 08:38:13 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000112.html">[jjack-users] JJack native client redesign proposal for future	0.4 release
+</A></li>
+        <LI>Next message: <A HREF="000120.html">[jjack-users] JJack native client redesign proposal for future	0.4 release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#113">[ date ]</a>
+              <a href="thread.html#113">[ thread ]</a>
+              <a href="subject.html#113">[ subject ]</a>
+              <a href="author.html#113">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Ollie,
+
+&gt;<i> Hi, this appears to work well for me (Mac OSX 10.5.7, Java 1.5,
+</I>&gt;<i> Eclipse 3.4.1, Jack 0.8.7), except for following message (which also
+</I>&gt;<i> occurs on my previous version of jjack)...
+</I>&gt;<i>
+</I>&gt;<i> jack_client_new: deprecated
+</I>&gt;<i>
+</I>&gt;<i> This is weird; one of the first things I did was to get rid of the
+</I>deprecated jack_client_new calls.  It appears that you're still loading the
+old version of the native binaries.  That also seems strange, though,
+because the new Java code (JJackNativeClient.java) doesn't work with the old
+binaries.  Is it possible that your build path in Eclipse still points to
+the old jar file as well as the old native code?  Did you build the new
+version with &quot;ant -f build_macosx.xml&quot; in the make directory?  You may also
+have to delete the old Mac binaries that come with the svn checkout.
+
+Another question: I don't see a way to query JJackSystem (e.g., to
+&gt;<i> find out how many channels or what the buffer size is before you
+</I>&gt;<i> embark on this process callback), or to remote control Jack in any way
+</I>&gt;<i> (e.g., tell it how many channels / buffer size, make connections, or
+</I>&gt;<i> start and stop jackd). Are these things possible?
+</I>&gt;<i>
+</I>&gt;<i> If you're using the original JJack functionality (fully preserved in the
+</I>new version), then you can set the number of channels through system
+properties.  If you're using the new functionality, then you can open and
+close an arbitrary number of Jack clients and specify the number of input
+and output ports for each of them; you can also specify the names of clients
+to connect to.  JJackNativeClient.java also comes with static methods
+that'll report the sample rate and buffer size.
+
+As for starting and stopping Jack, it would be a trivial change to
+automatically start Jack when opening a client (just pass an additional flag
+to jack_client_open), but for the time being I decided against that because
+it would be a bit of a departure from the original functionality of JJack.
+Hope this helps,
+     Peter
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20090606/963c7b3a/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20090606/963c7b3a/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000112.html">[jjack-users] JJack native client redesign proposal for future	0.4 release
+</A></li>
+	<LI>Next message: <A HREF="000120.html">[jjack-users] JJack native client redesign proposal for future	0.4 release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#113">[ date ]</a>
+              <a href="thread.html#113">[ thread ]</a>
+              <a href="subject.html#113">[ subject ]</a>
+              <a href="author.html#113">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

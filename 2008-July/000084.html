@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] noisy, static for audio
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2008-July/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20noisy%2C%20static%20for%20audio&In-Reply-To=%3C2F9D4A00-BAB6-4413-82B3-A872ACB9512C%40mailtochris.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000085.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] noisy, static for audio</H1>
+    <B>Chris Kairalla</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20noisy%2C%20static%20for%20audio&In-Reply-To=%3C2F9D4A00-BAB6-4413-82B3-A872ACB9512C%40mailtochris.com%3E"
+       TITLE="[jjack-users] noisy, static for audio">chris at mailtochris.com
+       </A><BR>
+    <I>Mon Jul 21 21:28:55 CEST 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000085.html">[jjack-users] noisy, static for audio
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#84">[ date ]</a>
+              <a href="thread.html#84">[ thread ]</a>
+              <a href="subject.html#84">[ subject ]</a>
+              <a href="author.html#84">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello,
+I just started playing around with Jack and JJack, and I'm very  
+excited about the possibilities that it opens up.  I've hit a snag on  
+my first tests though.  When I run the gain client, any manipulation  
+of the slider will turn the audio into very loud static.  I followed  
+along with the example in &quot;Developing Jack Clients&quot; and got everything  
+running, but when I ran the audio through the gain algorithm in the  
+example I got the same static.  Last but not least, I wrote a very  
+simple volume parser and the numbers seem erratic and huge!  Much  
+larger than -1.0 to 1.0, as stated in the documentation.
+
+What step am I missing?  I'm using Mac OSX 1.5 on a Dual G5 desktop.   
+I'm attaching the code below.
+Thanks, Chris
+_____________________________________________________________________
+import java.nio.FloatBuffer;
+
+import de.gulden.framework.jjack.*;
+import de.gulden.framework.jjack.JJackSystem;
+public class MyJJackClient implements JJackAudioProcessor {
+
+	//event class for jjack.  Find audio level.
+     public void process(JJackAudioEvent e) {
+         float level = 0;
+         FloatBuffer in = e.getInput(e.getMonoInputPort());
+             int cap = in.capacity();
+             for (int j=0; j&lt;cap; j++) {
+                 float a = in.get(j);
+                 if (a &gt; level) level = a;
+             }
+         System.out.println(&quot;capacity=&quot;+in.capacity()+&quot;  level  
+=&quot;+level);
+     }
+
+     public static void main(String[] args){
+     	MyJJackClient jj = new MyJJackClient();
+     	JJackSystem.setProcessor(jj);
+     }
+}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000085.html">[jjack-users] noisy, static for audio
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#84">[ date ]</a>
+              <a href="thread.html#84">[ thread ]</a>
+              <a href="subject.html#84">[ subject ]</a>
+              <a href="author.html#84">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

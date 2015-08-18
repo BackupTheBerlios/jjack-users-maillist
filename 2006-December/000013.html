@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Using jjack to grab sound
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2006-December/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3Ce78383b30612130646n16e811c5xb81a6c1665421325%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000012.html">
+   <LINK REL="Next"  HREF="000011.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Using jjack to grab sound</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Using%20jjack%20to%20grab%20sound&In-Reply-To=%3Ce78383b30612130646n16e811c5xb81a6c1665421325%40mail.gmail.com%3E"
+       TITLE="[jjack-users] Using jjack to grab sound">helgeingvart at gmail.com
+       </A><BR>
+    <I>Wed Dec 13 15:46:10 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000012.html">[jjack-users] Using jjack to grab sound
+</A></li>
+        <LI>Next message: <A HREF="000011.html">[jjack-users] Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+and thanks for an extencive reply!
+
+It seems that jjack is definetly the API to use on Linux. I was originally
+looking for a cross-platform API, has jack been ported to Windows? Anyway
+we found other ways to grab sound on windows using DirectSound.
+
+Our intention is to build a radio simulator for ship-to-ship communication
+in naval training. To do this, I need to be able to grab at least 8 sounds
+at the
+same time and playback at least two. The voice will be sent to a recorder
+server via our own VoIP protocoll + sent to other student/instructor PCs
+also
+via VoIP.
+
+JJack seem to give me the direct access to the sound bits as I would like,
+the
+only problem is to find the correct hardware to use. I've been looking on
+this:
+
+<A HREF="http://audioen.terratec.net/modules.php?op=modload&amp;name=News&amp;file=article&amp;sid=9">http://audioen.terratec.net/modules.php?op=modload&amp;name=News&amp;file=article&amp;sid=9</A>
+
+It's not supported in the list of supported terratec devices:
+
+<A HREF="http://www.alsa-project.org/alsa-doc/index.php?vendor=vendor-Terratec#matrix">http://www.alsa-project.org/alsa-doc/index.php?vendor=vendor-Terratec#matrix</A>
+
+However, it's said to be supported by freebob (, which sits on top of jack
+as a client,
+so it should be supported by jjack then?
+
+An even more cost efficient solution would be to go for the
+
+<A HREF="http://www.soundonsound.com/sos/apr04/articles/terratecphase88.htm">http://www.soundonsound.com/sos/apr04/articles/terratecphase88.htm</A>
+
+but I haven't found that this is supported yet, even thought it's the
+successor of
+EWS 88MT PCI which is listed as supported under ALSA (and then jack as
+well?).
+
+Actually it seems like these two are the same, just a different layout
+(FireWire on the rack,
+PCI on the other).
+
+Any comments?
+
+Helge Fredriksen
+
+
+
+On 12/13/06, Cefn Hoile &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">inventor at cefn.com</A>&gt; wrote:
+&gt;<i>
+</I>&gt;<i> Hi, Helge
+</I>&gt;<i>
+</I>&gt;<i> I think the rate of sampling is handled by the Jack implementation,
+</I>&gt;<i> and JJack just intervenes as a client and exposes the bytes fed
+</I>&gt;<i> through the Jack system to Java. So some of this sampling rate, and
+</I>&gt;<i> the consequent load, will be determined by your configuration of Jack.
+</I>&gt;<i>
+</I>&gt;<i> From your description it seems like you have similar requirements to
+</I>&gt;<i> the project I attempted. You can see a nice pic from our test
+</I>&gt;<i> contraption here...
+</I>&gt;<i> <A HREF="http://flickr.com/photos/55387465@N00/218307084/">http://flickr.com/photos/55387465@N00/218307084/</A>
+</I>&gt;<i>
+</I>&gt;<i> I made some progress on it, and managed to get quite a few usb audio
+</I>&gt;<i> cards working with JJack - initially on Pure:Dyne had driver problems
+</I>&gt;<i> but finally on debian got at least the test JJack apps like the
+</I>&gt;<i> 'echo' working for long periods with multiple (4 in the end) cheap
+</I>&gt;<i> VoIP soundcards and USB hubs. I think in principle the experiment
+</I>&gt;<i> could have been extended to more soundcards and hubs. The sample apps
+</I>&gt;<i> would crash eventually (after quite a while - tens of minutes) but
+</I>&gt;<i> could be restarted automatically with simple scripting. I needed to
+</I>&gt;<i> work on something else at that point, so it got left as it is.
+</I>&gt;<i>
+</I>&gt;<i> You'll see more in the links below. In the longer run I intended to
+</I>&gt;<i> simply serialise the bytes in JJack events directly to file, and
+</I>&gt;<i> reverse the process for playback. Doesn't give you the open format
+</I>&gt;<i> which might be ideal, but for my project the playback output was
+</I>&gt;<i> JJack as well, (other live sound outputs)  so it suited me to try it
+</I>&gt;<i> that way. Funnily enough my project involved telephones too.
+</I>&gt;<i>
+</I>&gt;<i> You can follow the blog topics about the project in reverse order
+</I>&gt;<i> here...
+</I>&gt;<i> <A HREF="http://cefn.com/curiosity/tag/pipedreams">http://cefn.com/curiosity/tag/pipedreams</A>
+</I>&gt;<i>
+</I>&gt;<i> ...and several snapshots from the attempted code framework by
+</I>&gt;<i> following these links...
+</I>&gt;<i>
+</I>&gt;<i> 1) The primary game intended to be run using a multi-audio-channel
+</I>&gt;<i> enabled PC
+</I>&gt;<i> <A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A>
+</I>&gt;<i> backchatter/games/ConverseGame.java?view=markup
+</I>&gt;<i>
+</I>&gt;<i> 2) A directory containing test 'games' which invoke my Channel-
+</I>&gt;<i> oriented API
+</I>&gt;<i> <A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A>
+</I>&gt;<i> backchatter/games/
+</I>&gt;<i>
+</I>&gt;<i> 3) Here you can browse my Channel API itself - a high level framework
+</I>&gt;<i> for manipulating, wiring and recording channels in general.
+</I>&gt;<i> <A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A>
+</I>&gt;<i> backchatter/
+</I>&gt;<i>
+</I>&gt;<i> 4) A rough and ready JJack implementation of my channel API
+</I>&gt;<i> <A HREF="http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/">http://curiosity.cvs.sourceforge.net/curiosity/phoney/com/cefn/</A>
+</I>&gt;<i> backchatter/impl/jjack/
+</I>&gt;<i>
+</I>&gt;<i> The API seemed to work. The channel-based games written (like the
+</I>&gt;<i> ConverseGame) would run with a text emulator (text input and output
+</I>&gt;<i> channels were coordinated properly).
+</I>&gt;<i>
+</I>&gt;<i> However, the JJack implementation hosting multiple live audio channel
+</I>&gt;<i> interfaces was still very untried and tested. Mostly I would look at
+</I>&gt;<i> my own use of JJack for reference and ideas rather than as a working
+</I>&gt;<i> implementation. I still intend to build on it in the end, but it's
+</I>&gt;<i> work in progress.
+</I>&gt;<i>
+</I>&gt;<i> Drop me a line (directly or through this list) if you're following
+</I>&gt;<i> any of the same paths to try and get your thing working, and if I can
+</I>&gt;<i> help I'll make suggestions. Not totally sure what your application
+</I>&gt;<i> is, but I'm guessing it's similar in it's basic needs.
+</I>&gt;<i>
+</I>&gt;<i> For other stuff which the Curiosity Collective is up to, you can
+</I>&gt;<i> visit the main website...
+</I>&gt;<i> <A HREF="http://curiositycollective.org">http://curiositycollective.org</A>
+</I>&gt;<i>
+</I>&gt;<i> Good luck.
+</I>&gt;<i>
+</I>&gt;<i> Cefn
+</I>&gt;<i> <A HREF="http://cefn.com/cefntiki/">http://cefn.com/cefntiki/</A>
+</I>&gt;<i>
+</I>&gt;<i> On 12 Dec 2006, at 21:04, Helge Fredriksen wrote:
+</I>&gt;<i>
+</I>&gt;<i> &gt; Hello!
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; I'm looking for an API to grab sound with as minimum of delay as
+</I>&gt;<i> &gt; possible (as contrary to JavaSound). I need only telephone quality
+</I>&gt;<i> &gt; sound, that is 11kHz sampling rate and 8bit mono. Is it possible to
+</I>&gt;<i> &gt; downsize the default CD-quality of sound in jjack? Also, I'm
+</I>&gt;<i> &gt; looking for a device reccomandation to fit this API that will be
+</I>&gt;<i> &gt; able to grab
+</I>&gt;<i> &gt; sound from 8 different channels simultaniously.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Best regards,
+</I>&gt;<i> &gt; Helge Fredriksen
+</I>&gt;<i> &gt; _______________________________________________
+</I>&gt;<i> &gt; jjack-users mailing list
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i>
+</I>-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20061213/6878a7ae/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20061213/6878a7ae/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000012.html">[jjack-users] Using jjack to grab sound
+</A></li>
+	<LI>Next message: <A HREF="000011.html">[jjack-users] Using jjack to grab sound
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

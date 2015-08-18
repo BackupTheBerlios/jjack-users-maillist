@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] JJack native client redesign proposal for future 0.4	release
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2009-June/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%200.4%0A%09release&In-Reply-To=%3Cda05bb0906060043w243f9890l45ac3a52163d84ff%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000120.html">
+   <LINK REL="Next"  HREF="000115.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] JJack native client redesign proposal for future 0.4	release</H1>
+    <B>Peter Brinkmann</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20JJack%20native%20client%20redesign%20proposal%20for%20future%200.4%0A%09release&In-Reply-To=%3Cda05bb0906060043w243f9890l45ac3a52163d84ff%40mail.gmail.com%3E"
+       TITLE="[jjack-users] JJack native client redesign proposal for future 0.4	release">peter.brinkmann at googlemail.com
+       </A><BR>
+    <I>Sat Jun  6 09:43:31 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000120.html">[jjack-users] JJack native client redesign proposal for future	0.4 release
+</A></li>
+        <LI>Next message: <A HREF="000115.html">[jjack-users] JNA binding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#114">[ date ]</a>
+              <a href="thread.html#114">[ thread ]</a>
+              <a href="subject.html#114">[ subject ]</a>
+              <a href="author.html#114">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello everybody,
+Just a few words to set up some context for my take on JJack:
+
+  - I'm using JJack in the audio components of jReality (www.jreality.de).
+In particular, the idea is to render an Ambisonics B-signal and use JACK to
+pipe the B-signal into an Ambisonics decoder such as Fons Adriaensen's
+ambdec, so that I needed the ability to autoconnect to all kinds of JACK
+ports, not just physical ports.
+
+- A jReality application may need to connect to several JACK clients at once
+(e.g., it might connect to ambdec for Ambisonics output as well as various
+soft synths for input), and so it made sense to have several clients, each
+of which autoconnects to a different list of ports.  Moreover, the
+collection of JACK clients may depend on user interaction, so that I needed
+a way of adding or removing clients on the fly.
+
+  - I encountered a lot of zombifications on an underpowered (albeit not
+quite obsolete) Linux box, and so I needed a way to restart my JACK
+components without restarting the entire application.
+
+  - If you're only interested in the original functionality of JJack, then
+the new version should look the same to you, with one minor difference:  The
+new version attaches JACK threads as daemon threads, so that a Java
+application will terminate if the only remaining threads are JACK threads.
+If you have any applications that expect to stay alive as long as their JACK
+threads are alive, please let me know.  Restoring the original functionality
+would be trivial, but for my purposes (lots of JACK threads that are
+subordinate to graphics and user interaction threads) it makes more sense to
+attach JACK threads as daemons.
+
+Any thoughts would be appreciated.
+All the best,
+     Peter
+
+
+
+
+&lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/2009-June/000112.html">https://lists.berlios.de/pipermail/jjack-users/2009-June/000112.html</A>&gt;
+&gt;<i>
+</I>&gt;<i> Hello JJack users and developers,
+</I>&gt;<i>
+</I>&gt;<i> Peter Brinkmann has contributed substantial changes to libjjack.c and
+</I>&gt;<i> JJackSystem.java. They are a complete re-implementation of the native
+</I>&gt;<i> client architecture and promise to solve a number of performance issues.
+</I>&gt;<i> I have not done any practical tests yet, but looked into the code and
+</I>&gt;<i> have found several useful improvements (see the list of changes below).
+</I>&gt;<i>
+</I>&gt;<i> Peter's code is available on an SVN-branch at
+</I>&gt;<i>
+</I>&gt;<i> <A HREF="https://&lt;developername">https://&lt;developername</A> &lt;<A HREF="https://%3cdevelopername/">https://%3cdevelopername/</A>&gt;&gt;@svn.berlios.de/svnroot/repos/jjack/branches/v04-proposal
+</I>&gt;<i>
+</I>&gt;<i> Changed files:
+</I>&gt;<i> src/de/gulden/framework/jjack/JJackAudioEvent.java
+</I>&gt;<i> src/de/gulden/framework/jjack/JJackNativeClient.java (new)
+</I>&gt;<i> src/de/gulden/framework/jjack/JJackNativeClientEvent.java (new)
+</I>&gt;<i> src/de/gulden/framework/jjack/JJackNativeClientListener.java (new)
+</I>&gt;<i> src/de/gulden/framework/jjack/JJackSystem.java
+</I>&gt;<i> src/de/gulden/framework/jjack/libjjack.c
+</I>&gt;<i> make/build_macosx.xml (new)
+</I>&gt;<i> make/build.xml
+</I>&gt;<i>
+</I>&gt;<i> I have called this &quot;version 0.4 proposal&quot;. We can discuss including
+</I>&gt;<i> other changes (maybe from the Frinika project?) before merging them into
+</I>&gt;<i> trunk and finally building a 0.4 release.
+</I>&gt;<i>
+</I>&gt;<i> New features are:
+</I>&gt;<i>
+</I>&gt;<i> - The native bridge now lives in a new class (JJackNativeClient.java),
+</I>&gt;<i> which is a minimal wrapper for native jack clients. It is now possible
+</I>&gt;<i> to create multiple clients, open, close, etc., without restarting the JVM
+</I>&gt;<i>
+</I>&gt;<i> - The process callback is significantly smaller than before, which
+</I>&gt;<i> hopefully reduces the amount of zombifications.
+</I>&gt;<i>
+</I>&gt;<i> - There now is a shutdown call (with listeners), so at least you get
+</I>&gt;<i> notified when you are zombified.
+</I>&gt;<i>
+</I>&gt;<i> - Init and destroy now implicitly happen automatically, and in addition
+</I>&gt;<i> every client has a finalize-method, so there are no leaks.
+</I>&gt;<i>
+</I>&gt;<i> - Despite all changes, JJackSystem should behave exactly like before
+</I>&gt;<i> (except the thread-issue mentioned above). Besides JJackSystem.java,
+</I>&gt;<i> libjjack.c and a small addition in JJackAudioEvent.java, no files have
+</I>&gt;<i> been changed.
+</I>&gt;<i>
+</I>&gt;<i> - Inside the process-callback, as few new object instances as possible
+</I>&gt;<i> are created.
+</I>&gt;<i>
+</I>&gt;<i> - There now is a build-file for MacOS.
+</I>&gt;<i>
+</I>&gt;<i> Feedback on this is very helpful for building a version 0.4 release. So
+</I>&gt;<i> everyone is welcome to give comments.
+</I>&gt;<i>
+</I>&gt;<i> Best,
+</I>&gt;<i> Jens
+</I>&gt;<i>
+</I>&gt;<i>
+</I>-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20090606/476678a1/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20090606/476678a1/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000120.html">[jjack-users] JJack native client redesign proposal for future	0.4 release
+</A></li>
+	<LI>Next message: <A HREF="000115.html">[jjack-users] JNA binding
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#114">[ date ]</a>
+              <a href="thread.html#114">[ thread ]</a>
+              <a href="subject.html#114">[ subject ]</a>
+              <a href="author.html#114">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

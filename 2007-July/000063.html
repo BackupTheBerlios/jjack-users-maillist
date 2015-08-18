@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Lifetime Management (jack_shutdown)
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Lifetime%20Management%20%28jack_shutdown%29&In-Reply-To=%3C468A2892.2020104%40jensgulden.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000062.html">
+   <LINK REL="Next"  HREF="000064.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Lifetime Management (jack_shutdown)</H1>
+    <B>Jens Gulden</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Lifetime%20Management%20%28jack_shutdown%29&In-Reply-To=%3C468A2892.2020104%40jensgulden.de%3E"
+       TITLE="[jjack-users] Lifetime Management (jack_shutdown)">mail at jensgulden.de
+       </A><BR>
+    <I>Tue Jul  3 12:44:34 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000062.html">[jjack-users] Lifetime Management (jack_shutdown)
+</A></li>
+        <LI>Next message: <A HREF="000064.html">[jjack-users] Problems with arrays when no output data
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#63">[ date ]</a>
+              <a href="thread.html#63">[ thread ]</a>
+              <a href="subject.html#63">[ subject ]</a>
+              <a href="author.html#63">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello Andrew,
+
+&gt;<i> ...jack_shutdown... I can find anything similar in JJack.
+</I>
+This is not implemented by now, I think just because it hasn't been needed before.
+Can you add it yourself? I think it would just be a simple wrap from a native callback function to a 
+static Java method in JJackSystem. See (*env)-&gt;CallStaticVoidMethod... elsewhere in the code on how 
+to do that, maybe in combination with (*jvm)-&gt;AttachCurrentThread(jvm, &amp;inf-&gt;env, NULL).
+
+&gt;<i> (I don't know if this is the latest code - <A HREF="http://www.koders.com/...">http://www.koders.com/...</A>
+</I>
+The original development CVS repository is here: <A HREF="http://developer.berlios.de/cvs/?group_id=1786">http://developer.berlios.de/cvs/?group_id=1786</A>
+
+Hope that helps,
+Jens
+
+
+andrew cooke schrieb:
+&gt;<i> How do I know when Jack has stopped calling my JJack application?  Jack
+</I>&gt;<i> provides a callback for this, but I can find anything similar in JJack.
+</I>&gt;<i> 
+</I>&gt;<i> (I don't know if this is the latest code -
+</I>&gt;<i> <A HREF="http://www.koders.com/c/fidF85C7C2E5B91492A20C70FBEAD7990A074D24562.aspx">http://www.koders.com/c/fidF85C7C2E5B91492A20C70FBEAD7990A074D24562.aspx</A> -
+</I>&gt;<i> but it has a call to jack_shutdown commented out.)
+</I>&gt;<i> 
+</I>&gt;<i> Thanks,
+</I>&gt;<i> Andrew
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000062.html">[jjack-users] Lifetime Management (jack_shutdown)
+</A></li>
+	<LI>Next message: <A HREF="000064.html">[jjack-users] Problems with arrays when no output data
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#63">[ date ]</a>
+              <a href="thread.html#63">[ thread ]</a>
+              <a href="subject.html#63">[ subject ]</a>
+              <a href="author.html#63">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

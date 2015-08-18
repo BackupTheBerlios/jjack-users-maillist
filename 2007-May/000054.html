@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] Experience with volume setting?
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Experience%20with%20volume%20setting%3F&In-Reply-To=%3Ce78383b30705220017s38c8fffdx8cc461e7f4268262%40mail.gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000053.html">
+   <LINK REL="Next"  HREF="000056.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] Experience with volume setting?</H1>
+    <B>Helge Fredriksen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20Experience%20with%20volume%20setting%3F&In-Reply-To=%3Ce78383b30705220017s38c8fffdx8cc461e7f4268262%40mail.gmail.com%3E"
+       TITLE="[jjack-users] Experience with volume setting?">helgeingvart at gmail.com
+       </A><BR>
+    <I>Tue May 22 09:17:34 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000053.html">[jjack-users] Experience with volume setting?
+</A></li>
+        <LI>Next message: <A HREF="000056.html">[jjack-users] Experience with volume setting?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#54">[ date ]</a>
+              <a href="thread.html#54">[ thread ]</a>
+              <a href="subject.html#54">[ subject ]</a>
+              <a href="author.html#54">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>&gt;<i> PCM is a simple direct linear digital representation of the analog signal.
+</I>&gt;<i> No
+</I>&gt;<i> logarithms involved. You only need logarithms if you want to change the
+</I>&gt;<i> volume using the decibel scale.
+</I>
+
+OK, I  imagine that the decibel scale considerations enter the picture when
+you start considering the human ear, am I right? To my experience, lowering
+the amplitude to 10% of original strength did not sound that way. More so
+when I lowered it to 1%. Then it sounded like 10%, which would match the
+decibel reduction pretty good.
+
+&gt;<i> What I'm really after is the correct mix of several samples (S1...SN) into
+</I>&gt;<i> &gt; one, where each sample is weighted (W1...WN).
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Result = S1 * W1 + S2 * W2 + .... + SN * WN
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; and W1 + W2 + ... + WN = 1.
+</I>&gt;<i>
+</I>&gt;<i> The correct mix is your formula just as you've entered it. Nothing more.
+</I>&gt;<i> Just
+</I>&gt;<i> make sure the sum of your weights is 1.
+</I>
+
+OK, will try.
+
+A fast decibel to multiplication factor converter:
+&gt;<i> sample = sample * getAmplitueRatio(-6);
+</I>&gt;<i>
+</I>&gt;<i> which will lower the volume of your sample by 6dB.
+</I>
+
+What would be the typical decibel range to use? [-10, 10]? Or could it be
+any integer number?
+
+Thanks,
+Helge
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/jjack-users/attachments/20070522/0c436434/attachment.html">https://lists.berlios.de/pipermail/jjack-users/attachments/20070522/0c436434/attachment.html</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000053.html">[jjack-users] Experience with volume setting?
+</A></li>
+	<LI>Next message: <A HREF="000056.html">[jjack-users] Experience with volume setting?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#54">[ date ]</a>
+              <a href="thread.html#54">[ thread ]</a>
+              <a href="subject.html#54">[ subject ]</a>
+              <a href="author.html#54">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,97 @@
+From jjack at bzzt.net  Thu Mar  5 09:14:45 2009
+From: jjack at bzzt.net (Arnout Engelen)
+Date: Thu, 5 Mar 2009 09:14:45 +0100
+Subject: [jjack-users] Patterns for exposing more Jack functionality
+Message-ID: <20090305081445.GN10330@bzzt.net>
+
+Hi,
+
+I might like to take a stab at exposing some more Jack functionality though 
+JJack, starting with transport-related functionality.
+
+I'd like to discuss what would be a neat way to do this. It seems convenient
+to keep all 'native' methods in the same file (JJackSystem on the java side 
+and libjjack.c on the c side). I think those native signatures should be as 
+close to the jack counterparts as possible.
+
+'Client' code wouldn't call these native methods directly, but instead call 
+a 'wrapper' method that might do some conversions and such. Those 'wrapper'
+methods could be static methods in different classes, grouping the 
+functionality into logical chunks (e.g. 'JJackTransport', 'JJackMidi' etc).
+
+Jack often works by passing in a struct to hold either a parameter or a kind of
+'return value'. We could follow that pattern, and put a piece of memory in
+INF to temporarily hold the values.
+
+The native side of 'jack_transport_query' wrapper would then look something 
+like this:
+
+/*
+ * Class:     de_gulden_framework_jjack_JJackSystem
+ * Method:    nativeTransportQuery
+ * Signature: (Lde/gulden/framework/jjack/JJackPosition;)I
+ */
+JNIEXPORT jint JNICALL Java_de_gulden_framework_jjack_JJackSystem_nativeTransportQuery
+  (JNIEnv *env, jclass cls, jobject position)
+{
+        INF inf = getInf(env, cls);
+        int state = jack_transport_query(inf->client, &inf->position);
+
+        setIntField(env, position, "beat", inf->position.beat);
+        setIntField(env, position, "bar", inf->position.bar);
+        setIntField(env, position, "tick", inf->position.tick);
+
+        return state;
+}
+
+and the Java side:
+
+public class JJackTransport
+{
+	/**
+	 * fills the static fields of {@link JJackPosition} with the current
+	 * position
+	 */
+	public static JJackTransportState query(JJackPosition position)
+	{
+		return JJackTransportState.values()[JJackSystem.nativeTransportQuery(position)];
+	}
+}
+
+(of course more fields should be added, and JJackTransport would also get 
+static methods for starting, stopping, relocation, etc).
+
+Is that a reasonable approach, or is there a better way? I'm quite new to JNI,
+so I might have some best practices to learn :).
+
+The build.xml now specifies Java version 1.4. What would you think about 
+raising that to java5? It's been out for a while, and has some nice features
+(like new enumerations and generics). 
+
+
+Kind regards,
+
+Arnout Engelen
+
+
+From jjack at bzzt.net  Thu Mar  5 09:23:42 2009
+From: jjack at bzzt.net (Arnout Engelen)
+Date: Thu, 5 Mar 2009 09:23:42 +0100
+Subject: [jjack-users] Garbage collection
+Message-ID: <20090305082342.GO10330@bzzt.net>
+
+Hi,
+
+If the garbage collector runs during audio processing, wouldn't that be 
+likely to make processing too slow and get the application kicked as a
+jack client?
+
+Is it possible to prevent the GC from running while processing? Does JNI 
+already guarantee that? Or should we just be careful not to do any memory 
+allocations while processing audio (which might be quite hard in the presence 
+of threads)?
+
+
+Arnout
+
+

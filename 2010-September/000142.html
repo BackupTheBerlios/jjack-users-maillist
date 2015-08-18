@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [jjack-users] need a little help... making sound using JJack
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/jjack-users/2010-September/index.html" >
+   <LINK REL="made" HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20need%20a%20little%20help...%20making%20sound%20using%20JJack&In-Reply-To=%3C20100923073141.GM9348%40bzzt.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000141.html">
+   <LINK REL="Next"  HREF="000143.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[jjack-users] need a little help... making sound using JJack</H1>
+    <B>Arnout Engelen</B> 
+    <A HREF="mailto:jjack-users%40lists.berlios.de?Subject=Re%3A%20%5Bjjack-users%5D%20need%20a%20little%20help...%20making%20sound%20using%20JJack&In-Reply-To=%3C20100923073141.GM9348%40bzzt.net%3E"
+       TITLE="[jjack-users] need a little help... making sound using JJack">jjack at bzzt.net
+       </A><BR>
+    <I>Thu Sep 23 09:31:42 CEST 2010</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000141.html">[jjack-users] need a little help... making sound using JJack
+</A></li>
+        <LI>Next message: <A HREF="000143.html">[jjack-users] need a little help... making sound using JJack
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#142">[ date ]</a>
+              <a href="thread.html#142">[ thread ]</a>
+              <a href="subject.html#142">[ subject ]</a>
+              <a href="author.html#142">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On Wed, Sep 22, 2010 at 09:46:01PM -0400, Kieth Skowran wrote:
+&gt;<i> On Wed, Sep 22, 2010 at 2:51 PM, Arnout Engelen &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack at bzzt.net</A>&gt; wrote:
+</I>&gt;<i> &gt; On Wed, Sep 22, 2010 at 02:24:13PM -0400, Kieth Skowran wrote:
+</I>&gt;<i> &gt; &gt; I just installed qjackctl, but it has a problem when it runs. Due to C++
+</I>&gt;<i> &gt; &gt; name mangling i can't tell which library it's missing. I think it's
+</I>&gt;<i> &gt; &gt; drawPixmap?
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Which distro are you using?
+</I>&gt;<i> 
+</I>&gt;<i> At work, we are using Fedora 10 32 bit.
+</I>&gt;<i> At home, I'm using Fedora 13, 64 bit. 
+</I>
+Are you installing qjackctl through the package manager or 'manually'? 
+Normally the package manager should take care of installing all neccessary
+libraries.
+
+&gt;<i> I am able to run qjackctl.  When i run
+</I>&gt;<i> the Java app, the connections window does show 2 input ports for JJack and 2
+</I>&gt;<i> output ports for JJack. But am unsure what calls to make to send data to
+</I>&gt;<i> JJack input port. and how to connect JJack output to sound card.
+</I>
+You don't need to use the JJack input ports if your application doesn't 
+require sound input.
+
+You can connect JJack output to the sound card in the 'connections' window:
+just select JJack on the left and your soundcard (usually called 'alsa_pcm' 
+or something like that iirc) on the right, and hit 'connect' (or use 
+drag-and-drop).
+
+
+Regards,
+
+Arnout
+
+&gt;<i> &gt; &gt; On Sep 22, 2010 9:58 AM, &quot;Arnout Engelen&quot; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack at bzzt.net</A>&gt; wrote:
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; On Tue, Sep 21, 2010 at 11:12:59PM -0400, Kieth Skowran wrote:
+</I>&gt;<i> &gt; &gt; &gt; So, I want to make a .wav player us...
+</I>&gt;<i> &gt; &gt; OK
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; The Jack C program
+</I>&gt;<i> &gt; &gt; &gt; seems to &quot;lock&quot; something, such that when it is running, the Java
+</I>&gt;<i> &gt; program
+</I>&gt;<i> &gt; &gt; &gt; ...
+</I>&gt;<i> &gt; &gt; When running, JACK tends to take full control over the ALSA sound card,
+</I>&gt;<i> &gt; &gt; preventing other applications from accessing it.
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; The thought is that if I change the Java program to play
+</I>&gt;<i> &gt; &gt; &gt; audio using JJack, it will go thru Jac...
+</I>&gt;<i> &gt; &gt; Yes. There are a couple of other ways to route audio through JACK, but
+</I>&gt;<i> &gt; using
+</I>&gt;<i> &gt; &gt; JJack could be a suitable way to do it.
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; Well, how to do this in JJack is unclear to me. Do I need to simply
+</I>&gt;<i> &gt; create
+</I>&gt;<i> &gt; &gt; a
+</I>&gt;<i> &gt; &gt; &gt; JJackClient with a...
+</I>&gt;<i> &gt; &gt; My JJack is rather rusty. Does your application, when run, show up in the
+</I>&gt;<i> &gt; &gt; 'connections' window of qjackctl? Is it connected to your soundcard?
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; Regards,
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; Arnout
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; &gt; import de.gulden.framework.jjack.util.*;
+</I>&gt;<i> &gt; &gt; &gt; import de.gulden.framework.jjack.*;
+</I>&gt;<i> &gt; &gt; &gt; import de.gulden...
+</I>&gt;<i> &gt; &gt; &gt; _______________________________________________
+</I>&gt;<i> &gt; &gt; &gt; jjack-users mailing list
+</I>&gt;<i> &gt; &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> &gt; &gt;
+</I>&gt;<i> &gt; &gt; _______________________________________________
+</I>&gt;<i> &gt; &gt; jjack-users mailing list
+</I>&gt;<i> &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; &gt; _______________________________________________
+</I>&gt;<i> &gt; &gt; jjack-users mailing list
+</I>&gt;<i> &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; _______________________________________________
+</I>&gt;<i> &gt; jjack-users mailing list
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>&gt;<i> &gt;
+</I>
+&gt;<i> _______________________________________________
+</I>&gt;<i> jjack-users mailing list
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">jjack-users at lists.berlios.de</A>
+</I>&gt;<i> <A HREF="https://lists.berlios.de/mailman/listinfo/jjack-users">https://lists.berlios.de/mailman/listinfo/jjack-users</A>
+</I>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000141.html">[jjack-users] need a little help... making sound using JJack
+</A></li>
+	<LI>Next message: <A HREF="000143.html">[jjack-users] need a little help... making sound using JJack
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#142">[ date ]</a>
+              <a href="thread.html#142">[ thread ]</a>
+              <a href="subject.html#142">[ subject ]</a>
+              <a href="author.html#142">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/jjack-users">More information about the jjack-users
+mailing list</a><br>
+</body></html>
