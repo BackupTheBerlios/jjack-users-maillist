@@ -323,7 +323,7 @@ Message-ID: <200707102105.33510.contact@petersalomonsen.com>
 Hi Andrew,
 
 Just tested your patch (wasn't as much as I thought :) - it all makes sense. 
-It's commited to CVS.
+It's committed to CVS.
 
 Thanks again!
 

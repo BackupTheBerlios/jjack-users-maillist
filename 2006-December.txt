@@ -201,7 +201,7 @@ Hi,
 
 and thanks for an extencive reply!
 
-It seems that jjack is definetly the API to use on Linux. I was originally
+It seems that jjack is definitely the API to use on Linux. I was originally
 looking for a cross-platform API, has jack been ported to Windows? Anyway
 we found other ways to grab sound on windows using DirectSound.
 
@@ -365,7 +365,7 @@ References: <e78383b30612121304y617e43c2t9346f021b66109c@mail.gmail.com>
 	<200612130829.34147.contact@petersalomonsen.com>
 Message-ID: <e78383b30612150425y6d649e5ahac196d9b3449649a@mail.gmail.com>
 
-Can you depict an algorithm for such a downscale? Would it be a noticable
+Can you depict an algorithm for such a downscale? Would it be a noticeable
 cpu
 usage for this?
 
@@ -428,7 +428,7 @@ Message-ID: <200612151510.00858.contact@petersalomonsen.com>
 
 
 On Friday 15 December 2006 13:25, Helge Fredriksen wrote:
-> Can you depict an algorithm for such a downscale? Would it be a noticable
+> Can you depict an algorithm for such a downscale? Would it be a noticeable
 > cpu
 > usage for this?
 
@@ -483,7 +483,7 @@ On 12/15/06, Peter Salomonsen <contact at petersalomonsen.com > wrote:
 >
 > On Friday 15 December 2006 13:25, Helge Fredriksen wrote:
 > > Can you depict an algorithm for such a downscale? Would it be a
-> noticable
+> noticeable
 > > cpu
 > > usage for this?
 >
@@ -555,7 +555,7 @@ On Monday 18 December 2006 21:55, Helge Fredriksen wrote:
 > > On Friday 15 December 2006 13:25, Helge Fredriksen wrote:
 > > > Can you depict an algorithm for such a downscale? Would it be a
 > >
-> > noticable
+> > noticeable
 > >
 > > > cpu
 > > > usage for this?

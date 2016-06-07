@@ -218,7 +218,7 @@ targetDataLine.read(buffer) with a  AudioFormat of
 
 AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512, false);
 
-using the slow JavaSound target data line? buffer beeing a byte buffer that is.
+using the slow JavaSound target data line? buffer being a byte buffer that is.
 
 Helge
 
@@ -296,7 +296,7 @@ Hello again.
 I'm trying to setup the frinika project on my brand new Dell Optiplex
 machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
 everything,
-seeing arch=AMD64 beeing default (not sure if this has any effect on
+seeing arch=AMD64 being default (not sure if this has any effect on
 the compiling, though).
 
 However, trying to use this lib through IDEA:
@@ -324,7 +324,7 @@ On 1/19/07, Helge Fredriksen <helgeingvart at gmail.com> wrote:
 >
 > AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512, false);
 >
-> using the slow JavaSound target data line? buffer beeing a byte buffer that is.
+> using the slow JavaSound target data line? buffer being a byte buffer that is.
 >
 > Helge
 >
@@ -416,7 +416,7 @@ On Wednesday 24 January 2007 13:29, Helge Fredriksen wrote:
 > I'm trying to setup the frinika project on my brand new Dell Optiplex
 > machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
 > everything,
-> seeing arch=AMD64 beeing default (not sure if this has any effect on
+> seeing arch=AMD64 being default (not sure if this has any effect on
 > the compiling, though).
 >
 > However, trying to use this lib through IDEA:
@@ -445,7 +445,7 @@ On Wednesday 24 January 2007 13:29, Helge Fredriksen wrote:
 > > AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
 > > false);
 > >
-> > using the slow JavaSound target data line? buffer beeing a byte buffer
+> > using the slow JavaSound target data line? buffer being a byte buffer
 > > that is.
 > >
 > > Helge
@@ -599,7 +599,7 @@ On 1/24/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
 > > I'm trying to setup the frinika project on my brand new Dell Optiplex
 > > machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
 > > everything,
-> > seeing arch=AMD64 beeing default (not sure if this has any effect on
+> > seeing arch=AMD64 being default (not sure if this has any effect on
 > > the compiling, though).
 > >
 > > However, trying to use this lib through IDEA:
@@ -628,7 +628,7 @@ On 1/24/07, Peter Salomonsen <contact at petersalomonsen.com> wrote:
 > > > AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
 > > > false);
 > > >
-> > > using the slow JavaSound target data line? buffer beeing a byte buffer
+> > > using the slow JavaSound target data line? buffer being a byte buffer
 > > > that is.
 > > >
 > > > Helge
@@ -796,7 +796,7 @@ On Wednesday 24 January 2007 15:28, Helge Fredriksen wrote:
 > > > I'm trying to setup the frinika project on my brand new Dell Optiplex
 > > > machine (AMD64) on a Ubuntu Edgy system. I'm able to make the so and
 > > > everything,
-> > > seeing arch=AMD64 beeing default (not sure if this has any effect on
+> > > seeing arch=AMD64 being default (not sure if this has any effect on
 > > > the compiling, though).
 > > >
 > > > However, trying to use this lib through IDEA:
@@ -825,7 +825,7 @@ On Wednesday 24 January 2007 15:28, Helge Fredriksen wrote:
 > > > > AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 11025, 16, 1, 2, 5512,
 > > > > false);
 > > > >
-> > > > using the slow JavaSound target data line? buffer beeing a byte
+> > > > using the slow JavaSound target data line? buffer being a byte
 > > > > buffer that is.
 > > > >
 > > > > Helge

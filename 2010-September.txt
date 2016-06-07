@@ -9,7 +9,7 @@ Java and currently plays the .wav file using javax.sound api.  Another
 program in the system plays audio using Jack C calls.  The Jack C program
 seems to "lock" something, such that when it is running, the Java program
 cannot play audio. The thought is that if I change the Java program to play
-audio using JJack, it will go thru Jackd, and the two programs will be able
+audio using JJack, it will go through Jackd, and the two programs will be able
 to run, and play, audio simultaneously. Am I on the right track?
 
 Well, how to do this in JJack is unclear to me. Do I need to simply create a
@@ -111,7 +111,7 @@ When running, JACK tends to take full control over the ALSA sound card,
 preventing other applications from accessing it.
 
 > The thought is that if I change the Java program to play
-> audio using JJack, it will go thru Jackd, and the two programs will be able
+> audio using JJack, it will go through Jackd, and the two programs will be able
 > to run, and play, audio simultaneously. Am I on the right track?
 
 Yes. There are a couple of other ways to route audio through JACK, but using
@@ -231,7 +231,7 @@ preventing other applications from accessing it.
 
 
 > The thought is that if I change the Java program to play
-> audio using JJack, it will go thru Jac...
+> audio using JJack, it will go through Jac...
 Yes. There are a couple of other ways to route audio through JACK, but using
 JJack could be a suitable way to do it.
 
@@ -303,7 +303,7 @@ Arnout
 > 
 > 
 > > The thought is that if I change the Java program to play
-> > audio using JJack, it will go thru Jac...
+> > audio using JJack, it will go through Jac...
 > Yes. There are a couple of other ways to route audio through JACK, but using
 > JJack could be a suitable way to do it.
 > 
@@ -399,7 +399,7 @@ Kieth
 > >
 > >
 > > > The thought is that if I change the Java program to play
-> > > audio using JJack, it will go thru Jac...
+> > > audio using JJack, it will go through Jac...
 > > Yes. There are a couple of other ways to route audio through JACK, but
 > using
 > > JJack could be a suitable way to do it.
@@ -470,7 +470,7 @@ On Wed, Sep 22, 2010 at 09:46:01PM -0400, Kieth Skowran wrote:
 > At home, I'm using Fedora 13, 64 bit. 
 
 Are you installing qjackctl through the package manager or 'manually'? 
-Normally the package manager should take care of installing all neccessary
+Normally the package manager should take care of installing all necessary
 libraries.
 
 > I am able to run qjackctl.  When i run
@@ -507,7 +507,7 @@ Arnout
 > > >
 > > >
 > > > > The thought is that if I change the Java program to play
-> > > > audio using JJack, it will go thru Jac...
+> > > > audio using JJack, it will go through Jac...
 > > > Yes. There are a couple of other ways to route audio through JACK, but
 > > using
 > > > JJack could be a suitable way to do it.
@@ -586,7 +586,7 @@ On Thu, Sep 23, 2010 at 3:31 AM, Arnout Engelen <jjack at bzzt.net> wrote:
 > > At home, I'm using Fedora 13, 64 bit.
 >
 > Are you installing qjackctl through the package manager or 'manually'?
-> Normally the package manager should take care of installing all neccessary
+> Normally the package manager should take care of installing all necessary
 > libraries.
 >
 

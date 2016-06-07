@@ -93,13 +93,13 @@ loop:
             noise.write(buf, 0, buf.length);
         }
 
-I have tried to start the jackd deamon with 44100 samle rate (default beeing
+I have tried to start the jackd deamon with 44100 samle rate (default being
 48000), and forcing short as sample size, with no luck. Also, I have tried
 to use qjackctl to connect JJack input/output to the alsa playback and
 capture also with no luck.
 
 2) I would like to use jjack for mixing other sounds in together with voice
-beeing tranfered from the network. I had expected to see more jjack clients
+being tranfered from the network. I had expected to see more jjack clients
 popping up when executing
 
        SourceDataLine noise = (SourceDataLine)mixer.getLine(

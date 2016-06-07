@@ -589,7 +589,7 @@ higher latency on windows) is the same as I've observed.
 
 I have never tried this roundrip measurement using ethernet - only the full 
 duplex approach as used in Frinika. I get to calculate the full roundrip 
-time, and may also estimate the system overhead (by substracting the buffer 
+time, and may also estimate the system overhead (by subtracting the buffer 
 latency time) - but to separate input / output system overhead is more 
 difficult...
 

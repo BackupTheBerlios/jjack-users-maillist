@@ -123,11 +123,11 @@ Message-ID: <468224B2.30208@jensgulden.de>
 
 Hello Andrew,
 
-it looks like you are runing a 64 bit system. There is at least one known bug in version 0.2 which 
+it looks like you are running a 64 bit system. There is at least one known bug in version 0.2 which 
 can make JJack refuse to run on 64 bit systems (size of INF pointer). This has been fixed in the 
 meantime, but is only available via CVS by now.
 
-So, yes, please try to compile everthing yourself, and be sure to use the most current code from CVS 
+So, yes, please try to compile everything yourself, and be sure to use the most current code from CVS 
 (see http://developer.berlios.de/cvs/?group_id=1786). Besides fixing the 64 bit bug there have been 
 MANY improvements to JJack since version 0.2, because other developers have joined in. (I myself 
 didn't have time yet to try out all the new things, but expect JJack on CVS to look already pretty 
@@ -206,13 +206,13 @@ Andrew
 
 > Hello Andrew,
 >
-> it looks like you are runing a 64 bit system. There is at least one known
+> it looks like you are running a 64 bit system. There is at least one known
 > bug in version 0.2 which
 > can make JJack refuse to run on 64 bit systems (size of INF pointer). This
 > has been fixed in the
 > meantime, but is only available via CVS by now.
 >
-> So, yes, please try to compile everthing yourself, and be sure to use the
+> So, yes, please try to compile everything yourself, and be sure to use the
 > most current code from CVS
 > (see http://developer.berlios.de/cvs/?group_id=1786). Besides fixing the
 > 64 bit bug there have been

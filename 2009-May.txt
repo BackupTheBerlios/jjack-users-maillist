@@ -8,7 +8,7 @@ Message-ID: <200905111056.24223.Oliver.Rettig@orat.de>
 
 Hallo,
 on standard virtual machine the gc stops execution of all threads and there is 
-no possiblity to prevent the GC from running. Some gc can be configured a way 
+no possibility to prevent the GC from running. Some gc can be configured a way 
 that the duration of the stops are small but it stays critical. My experience 
 is that to excute the GC explicitly before starting the realtime 
 audioprocessing works fine if your programm does not create much objects.
@@ -56,7 +56,7 @@ cheers Paul.
 On Mon, 2009-05-11 at 10:56 +0200, Oliver Rettig wrote:
 > Hallo,
 > on standard virtual machine the gc stops execution of all threads and there is 
-> no possiblity to prevent the GC from running. Some gc can be configured a way 
+> no possibility to prevent the GC from running. Some gc can be configured a way 
 > that the duration of the stops are small but it stays critical. My experience 
 > is that to excute the GC explicitly before starting the realtime 
 > audioprocessing works fine if your programm does not create much objects.
@@ -122,7 +122,7 @@ On Mon, May 11, 2009 at 11:39 AM, Paul John Leonard <eespjl at bath.ac.uk>wrote:
 > > Hallo,
 > > on standard virtual machine the gc stops execution of all threads and
 > there is
-> > no possiblity to prevent the GC from running. Some gc can be configured a
+> > no possibility to prevent the GC from running. Some gc can be configured a
 > way
 > > that the duration of the stops are small but it stays critical. My
 > experience
@@ -230,7 +230,7 @@ On Mon, 2009-05-11 at 12:16 +0200, Peter Salomonsen wrote:
 >         > Hallo,
 >         > on standard virtual machine the gc stops execution of all
 >         threads and there is
->         > no possiblity to prevent the GC from running. Some gc can be
+>         > no possibility to prevent the GC from running. Some gc can be
 >         configured a way
 >         > that the duration of the stops are small but it stays
 >         critical. My experience
@@ -358,7 +358,7 @@ On Mon, May 11, 2009 at 1:06 PM, Paul John Leonard <eespjl at bath.ac.uk>wrote:
 > >         > Hallo,
 > >         > on standard virtual machine the gc stops execution of all
 > >         threads and there is
-> >         > no possiblity to prevent the GC from running. Some gc can be
+> >         > no possibility to prevent the GC from running. Some gc can be
 > >         configured a way
 > >         > that the duration of the stops are small but it stays
 > >         critical. My experience
@@ -525,7 +525,7 @@ On Mon, 2009-05-11 at 13:13 +0200, Peter Salomonsen wrote:
 >         >         > on standard virtual machine the gc stops execution
 >         of all
 >         >         threads and there is
->         >         > no possiblity to prevent the GC from running. Some
+>         >         > no possibility to prevent the GC from running. Some
 >         gc can be
 >         >         configured a way
 >         >         > that the duration of the stops are small but it
@@ -719,7 +719,7 @@ Cheers, peter
 >>         >         > on standard virtual machine the gc stops execution
 >>         of all
 >>         >         threads and there is
->>         >         > no possiblity to prevent the GC from running. Some
+>>         >         > no possibility to prevent the GC from running. Some
 >>         gc can be
 >>         >         configured a way
 >>         >         > that the duration of the stops are small but it
@@ -934,7 +934,7 @@ On Mon, 2009-05-11 at 22:18 +0200, Peter Salomonsen wrote:
 > >>         >         > on standard virtual machine the gc stops execution
 > >>         of all
 > >>         >         threads and there is
-> >>         >         > no possiblity to prevent the GC from running. Some
+> >>         >         > no possibility to prevent the GC from running. Some
 > >>         gc can be
 > >>         >         configured a way
 > >>         >         > that the duration of the stops are small but it

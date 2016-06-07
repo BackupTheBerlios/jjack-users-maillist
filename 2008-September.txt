@@ -6,7 +6,7 @@ Message-ID: <200809191151.52690.Oliver.Rettig@orat.de>
 
 Hallo, 
 
-I am thinking about useing JJack to implement an audio application which 
+I am thinking about using JJack to implement an audio application which 
 should run also with jackdmp and windows. 
 
 Is this possible. Has anybody done this?
@@ -45,7 +45,7 @@ On Fri, Sep 19, 2008 at 11:51 AM, Oliver Rettig <Oliver.Rettig at orat.de>wrote:
 
 > Hallo,
 >
-> I am thinking about useing JJack to implement an audio application which
+> I am thinking about using JJack to implement an audio application which
 > should run also with jackdmp and windows.
 >
 > Is this possible. Has anybody done this?
